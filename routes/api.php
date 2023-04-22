@@ -32,6 +32,9 @@ use Illuminate\Support\Facades\Route;
 // Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 //     return $request->user();
 // });
+Route::group(['middleware' => ['web']], function () {
+    Route::get('/google/login', [UserController::class, 'redirect']);
+});
 Route::middleware('cors')->group(function () {
     Route::middleware('auth:sanctum')->group(function () {
         Route::get('/auth/me', [UserController::class, 'getme']);
@@ -51,7 +54,6 @@ Route::middleware('cors')->group(function () {
 
     // Route::post('/post/danhmuc',[DanhMucAPIController::class,'createCategory']);
     // Route::get('/get/danhmuc',[DanhMucAPIController::class,'index']);
-    Route::get('/google/login', [UserController::class, 'redirect']);
     Route::get('auth/google/callback', [UserController::class, 'callback']);
     Route::post('/auth/register', [UserController::class, 'register']);
     Route::post('/auth/login', [UserController::class, 'login']);
