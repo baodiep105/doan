@@ -34,16 +34,16 @@ class UserController extends Controller
 
     public function redirect()
     {
-        // return Socialite::driver('google')->stateless()->redirect();
-        return response()->json([
-            'status'=>'success',
-            'url' => Socialite::driver('google')->redirect(),
-        ]);
+        return Socialite::driver('google')->stateless()->redirect();
+        // return response()->json([
+        //     'status'=>'success',
+        //     'url' => Socialite::driver('google')->redirect(),
+        // ]);
     }
 
     public function callback()
     {
-        $googleUser = Socialite::driver('google')->stateless()->user()->email;
+        $googleUser = Socialite::driver('google')->stateless()->user();
         if (!is_null($googleUser) || !empty($googleUser)) {
             $user = User::where('email', $googleUser->email)->where('id_loai', 2)->first();
             // dd($user);
