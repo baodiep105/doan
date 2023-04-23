@@ -47,14 +47,14 @@ class UserController extends Controller
     }
 
     public function callback(){
-        try {
-            $googleUser =  Socialite::driver('google')->stateless()->user();
-        } catch (\Exception $e) {
+        // try {
+        //     $googleUser =  Socialite::driver('google')->stateless()->user();
+        // } catch (\Exception $e) {
             return response()->json([
                 'status'=> 'error',
-                'message'=>' không tìm thấy tài khoảng google'
+                'message'=> Socialite::driver('google')->stateless()->user()
         ]);
-        }
+        // }
 
         $user = User::where('email',$googleUser->email)->where('id_loai',2)->first();
         // dd($user);
