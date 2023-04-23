@@ -33,6 +33,6 @@ return [
     'google' => [
         'client_id' => '994583850445-kglpvfcfhu987uiohdtou3sr62gidklh.apps.googleusercontent.com',
         'client_secret' => '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',
-        'redirect' => 'https://doan-production.up.railway.app/api/google/login',
+        'redirect' => 'https://doan-production.up.railway.app/api/google/callback',
     ],
 ];
