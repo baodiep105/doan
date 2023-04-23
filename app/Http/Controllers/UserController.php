@@ -56,7 +56,7 @@ class UserController extends Controller
         ]);
         }
 
-        $user = User::where('email',$googleUser->getEmail)->where('id_loai',2)->first();
+        $user = User::where('email',$googleUser->email)->where('id_loai',2)->first();
         // dd($user);
         if (!is_null($user) || !empty($user)) {
             // $token = $user->createToken('auth_token')->accessToken;
