@@ -31,8 +31,8 @@ return [
     ],
 
     'google' => [
-        'client_id' => '54140734862-ussjpcnb6vcrfpmruu2qqev5vektoash.apps.googleusercontent.com',
-        'client_secret' => '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',
+        'client_id' => '994583850445-kglpvfcfhu987uiohdtou3sr62gidklh.apps.googleusercontent.com',
+        'client_secret' => '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',
         'redirect' => 'https://doan-production.up.railway.app/api/auth/google/callback',
     ],
 ];
