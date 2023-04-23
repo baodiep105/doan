@@ -54,7 +54,7 @@ Route::middleware('cors')->group(function () {
 
     // Route::post('/post/danhmuc',[DanhMucAPIController::class,'createCategory']);
     // Route::get('/get/danhmuc',[DanhMucAPIController::class,'index']);
-    Route::get('auth/google/callback', [UserController::class, 'callback']);
+    Route::get('google/callback', [UserController::class, 'callback']);
     Route::post('/auth/register', [UserController::class, 'register']);
     Route::post('/auth/login', [UserController::class, 'login']);
     Route::get('/active/{hash}', [UserController::class, 'active']);
