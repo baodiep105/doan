@@ -37,7 +37,7 @@ class UserController extends Controller
         // return Socialite::driver('google')->stateless()->redirect();
         return response()->json([
             'status'=>'success',
-            'url' => Socialite::driver('google')->stateless()->redirect()->getTargetUrl(),
+            'url' => Socialite::driver('google')->stateless()->redirect(),
         ]);
     }
 
