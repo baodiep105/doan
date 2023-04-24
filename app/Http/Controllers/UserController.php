@@ -44,7 +44,7 @@ class UserController extends Controller
     public function callback()
     {
 
-        $social_user = Socialite::driver($driver)->stateless()->user();
+        $social_user = Socialite::driver('facebook')->stateless()->user();
         // dd($social_user);
         return response()->json([
             'status' => 'success',
