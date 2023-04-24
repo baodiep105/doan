@@ -19,6 +19,8 @@ use Illuminate\Support\Facades\Validator;
 use SanPhamYeuThich;
 use Cookie;
 use Config;
+use Google\Client as GoogleClient;
+
 class HomeController extends Controller
 {
     public function arrival()

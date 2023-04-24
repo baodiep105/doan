@@ -44,15 +44,38 @@ class UserController extends Controller
 
     public function callback()
     {
-        $getInfo = Socialite::driver('google')->with(['access_type' => 'offline'])
-        ->stateless()->user();
-        $user = $this->createUser($getInfo);
-        $success['token'] = $user->createToken('myApp')->accessToken->token;
-        return response()->json([
+        $client = new GoogleClient();
+        $client->setClientId(config('services.google.client_id'));
+        $client->setClientSecret(config('services.google.client_secret'));
+        $client->setRedirectUri(config('services.google.redirect'));
+        $client->addScope('email');
+        $client->addScope('profile');
+    
+        if ($request->get('code')) {
+            $token = $client->fetchAccessTokenWithAuthCode($request->get('code'));
+            $oauth = new Oauth2($client);
+            $userData = $oauth->userinfo->get();
+            
+            $user = $this->createUser($userData);
+            $success['token'] = $user->createToken('myApp')->accessToken->token;
+            return response()->json([
                         'status'=>'success',
                         'token'=> $success,
                         'user'=>$user,
                     ]);
+            // $user = [
+            //     'name' => $userData->name,
+            //     'email' => $userData->email,
+            //     'avatar' => $userData->picture,
+            //     'token' => $token,
+            // ];
+            // session(['user' => $user]);
+    
+            // return json_encode($user);
+        }
+        // $getInfo = Socialite::driver('google')->with(['access_type' => 'offline'])
+        // ->stateless()->user();
+        
     }
     public function createUser($getInfo)
     {
