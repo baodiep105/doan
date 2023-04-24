@@ -44,6 +44,7 @@ class UserController extends Controller
     public function callback()
     {
         $googleUser = Socialite::driver('facebook')->stateless()->user();
+        dd($googleUser);
         if (!is_null($googleUser) || !empty($googleUser)) {
             $user = User::where('email', $googleUser->email)->where('id_loai', 2)->first();
             // dd($user);

@@ -64,7 +64,7 @@ Route::middleware('cors')->group(function () {
     Route::post('/reset-password', [UserController::class, 'reset_password']);
     Route::post('/login',[loginController::class,'login']);
 
-    Route::get('/google/login', [UserController::class, 'redirect']);
+    Route::get('/facebook/login', [UserController::class, 'redirect']);
 
     Route::get('/facebook/callback', [UserController::class, 'callback']);
 

@@ -36,8 +36,8 @@ return [
         'redirect' => 'https://doan-production.up.railway.app/api/callback',
     ],
     'facebook' => [
-        'client_id' => '766254678094203',
-        'client_secret' => 'e79889e5602318c98ac04a1231d5dbdf',
+        'client_id' => '790310948966114',
+        'client_secret' => '265b983b9fb7257a269137803564bf80',
         'redirect' => 'https://doan-production.up.railway.app/api/facebook/callback',
     ],
 ];
