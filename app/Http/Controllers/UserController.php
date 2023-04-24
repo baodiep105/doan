@@ -43,12 +43,13 @@ class UserController extends Controller
 
     public function callback()
     {
-        try {
-            $social_user = Socialite::driver($driver)->user();
-        } catch (\Exception $e) {
-            return redirect()->route('login');
-        }
-        if (!is_null($googleUser) || !empty($googleUser)) {
+
+        $social_user = Socialite::driver($driver)->stateless()->user();
+        // dd($social_user);
+        return response()->json([
+            'status' => 'success',
+            'data'=>$social_user,]);
+            if (!is_null($googleUser) || !empty($googleUser)) {
             $user = User::where('email', $googleUser->email)->where('id_loai', 2)->first();
             // dd($user);
             if (!is_null($user) || !empty($user)) {
