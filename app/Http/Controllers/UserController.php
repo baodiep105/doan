@@ -46,10 +46,7 @@ class UserController extends Controller
 
         $social_user = Socialite::driver('facebook')->stateless()->user();
         // dd($social_user);
-        return response()->json([
-            'status' => 'success',
-            'data'=>$social_user,]);
-            if (!is_null($googleUser) || !empty($googleUser)) {
+        if (!is_null($social_user) || !empty($social_user)) {
             $user = User::where('email', $googleUser->email)->where('id_loai', 2)->first();
             // dd($user);
             if (!is_null($user) || !empty($user)) {
@@ -69,6 +66,12 @@ class UserController extends Controller
                     'token' => $success,
                 ]);
             }
+        }
+        else {
+            return response()->json([
+                'status' => 'error',
+                'message'=> 'không tìm thấy tài khoảng facebook của bạn'
+            ]);
         }
 
     }
