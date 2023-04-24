@@ -43,8 +43,11 @@ class UserController extends Controller
 
     public function callback()
     {
-        $googleUser = Socialite::driver('facebook')->stateless()->user();
-        dd($googleUser);
+        try {
+            $social_user = Socialite::driver($driver)->user();
+        } catch (\Exception $e) {
+            return redirect()->route('login');
+        }
         if (!is_null($googleUser) || !empty($googleUser)) {
             $user = User::where('email', $googleUser->email)->where('id_loai', 2)->first();
             // dd($user);
@@ -65,11 +68,6 @@ class UserController extends Controller
                     'token' => $success,
                 ]);
             }
-        } else {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'khong tim thay tai khoan google của bạn',
-            ]);
         }
 
     }
