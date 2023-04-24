@@ -43,9 +43,11 @@ class UserController extends Controller
 
     public function callback()
     {
-
-        $social_user = Socialite::driver('facebook')->stateless()->user();
-        // dd($social_user);
+                $token = Config::get('services.facebook.client_id');
+                $secret = Config::get('services.facebook.client_secret');
+                $social_user = Socialite::driver('facebook')->userFromTokenAndSecret($token, $secret);
+        // $social_user = Socialite::driver('facebook')->stateless()->user();
+        dd($social_user);
         if (!is_null($social_user) || !empty($social_user)) {
             $user = User::where('email', $googleUser->email)->where('id_loai', 2)->first();
             // dd($user);
