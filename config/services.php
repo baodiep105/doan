@@ -31,9 +31,9 @@ return [
     ],
 
     'google' => [
-        'client_id' => '994583850445-kglpvfcfhu987uiohdtou3sr62gidklh.apps.googleusercontent.com',
-        'client_secret' => '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',
-        'redirect' => 'https://doan-production.up.railway.app/api/callback',
+        'client_id' => '685445435750-idcbo3l9j9nl9qfbe82ov667f7bp5eo5.apps.googleusercontent.com',
+        'client_secret' => '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',
+        'redirect' => 'https://doan-production.up.railway.app/api/google/callback',
     ],
     'facebook' => [
         'client_id' => '893394775297643',

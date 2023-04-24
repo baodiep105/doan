@@ -35,49 +35,69 @@ class UserController extends Controller
 
     public function redirect()
     {
-        // return ;
-        return response()->json([
-            'status'=>'success',
-            'url' => Socialite::driver('google')->stateless()->redirect()->getTargetUrl(),
-        ]);
+        return Socialite::driver('google')->stateless()->redirect() ;
+        // return response()->json([
+        //     'status'=>'success',
+        //     'url' => Socialite::driver('google')->stateless()->redirect()->getTargetUrl(),
+        // ]);
     }
 
     public function callback()
     {
-                // $token = Config::get('services.facebook.client_id');
-                // $secret = Config::get('services.facebook.client_secret');
-                // $social_user = Socialite::driver('facebook')->userFromTokenAndSecret($token, $secret);
-        $social_user = Socialite::driver('google')->stateless()->user();
-        dd($social_user);
-        if (!is_null($social_user) || !empty($social_user)) {
-            $user = User::where('email', $googleUser->email)->where('id_loai', 2)->first();
-            // dd($user);
-            if (!is_null($user) || !empty($user)) {
-                // $token = $user->createToken('auth_token')->accessToken;
-                $success['token'] = $user->createToken('myApp')->accessToken->token;
-                return response()->json([
-                    'status' => 'success',
-                    'token' => $success,
-                    'user' => $user,
-                ]);
-            } else {
-                $user = User::create(['username' => $googleUser->getName(), 'email' => $googleUser->getEmail(), 'id_loai' => 2, 'is_email' => 1]);
-                $success['token'] = $user->createToken('myApp')->accessToken->token;
-                return response()::json([
-                    'status' => 'success',
-                    'user' => $user,
-                    'token' => $success,
-                ]);
-            }
-        }
-        else {
-            return response()->json([
-                'status' => 'error',
-                'message'=> 'không tìm thấy tài khoảng facebook của bạn'
-            ]);
-        }
-
+        $getInfo = Socialite::driver('google')->stateless()->user();
+        $user = $this->createUser($getInfo);
+        $success['token'] = $user->createToken('myApp')->accessToken->token;
+        return response()->json([
+                        'status'=>'success',
+                        'token'=> $success,
+                        'user'=>$user,
+                    ]);
     }
+    public function createUser($getInfo)
+    {
+        $user = User::where('email', $getInfo->email)->first();
+        if (!$user) {
+            $user = User::create(['username' => $getInfo->name, 'email' => $getInfo->email, 'id_loai' => 2, 'is_email' => 1]);
+        }
+        return $user;
+    }
+
+    // public function callback()
+    // {
+    //             // $token = Config::get('services.facebook.client_id');
+    //             // $secret = Config::get('services.facebook.client_secret');
+    //             // $social_user = Socialite::driver('facebook')->userFromTokenAndSecret($token, $secret);
+    //     $social_user = Socialite::driver('google')->stateless()->user();
+    //     // dd($social_user);
+    //     if (!is_null($social_user) || !empty($social_user)) {
+    //         $user = User::where('email', $googleUser->email)->where('id_loai', 2)->first();
+    //         // dd($user);
+    //         if (!is_null($user) || !empty($user)) {
+    //             // $token = $user->createToken('auth_token')->accessToken;
+    //             $success['token'] = $user->createToken('myApp')->accessToken->token;
+    //             return response()->json([
+    //                 'status' => 'success',
+    //                 'token' => $success,
+    //                 'user' => $user,
+    //             ]);
+    //         } else {
+    //             $user = User::create(['username' => $googleUser->getName(), 'email' => $googleUser->getEmail(), 'id_loai' => 2, 'is_email' => 1]);
+    //             $success['token'] = $user->createToken('myApp')->accessToken->token;
+    //             return response()::json([
+    //                 'status' => 'success',
+    //                 'user' => $user,
+    //                 'token' => $success,
+    //             ]);
+    //         }
+    //     }
+    //     else {
+    //         return response()->json([
+    //             'status' => 'error',
+    //             'message'=> 'không tìm thấy tài khoảng facebook của bạn'
+    //         ]);
+    //     }
+
+    // }
 
     public function register(Request $request)
     {
