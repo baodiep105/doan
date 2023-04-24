@@ -44,7 +44,8 @@ class UserController extends Controller
 
     public function callback()
     {
-        $getInfo = Socialite::driver('google')->stateless()->user();
+        $getInfo = Socialite::driver('google')->with(['access_type' => 'offline'])
+        ->stateless()->user();
         $user = $this->createUser($getInfo);
         $success['token'] = $user->createToken('myApp')->accessToken->token;
         return response()->json([
