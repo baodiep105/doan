@@ -38,7 +38,7 @@ class UserController extends Controller
         // return ;
         return response()->json([
             'status'=>'success',
-            'url' => Socialite::driver('facebook')->stateless()->redirect()->getTargetUrl(),
+            'url' => Socialite::driver('google')->stateless()->redirect()->getTargetUrl(),
         ]);
     }
 
@@ -47,7 +47,7 @@ class UserController extends Controller
                 // $token = Config::get('services.facebook.client_id');
                 // $secret = Config::get('services.facebook.client_secret');
                 // $social_user = Socialite::driver('facebook')->userFromTokenAndSecret($token, $secret);
-        $social_user = Socialite::driver('facebook')->stateless()->user();
+        $social_user = Socialite::driver('google')->stateless()->user();
         dd($social_user);
         if (!is_null($social_user) || !empty($social_user)) {
             $user = User::where('email', $googleUser->email)->where('id_loai', 2)->first();
