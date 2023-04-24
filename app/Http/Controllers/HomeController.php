@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use SanPhamYeuThich;
 use Cookie;
+use Config;
 class HomeController extends Controller
 {
     public function arrival()
@@ -126,17 +127,14 @@ class HomeController extends Controller
         // $a->nguoi_nhan= "Quang Nguyễn";
         // $a->sdt= "0772531816";
         // $a->ghi_chu= "rẻwe";
-        setcookie('asd', 'adsasd', time() + (86400 * 30), "/");
-        dd($_COOKIE);
-        return response()->json(
-            [
-                'dasdas'=>$_COOKIE['asd'],
-            ]
-        );
+        // setcookie('asd', 'adsasd', time() + (86400 * 30), "/");
+        // dd($_COOKIE);
+        // dd();
     }
     public function test_session(){
-        session_start();
-       dd($_SESSION['a']);
+        // session_start();
+    //    dd($_SESSION['a']);
+       dd(Config::get('services.facebook'));
     }
     public function yeu()
     {

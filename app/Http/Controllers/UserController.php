@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Socialite;
-use App\Http\Controllers\Config;
+use Config;
 
 class UserController extends Controller
 {
