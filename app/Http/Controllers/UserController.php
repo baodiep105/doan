@@ -96,28 +96,27 @@ class UserController extends Controller {
                 'avatar' => $userData->picture,
                 'token' => $token,
             ];
-            $user = User::where('email', $social_user['email'])->where('id_loai',2)->first();
-            // dd($social_user);
-            if ($user) {
-                // $success[ 'token' ] = $user->createToken( 'myApp' )->accessToken->token;
-                return response()->json( [
-                    'status' => 'success',
-                    // 'token' => $success,
-                    'user' => json_encode($social_user),
-                ] );
-            } else {
-                $user = User::create( [ 'username' => $social_user[ 'name' ], 'email' => $social_user[ 'email' ], 'id_loai' => 2, 'is_email' => 1 ] );
-                $success[ 'token' ] = $user->createToken( 'myApp' )->accessToken->token;
-                return response()->json( [
-                    'status' => 'success',
-                    'user' => json_encode($social_user),
-                    // 'token' => $success,
-                ] );
-            }
+            $user_token=$this->save_user($social_user);
+            return response()->json([
+                'data'=>$social_user,
+                'token'=>$user_token
+            ]);
         }
             // return
     }
+    public function save_user($info){
+        $user = User::where('email', $info['email'])->where('id_loai',2)->first();
+            // dd($social_user);
+            if ($user) {
+                $success[ 'token' ] = $user->createToken( 'myApp' )->accessToken->token;
+                return $success;
 
+            } else {
+                $user = User::create( [ 'username' => $info[ 'name' ], 'email' => $info[ 'email' ], 'id_loai' => 2, 'is_email' => 1 ] );
+                $success[ 'token' ] = $user->createToken( 'myApp' )->accessToken->token;
+                return $success;
+            }
+    }
     public function register( Request $request ) {
         $rules = [
             'username' => 'required|unique:users,username',
