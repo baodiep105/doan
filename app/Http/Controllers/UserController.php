@@ -53,7 +53,7 @@ class UserController extends Controller {
 
 
 
-    public function callback() {
+    public function callback(Request $request) {
         try {
             $soaicl_user = Socialite::driver('google')->stateless()->user();
         } catch (ClientException $exception) {
