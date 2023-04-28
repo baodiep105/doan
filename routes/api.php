@@ -39,7 +39,7 @@ Route::middleware('cors')->group(function () {
     Route::middleware('auth:sanctum')->group(function () {
         Route::get('/auth/me', [UserController::class, 'getme']);
         Route::post('/auth/logout', [UserController::class, 'logout']);
-        Route::post('/auth/yeu-thich', [HomeController::c   lass, 'yeuthich']);
+        Route::post('/auth/yeu-thich', [HomeController::class, 'yeuthich']);
         Route::get('/auth/yeu-thich', [HomeController::class, 'yeu']);
         Route::delete('/auth/yeu-thich/{id}', [HomeController::class, 'deleteYeu']);
         Route::post('/auth/danh-gia/{id}', [UserController::class, 'danhgiaUser']);
