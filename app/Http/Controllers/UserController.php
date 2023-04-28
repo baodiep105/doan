@@ -63,6 +63,7 @@ class UserController extends Controller {
                 $user = User::create( [ 'username' =>  $userData->name , 'email' => $userData->email, 'id_loai' => 2, 'is_email' => 1 ] );
             }
             $success[ 'token' ] = $user->createToken( 'myApp' )->accessToken->token;
+            dd('abc');
             return response()->json([
                 'data'=>$social_user,
                 'token'=>$success,
