@@ -58,12 +58,12 @@ class UserController extends Controller {
             $oauth = new Oauth2($client);
             $userData = $oauth->userinfo->get();
 
+            dd('abc');
             $user = User::where('email', $userData->email)->where('id_loai',2)->first();
             if (!$user) {
                 $user = User::create( [ 'username' =>  $userData->name , 'email' => $userData->email, 'id_loai' => 2, 'is_email' => 1 ] );
             }
             $success[ 'token' ] = $user->createToken( 'myApp' )->accessToken->token;
-            dd('abc');
             return response()->json([
                 'data'=>$social_user,
                 'token'=>$success,
