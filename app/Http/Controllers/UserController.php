@@ -96,7 +96,8 @@ class UserController extends Controller {
                 'avatar' => $userData->picture,
                 'token' => $token,
             ];
-            return User::where('email', $social_user['email'])->where('id_loai',2)->first();
+            $user=User::where('email', $social_user['email'])->where('id_loai',2)->first();
+            return 1;
             // return json_encode($social_user);
             // $user = User::where('email', $social_user['email'])->where('id_loai',2)->first();
             // // dd($social_user);
