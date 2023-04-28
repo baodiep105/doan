@@ -31,9 +31,9 @@ return [
     ],
 
     'google' => [
-        'client_id' => '1076580330230-o65dalqp4773782q1r0fh3nlcr86csnm.apps.googleusercontent.com',
-        'client_secret' => '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',
-        'redirect' => 'https://doan-production.up.railway.app/api/google/callback',
+        'client_id' => env('GOOGLE_CLIENT_ID'),
+        'client_secret' => env('GOOGLE_CLIENT_SECRET'),
+        'redirect' => env('GOOGLE_REDIRECT_URI'),
     ],
     'facebook' => [
         'client_id' => '893394775297643',
