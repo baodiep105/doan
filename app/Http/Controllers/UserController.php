@@ -53,34 +53,17 @@ class UserController extends Controller {
 
 
 
-    public function callback( Request $request ) {
+    public function callback() {
         try {
-            $user = Socialite::driver($provider)->stateless()->user();
+            $soaicl_user = Socialite::driver('google')->stateless()->user();
         } catch (ClientException $exception) {
             return response()->json(['error' => 'Invalid credentials provided.'], 422);
         }
-
-        $userCreated = User::firstOrCreate(
-            [
-                'email' => $user->getEmail()
-            ],
-            [
-                'email_verified_at' => now(),
-                'name' => $user->getName(),
-                'status' => true,
-            ]
-        );
-        $userCreated->providers()->updateOrCreate(
-            [
-                'provider' => $provider,
-                'provider_id' => $user->getId(),
-            ],
-            [
-                'avatar' => $user->getAvatar()
-            ]
-        );
-        $token = $userCreated->createToken('token-name')->plainTextToken;
-
+        $user = User::where('email',$social_user->getEmail())->where('id_loai',2)->first();
+        if(!$user){
+            $user =  User::create( [ 'username' => $social_user->getName(), 'email' => $social_user->getEmail(), 'id_loai' => 2, 'is_email' => 1 ] );
+        }
+            $token = $userCreated->createToken('token-name')->plainTextToken;
         return response()->json($userCreated, 200, ['Access-Token' => $token]);
 
         // $client = new GoogleClient();
