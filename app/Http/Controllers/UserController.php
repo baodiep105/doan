@@ -96,8 +96,20 @@ class UserController extends Controller {
                 'avatar' => $userData->picture,
                 'token' => $token,
             ];
-            $user=User::where('email', $social_user['email'])->where('id_loai',2)->first();
-            if (!$user) {
+                $user = User::firstOrCreate(
+                    [
+                        'email' =>$social_user[ 'name' ]
+                    ],
+                    [
+                        'name' => $social_user[ 'email' ],
+                    ],
+                    [
+                        'id_loai' => 2
+                    ],
+                    [
+                        'is_email' => 1
+                    ]
+                );
                 // $user = User::create( [ 'username' => $social_user[ 'name' ], 'email' => $social_user[ 'email' ], 'id_loai' => 2, 'is_email' => 1 ] );
                 return 1;
                 // $success[ 'token' ] = $user->createToken( 'myApp' )->accessToken->token;
