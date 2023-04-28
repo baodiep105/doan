@@ -20,7 +20,7 @@ class Users extends Migration
             $table->string('ten')->nullable();
             $table->string('sdt')->nullable();
             $table->string('email')->unique()->nullable();
-            $table->string('password');
+            $table->string('password')->nullable();
             $table->string('dia_chi')->nullable();
             $table->integer('is_block')->default(1);
             $table->integer('id_loai');
