@@ -97,7 +97,7 @@ Route::middleware('cors')->group(function () {
         Route::post('/add-cart', [detailController::class, 'addCart']);
     });
     Route::group(['prefix' => 'don-hang'], function () {
-        Route::post('/create/{type}', [add_cartController::class, 'DonHang']);
+        Route::get('/create/{type}', [add_cartController::class, 'DonHang']);
         Route::get('/lich-su-don-hang', [add_cartController::class, 'LichSuDonHang']);
         Route::get('/lich-su-mua-hang/detail/{id}', [add_cartController::class, 'detail']);
     });

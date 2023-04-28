@@ -19,112 +19,95 @@ use Illuminate\Support\Str;
 use Socialite;
 use Config;
 
-class UserController extends Controller
-{
+class UserController extends Controller {
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    * Display a listing of the resource.
+    *
+    * @return \Illuminate\Http\Response
+    */
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    * Show the form for creating a new resource.
+    *
+    * @return \Illuminate\Http\Response
+    */
 
-    public function redirect()
-    {
-        return Socialite::driver('google')->stateless()->redirect() ;
-        // return response()->json([
+    public function redirect() {
+        return Socialite::driver( 'google' )->stateless()->redirect() ;
+        // return response()->json( [
         //     'status'=>'success',
-        //     'url' => Socialite::driver('google')->stateless()->redirect()->getTargetUrl(),
-        // ]);
-    }
-
-    public function callback()
-    {
-        $client = new GoogleClient();
-        $client->setClientId(config('services.google.client_id'));
-        $client->setClientSecret(config('services.google.client_secret'));
-        $client->setRedirectUri(config('services.google.redirect'));
-        $client->addScope('email');
-        $client->addScope('profile');
-    
-        if ($request->get('code')) {
-            $token = $client->fetchAccessTokenWithAuthCode($request->get('code'));
-            $oauth = new Oauth2($client);
-            $userData = $oauth->userinfo->get();
-            
-            $user = $this->createUser($userData);
-            $success['token'] = $user->createToken('myApp')->accessToken->token;
-            return response()->json([
-                        'status'=>'success',
-                        'token'=> $success,
-                        'user'=>$user,
-                    ]);
-            // $user = [
-            //     'name' => $userData->name,
-            //     'email' => $userData->email,
-            //     'avatar' => $userData->picture,
-            //     'token' => $token,
-            // ];
-            // session(['user' => $user]);
-    
-            // return json_encode($user);
-        }
-        // $getInfo = Socialite::driver('google')->with(['access_type' => 'offline'])
-        // ->stateless()->user();
-        
-    }
-    public function createUser($getInfo)
-    {
-        $user = User::where('email', $getInfo->email)->first();
-        if (!$user) {
-            $user = User::create(['username' => $getInfo->name, 'email' => $getInfo->email, 'id_loai' => 2, 'is_email' => 1]);
-        }
-        return $user;
+        //     'url' => Socialite::driver( 'google' )->stateless()->redirect()->getTargetUrl(),
+        // ] );
     }
 
     // public function callback()
-    // {
-    //             // $token = Config::get('services.facebook.client_id');
-    //             // $secret = Config::get('services.facebook.client_secret');
-    //             // $social_user = Socialite::driver('facebook')->userFromTokenAndSecret($token, $secret);
-    //     $social_user = Socialite::driver('google')->stateless()->user();
-    //     // dd($social_user);
-    //     if (!is_null($social_user) || !empty($social_user)) {
-    //         $user = User::where('email', $googleUser->email)->where('id_loai', 2)->first();
-    //         // dd($user);
-    //         if (!is_null($user) || !empty($user)) {
-    //             // $token = $user->createToken('auth_token')->accessToken;
-    //             $success['token'] = $user->createToken('myApp')->accessToken->token;
-    //             return response()->json([
-    //                 'status' => 'success',
-    //                 'token' => $success,
-    //                 'user' => $user,
-    //             ]);
-    //         } else {
-    //             $user = User::create(['username' => $googleUser->getName(), 'email' => $googleUser->getEmail(), 'id_loai' => 2, 'is_email' => 1]);
-    //             $success['token'] = $user->createToken('myApp')->accessToken->token;
-    //             return response()::json([
-    //                 'status' => 'success',
-    //                 'user' => $user,
-    //                 'token' => $success,
-    //             ]);
-    //         }
+
+    //         $user = $this->createUser( $userData );
+    //         $success[ 'token' ] = $user->createToken( 'myApp' )->accessToken->token;
+    //         return response()->json( [
+    //                     'status'=>'success',
+    //                     'token'=> $success,
+    //                     'user'=>$user,
+    // ] );
+    //         // $user = [
+    //         //     'name' => $userData->name,
+    //         //     'email' => $userData->email,
+    //         //     'avatar' => $userData->picture,
+    //         //     'token' => $token,
+    //         // ];
+    //         // session( [ 'user' => $user ] );
+
+    //         // return json_encode( $user );
     //     }
-    //     else {
-    //         return response()->json([
-    //             'status' => 'error',
-    //             'message'=> 'không tìm thấy tài khoảng facebook của bạn'
-    //         ]);
-    //     }
+    //     // $getInfo = Socialite::driver( 'google' )->with( [ 'access_type' => 'offline' ] )
+    //     // ->stateless()->user();
 
     // }
+    // public function createUser( $getInfo )
+    // {
+    //     $user = User::where( 'email', $getInfo->email )->first();
+    //     if ( !$user ) {
+    //         $user = User::create( [ 'username' => $getInfo->name, 'email' => $getInfo->email, 'id_loai' => 2, 'is_email' => 1 ] );
+    //     }
+    //     return $user;
+    // }
 
-    public function register(Request $request)
-    {
+    public function callback() {
+        // $token = Config::get( 'services.facebook.client_id' );
+        // $secret = Config::get( 'services.facebook.client_secret' );
+        // $social_user = Socialite::driver( 'facebook' )->userFromTokenAndSecret( $token, $secret );
+        $social_user = Socialite::driver( 'google' )->stateless()->user();
+        // dd( $social_user );
+        if ( !is_null( $social_user ) || !empty( $social_user ) ) {
+            $user = User::where( 'email', $googleUser->email )->where( 'id_loai', 2 )->first();
+            // dd( $user );
+            if ( !is_null( $user ) || !empty( $user ) ) {
+                // $token = $user->createToken( 'auth_token' )->accessToken;
+                $success[ 'token' ] = $user->createToken( 'myApp' )->accessToken->token;
+                return response()->json( [
+                    'status' => 'success',
+                    'token' => $success,
+                    'user' => $user,
+                ] );
+            } else {
+                $user = User::create( [ 'username' => $googleUser->getName(), 'email' => $googleUser->getEmail(), 'id_loai' => 2, 'is_email' => 1 ] );
+                $success[ 'token' ] = $user->createToken( 'myApp' )->accessToken->token;
+                return response()::json( [
+                    'status' => 'success',
+                    'user' => $user,
+                    'token' => $success,
+                ] );
+            }
+        } else {
+            return response()->json( [
+                'status' => 'error',
+                'message'=> 'không tìm thấy tài khoảng facebook của bạn'
+            ] );
+        }
+
+    }
+
+    public function register( Request $request ) {
         $rules = [
             'username' => 'required|unique:users,username',
             'email' => 'required|unique:users,email',
@@ -134,7 +117,7 @@ class UserController extends Controller
 
         $input = $request->all();
 
-        $validator = Validator::make($input, $rules, [
+        $validator = Validator::make( $input, $rules, [
             'required' => ':attribute không được để trống',
             'min' => ':attribute quá ngắn',
             'unique' => ':attribute đã tồn tại',
@@ -145,46 +128,45 @@ class UserController extends Controller
             'email' => 'email',
             'password' => 'passwoed',
             're_password' => 're_password',
-        ]);
+        ] );
 
-        if ($validator->fails()) {
-            return response()->json([
+        if ( $validator->fails() ) {
+            return response()->json( [
                 'status' => 'error',
                 'error' => $validator->errors(),
-            ]);
+            ] );
         }
         $username = $request->username;
         $email = $request->email;
         $password = $request->password;
         $hash = Str::uuid();
-        $user = User::create(['username' => $username, 'email' => $email, 'password' => bcrypt($password), 'id_loai' => 2, 'hash' => $hash, 'is_email' => 0]);
+        $user = User::create( [ 'username' => $username, 'email' => $email, 'password' => bcrypt( $password ), 'id_loai' => 2, 'hash' => $hash, 'is_email' => 0 ] );
 
-        Mail::to($request->email)->send(new SendMail(
+        Mail::to( $request->email )->send( new SendMail(
             $request->username,
             $hash,
             'Kích Hoạt Tài Khoảng Người Dùng',
-        ));
-        if ($user) {
-            return response()->json([
+        ) );
+        if ( $user ) {
+            return response()->json( [
                 'status' => 'success',
-            ]);
+            ] );
         }
     }
 
-    public function active($hash)
-    {
-        $user = User::where('hash', $hash)->first();
-        if ($user->is_email) {
-            return "<h1>Tài khoản của bạn đã được kích hoạt trước đó</h1>";
+    public function active( $hash ) {
+        $user = User::where( 'hash', $hash )->first();
+        if ( $user->is_email ) {
+            return '<h1>Tài khoản của bạn đã được kích hoạt trước đó</h1>';
         } else {
             $user->is_email = 1;
             $user->save();
-            // $a="https://ab05-2402-800-629c-4cf2-5c25-9975-d834-68bf.ap.ngrok.io/login";
+            // $a = 'https://ab05-2402-800-629c-4cf2-5c25-9975-d834-68bf.ap.ngrok.io/login';
             return "<h1>Tài khoản của bạn đã được kích hoạt!</h1> <a href='https://15e8-2402-9d80-439-7544-400d-2590-5e4f-fb98.ap.ngrok.io/login'><h3>Đăng nhập tại đây</h3></a>";
         }
     }
-    public function login(Request $request)
-    {
+
+    public function login( Request $request ) {
         $rules = [
             'username' => 'required',
             'password' => 'required',
@@ -192,72 +174,69 @@ class UserController extends Controller
 
         $input = $request->all();
 
-        $validator = Validator::make($input, $rules, [
+        $validator = Validator::make( $input, $rules, [
             'required' => ':attribute không được để trống',
         ], [
             'username' => 'username',
-        ]);
-        if ($validator->fails()) {
-            return response()->json([
+        ] );
+        if ( $validator->fails() ) {
+            return response()->json( [
                 'status' => 'error',
                 'error' => $validator->errors(),
-            ]);
+            ] );
         }
-        if (!Auth('web')->attempt($request->only('username', 'password'))) {
-            return response()->json([
+        if ( !Auth( 'web' )->attempt( $request->only( 'username', 'password' ) ) ) {
+            return response()->json( [
                 'status' => 'erorr',
                 'message' => 'Mật khẩu không đúng',
-            ], 401);
+            ], 401 );
         }
 
-        $user = User::where('username', $request['username'])->firstOrFail();
-        if ($user->is_email == 1 && $user->id_loai == 2) {
-            $token = $user->createToken('auth_token')->plainTextToken;
-            // dd(Auth::guard('web')->user());
-            return response()->json([
+        $user = User::where( 'username', $request[ 'username' ] )->firstOrFail();
+        if ( $user->is_email == 1 && $user->id_loai == 2 ) {
+            $token = $user->createToken( 'auth_token' )->plainTextToken;
+            // dd( Auth::guard( 'web' )->user() );
+            return response()->json( [
                 'status' => 'success',
                 'user' => $user,
                 'access_token' => $token,
-            ]);
+            ] );
         } else {
-            return response()->json([
+            return response()->json( [
                 'status' => 'error',
                 'message' => 'bạn cần phải kích hoạt mail để login  ',
-            ]);
+            ] );
         }
-        return response()->json([
+        return response()->json( [
             'status' => 'error',
-        ]);
+        ] );
     }
 
-    public function logout()
-    {
-        if (Auth::check()) {
+    public function logout() {
+        if ( Auth::check() ) {
             Auth::user()->tokens()->delete();
-            return response()->json([
+            return response()->json( [
 
                 'status' => 'success',
                 'message' => 'User Logout',
-            ], 200);
+            ], 200 );
         } else {
-            return response()->json([
+            return response()->json( [
                 'status' => 'erorr',
                 'message' => 'logout fail',
-            ]);
+            ] );
         }
     }
 
-    public function getme(Request $request)
-    {
-        // dd($request->headers);
-        return response()->json([
-            'user' => Auth::guard('users')->user(),
-        ]);
+    public function getme( Request $request ) {
+        // dd( $request->headers );
+        return response()->json( [
+            'user' => Auth::guard( 'users' )->user(),
+        ] );
     }
 
-    public function danhgiaUser($id, Request $request)
-    {
-        // dd(auth()->user()->email);
+    public function danhgiaUser( $id, Request $request ) {
+        // dd( auth()->user()->email );
         $rules = [
             'content' => 'required|min:3',
             'sao' => 'required|numeric',
@@ -265,120 +244,117 @@ class UserController extends Controller
 
         $input = $request->all();
 
-        $validator = Validator::make($input, $rules);
+        $validator = Validator::make( $input, $rules );
 
-        if ($validator->fails()) {
-            return response()->json(['success' => false, 'error' => $validator->errors()]);
+        if ( $validator->fails() ) {
+            return response()->json( [ 'success' => false, 'error' => $validator->errors() ] );
         }
-        // $user=auth()->user()->email;
-        // $dh= DonHang::where('email','namhj1810@gmal.com')->get();
-        // // dd($user);
-        $exist = DB::table('chi_tiet_don_hangs as ct')
-            ->join('chi_tiet_san_pham as ctsp', 'ct.id_chi_tiet_san_pham', 'ctsp.id')
-        // ->join('san_phams as sp', 'ct.id_sanpham','sp.id')
-            ->join('don_hangs as dh', 'ct.don_hang_id', 'dh.id')
-            ->where('dh.email', auth()->user()->email)
-            ->where('ctsp.id_sanpham', $id)
-            ->get();
-        // return response()->json([
+        // $user = auth()->user()->email;
+        // $dh = DonHang::where( 'email', 'namhj1810@gmal.com' )->get();
+        // // dd( $user );
+        $exist = DB::table( 'chi_tiet_don_hangs as ct' )
+        ->join( 'chi_tiet_san_pham as ctsp', 'ct.id_chi_tiet_san_pham', 'ctsp.id' )
+        // ->join( 'san_phams as sp', 'ct.id_sanpham', 'sp.id' )
+        ->join( 'don_hangs as dh', 'ct.don_hang_id', 'dh.id' )
+        ->where( 'dh.email', auth()->user()->email )
+        ->where( 'ctsp.id_sanpham', $id )
+        ->get();
+        // return response()->json( [
         //     'áda'=>$exist,
-        // ]);
-        // $exist=DB::table('don_hangs')->where('email',$user)->get();
-        //             return response()->json([
+        // ] );
+        // $exist = DB::table( 'don_hangs' )->where( 'email', $user )->get();
+        //             return response()->json( [
         //                         'áda'=>$exist,
-        //                     ]);
-        if ($exist) {
-            $danh_gia = DanhGia::create([
+        // ] );
+        if ( $exist ) {
+            $danh_gia = DanhGia::create( [
                 'content' => $request->content,
                 'rate' => $request->sao,
                 'email' => auth()->user()->email,
                 'id_san_pham' => $id,
-            ]);
-            return response()->json([
+            ] );
+            return response()->json( [
                 'status' => 'success',
                 'data' => $danh_gia,
-            ]);
+            ] );
         } else {
-            return response()->json([
+            return response()->json( [
                 'status' => 'error',
                 'message' => 'bạn cần phải mua hàng để đánh giá',
-            ]);
+            ] );
         }
-        // $danh_gia = DanhGia::create([
+        // $danh_gia = DanhGia::create( [
         //     'content'   => $request->content,
         //     'rate'       => $request->sao,
         //     'email' => auth()->user()->email,
         //     'id_san_pham' => $id,
-        // ]);
-        // return response()->json([
+        // ] );
+        // return response()->json( [
         //     'status' => 'success',
         //     'data' => $danh_gia,
-        // ]);
+        // ] );
     }
 
-    public function forget_password(Request $request)
-    {
+    public function forget_password( Request $request ) {
         $rules = [
             'email' => 'required|exists:users,email',
         ];
         $input = $request->all();
-        $validator = Validator::make($input, $rules);
+        $validator = Validator::make( $input, $rules );
 
-        if ($validator->fails()) {
-            return response()->json(['status' => 'error', 'error' => $validator->errors()]);
+        if ( $validator->fails() ) {
+            return response()->json( [ 'status' => 'error', 'error' => $validator->errors() ] );
         }
         $email = $request->email;
-        $user = User::where('email', $email)->first();
+        $user = User::where( 'email', $email )->first();
 
-        if ($user) {
-            $hash = Str::random(6);
+        if ( $user ) {
+            $hash = Str::random( 6 );
             $user->reset_password = $hash;
             $user->save();
             $username = $user->username;
-            Mail::to($request->email)->send(new ForgetMail(
+            Mail::to( $request->email )->send( new ForgetMail(
                 $username,
                 $hash,
                 'Đổi mật Khẩu Tài Khoảng Người Dùng',
-            ));
+            ) );
         }
 
-        if ($user) {
-            return response()->json([
+        if ( $user ) {
+            return response()->json( [
                 'status' => 'success',
                 'data' => $request->email,
-            ]);
+            ] );
         }
     }
 
-    public function xac_nhan(Request $request)
-    {
-        $user = User::where('reset_password', $request->otp)->first();
-        // return response()->json([
+    public function xac_nhan( Request $request ) {
+        $user = User::where( 'reset_password', $request->otp )->first();
+        // return response()->json( [
         //     'status'=>'success',
         //     'email'=>$user,
-        // ]);
-        if (!is_null($user) || !empty($user)) {
-            // $user=User::where('reset_password',$request->code);
-            // $user_exist->update([
+        // ] );
+        if ( !is_null( $user ) || !empty( $user ) ) {
+            // $user = User::where( 'reset_password', $request->code );
+            // $user_exist->update( [
             //    'reset_password'=>null;
-            // ]);
-            // $user->reset_password =null;
+            // ] );
+            // $user->reset_password = null;
             // $user->save();
-            return response()->json([
+            return response()->json( [
                 'status' => 'success',
                 'email' => $user->email,
-            ]);
+            ] );
         }
-        return response()->json([
+        return response()->json( [
             'status' => 'false',
             'message' => 'wrong code!!!',
-        ]);
+        ] );
     }
 
-    public function reset_password(Request $request)
-    {
-        $user = User::where('email', $request->email)->first();
-        if (!is_null($user) || !empty($user)) {
+    public function reset_password( Request $request ) {
+        $user = User::where( 'email', $request->email )->first();
+        if ( !is_null( $user ) || !empty( $user ) ) {
             $rules = [
                 'password' => 'required|min:6',
                 're_password' => 'required|same:password',
@@ -386,53 +362,51 @@ class UserController extends Controller
 
             $input = $request->all();
 
-            $validator = Validator::make($input, $rules, [
+            $validator = Validator::make( $input, $rules, [
                 'required' => ':attribute không được để trống',
                 'min' => ':attribute quá ngắn',
                 'same' => ':attribute phải giống password',
             ], [
                 'password' => 'password',
                 're_password' => 're_password',
-            ]);
+            ] );
 
-            if ($validator->fails()) {
-                return response()->json([
+            if ( $validator->fails() ) {
+                return response()->json( [
                     'status' => 'error',
                     'error' => $validator->errors(),
-                ]);
+                ] );
             } else {
-                $user->update([
-                    'password' => bcrypt($request->password),
-                ]);
-                return response()->json([
+                $user->update( [
+                    'password' => bcrypt( $request->password ),
+                ] );
+                return response()->json( [
                     'status' => 'success',
-                ]);
+                ] );
             }
 
         }
     }
 
-    public function UpdateProfile(profileRequest $request)
-    {
+    public function UpdateProfile( profileRequest $request ) {
 
         $id = auth()->user()->id;
-        $user = User::find($id);
+        $user = User::find( $id );
 
-        $user->update([
+        $user->update( [
             'fullname' => $request->ho_ten,
             'sdt' => $request->sdt,
             'dia_chi' => $request->dia_chi,
-        ]);
+        ] );
 
-        return response()->json([
+        return response()->json( [
             'status' => 'success',
             'data' => $user,
-        ]);
+        ] );
     }
 
-    public function DonHang(Request $request)
-    {
-        $validator = Validator::make([
+    public function DonHang( Request $request ) {
+        $validator = Validator::make( [
             $request->all(),
         ], [
             'nguoi_nhan' => 'required',
@@ -448,18 +422,18 @@ class UserController extends Controller
             'nguoi_nhan' => 'người nhận',
             'sdt' => 'số điện thoại',
             'dia_chi' => 'địa chỉ',
-        ]);
-        foreach ($request->don_hang as $value) {
-            $san_pham = ChiTietSanPhamModel::find($value['id_chi_tiet_san_pham']);
-            if ($value['so_luong'] > $san_pham->sl_chi_tiet) {
-                return response()->json([
+        ] );
+        foreach ( $request->don_hang as $value ) {
+            $san_pham = ChiTietSanPhamModel::find( $value[ 'id_chi_tiet_san_pham' ] );
+            if ( $value[ 'so_luong' ] > $san_pham->sl_chi_tiet ) {
+                return response()->json( [
                     'status' => 'error',
                     'message' => 'Số lượng trong kho không đủ',
-                ]);
+                ] );
             }
         }
-        if ($request->don_hang > 0) {
-            $donHang = DonHang::create([
+        if ( $request->don_hang > 0 ) {
+            $donHang = DonHang::create( [
                 'email' => auth()->user()->email,
                 'tong_tien' => $request->tong_tien,
                 'tien_giam_gia' => $request->tien_giam,
@@ -469,27 +443,27 @@ class UserController extends Controller
                 'nguoi_nhan' => $request->nguoi_nhan,
                 'sdt' => $request->sdt,
                 'ghi_chu' => $request->ghi_chu,
-            ]);
-            foreach ($request->don_hang as $value) {
-                $chiTietDonHang = ChiTietDonHang::create([
-                    'id_chi_tiet_san_pham' => $value['id_chi_tiet_san_pham'],
-                    'don_gia' => $value['don_gia'],
-                    'so_luong' => $value['so_luong'],
+            ] );
+            foreach ( $request->don_hang as $value ) {
+                $chiTietDonHang = ChiTietDonHang::create( [
+                    'id_chi_tiet_san_pham' => $value[ 'id_chi_tiet_san_pham' ],
+                    'don_gia' => $value[ 'don_gia' ],
+                    'so_luong' => $value[ 'so_luong' ],
                     'don_hang_id' => $donHang->id,
-                ]);
-                $chi_tiet_san_pham = ChiTietSanPhamModel::where('id', $value['id_chi_tiet_san_pham'])->first();
-                $chi_tiet_san_pham->sl_chi_tiet -= $value['so_luong'];
+                ] );
+                $chi_tiet_san_pham = ChiTietSanPhamModel::where( 'id', $value[ 'id_chi_tiet_san_pham' ] )->first();
+                $chi_tiet_san_pham->sl_chi_tiet -= $value[ 'so_luong' ];
                 $chi_tiet_san_pham->save();
             }
 
-            return response()->json([
+            return response()->json( [
                 'status' => 'success',
 
-            ]);
+            ] );
         }
-        return response()->json([
+        return response()->json( [
             'status' => 'success',
             'message' => 'giỏ hàng rỗng',
-        ]);
+        ] );
     }
 }

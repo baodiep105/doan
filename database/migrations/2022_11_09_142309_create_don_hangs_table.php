@@ -23,6 +23,7 @@ class CreateDonHangsTable extends Migration
             $table->String('dia_chi');
             $table->String('nguoi_nhan');
             $table->String('sdt');
+            $table->integer('loai_thanh_toan');
             $table->timestamps();
         });
     }

@@ -1,2 +1,2 @@
 <?php
- return['global'=>'jghjg','user_type'=>['User','Admin'],];
+ return['global','user_type'=>['User','Admin'],];
