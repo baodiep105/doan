@@ -48,7 +48,7 @@ class UserController extends Controller {
         //     return $validated;
         // }
 
-        return Socialite::driver($provider)->stateless()->redirect();
+        return Socialite::driver('google')->stateless()->redirect();
     }
 
 
