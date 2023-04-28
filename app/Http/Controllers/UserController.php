@@ -45,6 +45,38 @@ class UserController extends Controller {
         return redirect( $authUrl );
     }
 
+    // public function callback()
+
+    //         $user = $this->createUser( $userData );
+    //         $success[ 'token' ] = $user->createToken( 'myApp' )->accessToken->token;
+    //         return response()->json( [
+    //                     'status'=>'success',
+    //                     'token'=> $success,
+    //                     'user'=>$user,
+    // ] );
+    //         // $user = [
+    //         //     'name' => $userData->name,
+    //         //     'email' => $userData->email,
+    //         //     'avatar' => $userData->picture,
+    //         //     'token' => $token,
+    //         // ];
+    //         // session( [ 'user' => $user ] );
+
+    //         // return json_encode( $user );
+    //     }
+    //     // $getInfo = Socialite::driver( 'google' )->with( [ 'access_type' => 'offline' ] )
+    //     // ->stateless()->user();
+
+    // }
+    // public function createUser( $getInfo )
+    // {
+    //     $user = User::where( 'email', $getInfo->email )->first();
+    //     if ( !$user ) {
+    //         $user = User::create( [ 'username' => $getInfo->name, 'email' => $getInfo->email, 'id_loai' => 2, 'is_email' => 1 ] );
+    //     }
+    //     return $user;
+    // }
+
     public function callback( Request $request ) {
         $client = new GoogleClient();
         $client->setClientId(config('services.google.client_id'));
@@ -58,40 +90,34 @@ class UserController extends Controller {
             $oauth = new Oauth2($client);
             $userData = $oauth->userinfo->get();
 
-            dd('abc');
-            $user = User::where('email', $userData->email)->where('id_loai',2)->first();
-            if (!$user) {
-                $user = User::create( [ 'username' =>  $userData->name , 'email' => $userData->email, 'id_loai' => 2, 'is_email' => 1 ] );
-            }
-            $success[ 'token' ] = $user->createToken( 'myApp' )->accessToken->token;
-            return response()->json([
-                'data'=>$social_user,
-                'token'=>$success,
-            ]);
-            // $social_user = [
-            //     'name' => $userData->name,
-            //     'email' => $userData->email,
-            //     'avatar' => $userData->picture,
-            //     'token' => $token,
-            // $user_token=$this->save_user($social_user);
-            //     'token'=>$user_token
-            // ]);
+            $social_user = [
+                'name' => $userData->name,
+                'email' => $userData->email,
+                'avatar' => $userData->picture,
+                'token' => $token,
+            ];
+            return json_encode($social_user);
+            // $user = User::where('email', $social_user['email'])->where('id_loai',2)->first();
+            // // dd($social_user);
+            // if ($user) {
+            //     // $success[ 'token' ] = $user->createToken( 'myApp' )->accessToken->token;
+            //     return response()->json( [
+            //         'status' => 'success',
+            //         'token' => $success,
+            //         'user' => $user,
+            //     ] );
+            // } else {
+            //     $user = User::create( [ 'username' => $social_user[ 'name' ], 'email' => $social_user[ 'email' ], 'id_loai' => 2, 'is_email' => 1 ] );
+            //     $success[ 'token' ] = $user->createToken( 'myApp' )->accessToken->token;
+            //     return response()->json( [
+            //         'status' => 'success',
+            //         'user' => $user,
+            //         'token' => $success,
+            //     ] );
+            // }
         }
-            // return
     }
-    // public function save_user($info){
-    //     $user = User::where('email', $info['email'])->where('id_loai',2)->first();
-    //         // dd($social_user);
-    //         if ($user) {
-    //             $success[ 'token' ] = $user->createToken( 'myApp' )->accessToken->token;
-    //             return $success;
 
-    //         } else {
-    //             $user = User::create( [ 'username' => $info[ 'name' ], 'email' => $info[ 'email' ], 'id_loai' => 2, 'is_email' => 1 ] );
-    //             $success[ 'token' ] = $user->createToken( 'myApp' )->accessToken->token;
-    //             return $success;
-    //         }
-    // }
     public function register( Request $request ) {
         $rules = [
             'username' => 'required|unique:users,username',
