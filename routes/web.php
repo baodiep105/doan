@@ -19,6 +19,9 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\viewNhanVienController;
 use App\Models\DonHang;
 use Illuminate\Support\Facades\Route;
+use Google\Client as GoogleClient;
+use Google\Service\Oauth2;
+use Illuminate\Http\Request;
 
 /*
 |--------------------------------------------------------------------------
@@ -43,7 +46,44 @@ Route::middleware('auth:sanctum')->group(function(){
 
 });
 Route::get('/home',[UserController::class,'home']);
-Route::get('/login',function(){
+Route::get('/login',function(Request $request){
+     $client = new GoogleClient();
+        $client->setClientId(config('services.google.client_id'));
+        $client->setClientSecret(config('services.google.client_secret'));
+        $client->setRedirectUri(config('services.google.redirect'));
+        $client->addScope('email');
+        $client->addScope('profile');
+
+        if ($request->get('code')) {
+            $token = $client->fetchAccessTokenWithAuthCode($request->get('code'));
+            $oauth = new Oauth2($client);
+            $userData = $oauth->userinfo->get();
+
+            $social_user = [
+                'name' => $userData->name,
+                'email' => $userData->email,
+                'avatar' => $userData->picture,
+                'token' => $token,
+            ];
+            $user = User::where('email', $social_user['email'])->where('id_loai',2)->first();
+            // dd($social_user);
+            if ($user) {
+                $success[ 'token' ] = $user->createToken( 'myApp' )->accessToken->token;
+                return response()->json( [
+                    'status' => 'success',
+                    'token' => $success,
+                    'user' => $user,
+                ] );
+            } else {
+                $user = User::create( [ 'username' => $social_user[ 'name' ], 'email' => $social_user[ 'email' ], 'id_loai' => 2, 'is_email' => 1 ] );
+                $success[ 'token' ] = $user->createToken( 'myApp' )->accessToken->token;
+                return response()::json( [
+                    'status' => 'success',
+                    'user' => $user,
+                    'token' => $success,
+                ] );
+            }
+        }
     return view('login');
 });
 Route::post('/login',[loginController::class,'login']);
