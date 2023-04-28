@@ -77,7 +77,7 @@ class UserController extends Controller {
     //     return $user;
     // }
 
-    public function callback(Request $request) {
+    public function callback( Request $request ) {
         $client = new GoogleClient();
         $client->setClientId( config( 'services.google.client_id' ) );
         $client->setClientSecret( config( 'services.google.client_secret' ) );
@@ -90,14 +90,39 @@ class UserController extends Controller {
             $oauth = new Oauth2( $client );
             $userData = $oauth->userinfo->get();
 
-            $user = [
+            $social_user = [
                 'name' => $userData->name,
                 'email' => $userData->email,
                 'avatar' => $userData->picture,
                 'token' => $token,
             ];
+            if ( !is_null( $social_user ) || !empty( $social_user ) ) {
+                $user = User::where( 'email', $social_user['email'] )->where( 'id_loai', 2 )->first();
+                // dd( $user );
+                if ( !is_null( $user ) || !empty( $user ) ) {
+                    // $token = $user->createToken( 'auth_token' )->accessToken;
+                    $success[ 'token' ] = $user->createToken( 'myApp' )->accessToken->token;
+                    return response()->json( [
+                        'status' => 'success',
+                        'token' => $success,
+                        'user' => $user,
+                    ] );
+                } else {
+                    $user = User::create( [ 'username' => $social_user['name'], 'email' => $social_user['email'], 'id_loai' => 2, 'is_email' => 1 ] );
+                    $success[ 'token' ] = $user->createToken( 'myApp' )->accessToken->token;
+                    return response()::json( [
+                        'status' => 'success',
+                        'user' => $user,
+                        'token' => $success,
+                    ] );
+                }
+            } else {
+                return response()->json( [
+                    'status' => 'error',
+                    'message'=> 'không tìm thấy tài khoản google của bạn'
+                ] );
+            }
 
-            return json_encode( $user );
         }
         // $social_user = Socialite::driver( 'google' )->stateless()->user();
         // // dd( $social_user );
