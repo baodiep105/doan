@@ -18,6 +18,8 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Socialite;
 use Config;
+use Google\Client as GoogleClient;
+use Google\Service\Oauth2;
 
 class UserController extends Controller {
     /**
@@ -33,11 +35,14 @@ class UserController extends Controller {
     */
 
     public function redirect() {
-        return Socialite::driver( 'google' )->stateless()->redirect() ;
-        // return response()->json( [
-        //     'status'=>'success',
-        //     'url' => Socialite::driver( 'google' )->stateless()->redirect()->getTargetUrl(),
-        // ] );
+        $client = new GoogleClient();
+        $client->setClientId( config( 'services.google.client_id' ) );
+        $client->setClientSecret( config( 'services.google.client_secret' ) );
+        $client->setRedirectUri( config( 'services.google.redirect' ) );
+        $client->addScope( 'email' );
+        $client->addScope( 'profile' );
+        $authUrl = $client->createAuthUrl();
+        return redirect( $authUrl );
     }
 
     // public function callback()
@@ -72,39 +77,55 @@ class UserController extends Controller {
     //     return $user;
     // }
 
-    public function callback() {
-        // $token = Config::get( 'services.facebook.client_id' );
-        // $secret = Config::get( 'services.facebook.client_secret' );
-        // $social_user = Socialite::driver( 'facebook' )->userFromTokenAndSecret( $token, $secret );
-        $social_user = Socialite::driver( 'google' )->stateless()->user();
-        // dd( $social_user );
-        if ( !is_null( $social_user ) || !empty( $social_user ) ) {
-            $user = User::where( 'email', $googleUser->email )->where( 'id_loai', 2 )->first();
-            // dd( $user );
-            if ( !is_null( $user ) || !empty( $user ) ) {
-                // $token = $user->createToken( 'auth_token' )->accessToken;
-                $success[ 'token' ] = $user->createToken( 'myApp' )->accessToken->token;
-                return response()->json( [
-                    'status' => 'success',
-                    'token' => $success,
-                    'user' => $user,
-                ] );
+    public function callback( Request $request ) {
+        $client = new GoogleClient();
+        $client->setClientId( config( 'services.google.client_id' ) );
+        $client->setClientSecret( config( 'services.google.client_secret' ) );
+        $client->setRedirectUri( config( 'services.google.redirect' ) );
+        $client->addScope( 'email' );
+        $client->addScope( 'profile' );
+
+        if ( $request->get( 'code' ) ) {
+            $token = $client->fetchAccessTokenWithAuthCode( $request->get( 'code' ) );
+            $oauth = new Oauth2( $client );
+            $userData = $oauth->userinfo->get();
+
+            $socail_user = [
+                'name' => $userData->name,
+                'email' => $userData->email,
+                'avatar' => $userData->picture,
+                'token' => $token,
+            ];
+            // $social_user = Socialite::driver( 'google' )->stateless()->user();
+            // // dd( $social_user );
+            if ( !is_null( $socail_user ) || !empty( $socail_user ) ) {
+                $user = User::where( 'email', $socail_user['email'] )->where( 'id_loai', 2 )->first();
+                // dd( $user );
+                if ( !is_null( $user ) || !empty( $user ) ) {
+                    // $token = $user->createToken( 'auth_token' )->accessToken;
+                    $success[ 'token' ] = $user->createToken( 'myApp' )->accessToken->token;
+                    return response()->json( [
+                        'status' => 'success',
+                        'token' => $success,
+                        'user' => $user,
+                    ] );
+                } else {
+                    $user = User::create( [ 'username' => $socail_user['name'], 'email' => $socail_user['email'], 'id_loai' => 2, 'is_email' => 1 ] );
+                    $success[ 'token' ] = $user->createToken( 'myApp' )->accessToken->token;
+                    return response()::json( [
+                        'status' => 'success',
+                        'user' => $user,
+                        'token' => $success,
+                    ] );
+                }
             } else {
-                $user = User::create( [ 'username' => $googleUser->getName(), 'email' => $googleUser->getEmail(), 'id_loai' => 2, 'is_email' => 1 ] );
-                $success[ 'token' ] = $user->createToken( 'myApp' )->accessToken->token;
-                return response()::json( [
-                    'status' => 'success',
-                    'user' => $user,
-                    'token' => $success,
+                return response()->json( [
+                    'status' => 'error',
+                    'message'=> 'không tìm thấy tài khoảng facebook của bạn'
                 ] );
             }
-        } else {
-            return response()->json( [
-                'status' => 'error',
-                'message'=> 'không tìm thấy tài khoảng facebook của bạn'
-            ] );
-        }
 
+        }
     }
 
     public function register( Request $request ) {
