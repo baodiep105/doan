@@ -98,8 +98,8 @@ class UserController extends Controller {
             ];
             $user=User::where('email', $social_user['email'])->where('id_loai',2)->first();
             if (!$user) {
-                $user = User::create( [ 'username' => $social_user[ 'name' ], 'email' => $social_user[ 'email' ], 'id_loai' => 2, 'is_email' => 1 ] );
-                return $user;
+                // $user = User::create( [ 'username' => $social_user[ 'name' ], 'email' => $social_user[ 'email' ], 'id_loai' => 2, 'is_email' => 1 ] );
+                return 1;
                 // $success[ 'token' ] = $user->createToken( 'myApp' )->accessToken->token;
                 return response()->json( [
                     'status' => 'success',
