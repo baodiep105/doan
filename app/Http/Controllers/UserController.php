@@ -96,26 +96,26 @@ class UserController extends Controller {
                 'avatar' => $userData->picture,
                 'token' => $token,
             ];
-            return json_encode($social_user);
-            // $user = User::where('email', $social_user['email'])->where('id_loai',2)->first();
-            // // dd($social_user);
-            // if ($user) {
-            //     $success[ 'token' ] = $user->createToken( 'myApp' )->accessToken->token;
-            //     return response()->json( [
-            //         'status' => 'success',
-            //         'token' => $success,
-            //         'user' => $user,
-            //     ] );
-            // } else {
-            //     $user = User::create( [ 'username' => $social_user[ 'name' ], 'email' => $social_user[ 'email' ], 'id_loai' => 2, 'is_email' => 1 ] );
-            //     $success[ 'token' ] = $user->createToken( 'myApp' )->accessToken->token;
-            //     return response()::json( [
-            //         'status' => 'success',
-            //         'user' => $user,
-            //         'token' => $success,
-            //     ] );
-            // }
+            $user = User::where('email', $social_user['email'])->where('id_loai',2)->first();
+            // dd($social_user);
+            if ($user) {
+                // $success[ 'token' ] = $user->createToken( 'myApp' )->accessToken->token;
+                return response()->json( [
+                    'status' => 'success',
+                    // 'token' => $success,
+                    'user' => json_encode($social_user),
+                ] );
+            } else {
+                $user = User::create( [ 'username' => $social_user[ 'name' ], 'email' => $social_user[ 'email' ], 'id_loai' => 2, 'is_email' => 1 ] );
+                $success[ 'token' ] = $user->createToken( 'myApp' )->accessToken->token;
+                return response()->json( [
+                    'status' => 'success',
+                    'user' => json_encode($social_user),
+                    // 'token' => $success,
+                ] );
+            }
         }
+            // return
     }
 
     public function register( Request $request ) {
