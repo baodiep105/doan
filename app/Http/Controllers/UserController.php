@@ -78,43 +78,43 @@ class UserController extends Controller {
     // }
 
     public function callback( Request $request ) {
-        // $client = new GoogleClient();
-        // $client->setClientId(config('services.google.client_id'));
-        // $client->setClientSecret(config('services.google.client_secret'));
-        // $client->setRedirectUri(config('services.google.redirect'));
-        // $client->addScope('email');
-        // $client->addScope('profile');
+        $client = new GoogleClient();
+        $client->setClientId(config('services.google.client_id'));
+        $client->setClientSecret(config('services.google.client_secret'));
+        $client->setRedirectUri(config('services.google.redirect'));
+        $client->addScope('email');
+        $client->addScope('profile');
 
-        // if ($request->get('code')) {
-        //     $token = $client->fetchAccessTokenWithAuthCode($request->get('code'));
-        //     $oauth = new Oauth2($client);
-        //     $userData = $oauth->userinfo->get();
+        if ($request->get('code')) {
+            $token = $client->fetchAccessTokenWithAuthCode($request->get('code'));
+            $oauth = new Oauth2($client);
+            $userData = $oauth->userinfo->get();
 
-        //     $social_user = [
-        //         'name' => $userData->name,
-        //         'email' => $userData->email,
-        //         'avatar' => $userData->picture,
-        //         'token' => $token,
-        //     ];
-        //     $user = User::where('email', $social_user['email'])->where('id_loai',2)->first();
-        //     // dd($social_user);
-        //     if ($user) {
-        //         $success[ 'token' ] = $user->createToken( 'myApp' )->accessToken->token;
-        //         return response()->json( [
-        //             'status' => 'success',
-        //             'token' => $success,
-        //             'user' => $user,
-        //         ] );
-        //     } else {
-        //         $user = User::create( [ 'username' => $social_user[ 'name' ], 'email' => $social_user[ 'email' ], 'id_loai' => 2, 'is_email' => 1 ] );
-        //         $success[ 'token' ] = $user->createToken( 'myApp' )->accessToken->token;
-        //         return response()::json( [
-        //             'status' => 'success',
-        //             'user' => $user,
-        //             'token' => $success,
-        //         ] );
-        //     }
-        // }
+            $social_user = [
+                'name' => $userData->name,
+                'email' => $userData->email,
+                'avatar' => $userData->picture,
+                'token' => $token,
+            ];
+            $user = User::where('email', $social_user['email'])->where('id_loai',2)->first();
+            // dd($social_user);
+            if ($user) {
+                $success[ 'token' ] = $user->createToken( 'myApp' )->accessToken->token;
+                return response()->json( [
+                    'status' => 'success',
+                    'token' => $success,
+                    'user' => $user,
+                ] );
+            } else {
+                $user = User::create( [ 'username' => $social_user[ 'name' ], 'email' => $social_user[ 'email' ], 'id_loai' => 2, 'is_email' => 1 ] );
+                $success[ 'token' ] = $user->createToken( 'myApp' )->accessToken->token;
+                return response()::json( [
+                    'status' => 'success',
+                    'user' => $user,
+                    'token' => $success,
+                ] );
+            }
+        }
     }
 
     public function register( Request $request ) {
@@ -177,7 +177,6 @@ class UserController extends Controller {
     }
 
     public function login( Request $request ) {
-        
         $rules = [
             'username' => 'required',
             'password' => 'required',
