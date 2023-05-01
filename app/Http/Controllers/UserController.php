@@ -80,8 +80,9 @@ class UserController extends Controller {
                     'avatar' => $userData->picture,
                     'token' => $token,
                 ];
-                return json_encode( $social_user );
-                
+                $user=DB::table('users')->insert([ 'username' => $social_user['name'], 'email' => $social_user['email'], 'id_loai' => 2, 'is_email' => 1 ]);
+                return json_encode( $user );
+
                 // return json_encode( $social_user );
                 // $user = User::where( 'email', $social_user[ 'email' ] )->where( 'id_loai', 2 )->first();
                 // // dd( $social_user );
