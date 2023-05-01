@@ -63,6 +63,7 @@ Route::middleware('cors')->group(function () {
     Route::post('/confirm', [UserController::class, 'xac_nhan']);
     Route::post('/reset-password', [UserController::class, 'reset_password']);
     Route::post('/login',[loginController::class,'login']);
+    Route::post('/auth/google/login',[UserController::class,'google_login']);
 
     // Route::get('/facebook/login', [UserController::class, 'redirect']);
 
@@ -97,19 +98,16 @@ Route::middleware('cors')->group(function () {
         Route::post('/add-cart', [detailController::class, 'addCart']);
     });
     Route::group(['prefix' => 'don-hang'], function () {
-        Route::get('/create/{type}', [add_cartController::class, 'DonHang']);
+        Route::post('/create/{type}', [add_cartController::class, 'DonHang']);
         Route::get('/lich-su-don-hang', [add_cartController::class, 'LichSuDonHang']);
         Route::get('/lich-su-mua-hang/detail/{id}', [add_cartController::class, 'detail']);
     });
     Route::post('/login', [NhanVienController::class, 'login']);
     Route::get('/payment/{type}', [add_cartController::class, 'payment']);
     Route::get('/payment', [add_cartController::class, 'vnpay']);
-    Route::get('vnpay/return', [add_cartController::class, 'ReturnURL']);
-
-
+    Route::post('vnpay/return', [add_cartController::class, 'ReturnURL']);
 
     Route::get('/test', [HomeController::class, 'test']);
     Route::get('/test/session', [HomeController::class, 'test_session']);
-
 
 });

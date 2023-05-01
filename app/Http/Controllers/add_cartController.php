@@ -20,23 +20,20 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Cookie;
 
 class add_cartController extends Controller {
-    public function ReturnURL() {
-        $cookie_name = 'donhang';
-        $data = json_decode( $_COOKIE[ $cookie_name ], true );
-        ;
+    public function ReturnURL(Request $request) {
         $don_hang = DonHang::create( [
-            'email' => $data[ 'email' ],
-            'tong_tien' => $data[ 'tong_tien' ],
-            'tien_giam_gia' => $data[ 'tien_giam' ],
-            'thuc_tra' => $data[ 'thuc_tra' ],
+            'email' => $request->data['email'],
+            'tong_tien' => $request->data['tong_tien'],
+            'tien_giam_gia' => $request->data['tien_giam'],
+            'thuc_tra' => $request->data['thuc_tra'],
             'status' => 2,
-            'dia_chi' => $data[ 'dia_chi' ],
-            'nguoi_nhan' => $data[ 'nguoi_nhan' ],
-            'sdt' => $data[ 'sdt' ],
-            'ghi_chu' => $data[ 'ghi_chu' ],
-            'loai_thanh_toan'=>$_COOKIE['loai_thanh_toan'],
+            'dia_chi' => $request->data['dia_chi'],
+            'nguoi_nhan' => $request->data['nguoi_nhan'],
+            'sdt' => $request->data['sdt'],
+            'ghi_chu' => $request->data['ghi_chu'],
+            'loai_thanh_toan'=>$request->type,
         ] );
-        foreach ( $data[ 'don_hang' ]  as $value ) {
+        foreach ( $request->data['don_hang']  as $value ) {
             $chiTietDonHang = ChiTietDonHang::create( [
                 'id_chi_tiet_san_pham' => $value[ 'id_chi_tiet_san_pham' ],
                 'don_gia' => $value[ 'don_gia' ],
@@ -47,69 +44,68 @@ class add_cartController extends Controller {
             $chi_tiet_san_pham->sl_chi_tiet -= $value[ 'so_luong' ];
             $chi_tiet_san_pham->save();
         }
-        setcookie( $cookie_name, '', time() - ( 86500 * 30 ), '/' );
         return response()->json( [
             'status' => 'success',
             'email' => $don_hang->email,
         ] );
     }
 
-    public function momo($amount){
-        $endpoint = "https://test-payment.momo.vn/gw_payment/transactionProcessor";
-        $partnerCode = 'MOMOBKUN20180529';
-        $accessKey = 'klm05TvNBzhg7h7j';
-        $secretKey = 'at67qH6mk8w5Y1nAyMoYKMWACiEi2bsa';
-        $orderInfo = 'Thanh toán qua MoMo';
-        $amount = $amount;
-        $orderId = time() .'';
-        $returnUrl = 'http://localhost:8000/atm/result_atm.php';
-        $notifyurl = 'http://localhost:8000/atm/ipn_momo.php';
-        // Lưu ý: link notifyUrl không phải là dạng localhost
-        $bankCode = 'SML';
-        $requestId = time().'';
-        $requestType = 'captureWallet';
-        $extraData = '';
-        //before sign HMAC SHA256 signature
-        $rawHashArr =  array(
-            'partnerCode' => $partnerCode,
-            'accessKey' => $accessKey,
-            'requestId' => $requestId,
-            'amount' => $amount,
-            'orderId' => $orderId,
-            'orderInfo' => $orderInfo,
-            'bankCode' => $bankCode,
-            'returnUrl' => $returnUrl,
-            'notifyUrl' => $notifyurl,
-            'extraData' => $extraData,
-            'requestType' => $requestType
-        );
-        echo $secretKey;
-        die;
-        $rawHash = 'partnerCode='.$partnerCode.'&accessKey='.$accessKey.'&requestId='.$requestId.'&bankCode='.$bankCode.'&amount='.$amount.'&orderId='.$orderid.'&orderInfo='.$orderInfo.'&returnUrl='.$returnUrl.'&notifyUrl='.$notifyurl.'&extraData='.$extraData.'&requestType='.$requestType;
-        $signature = hash_hmac( 'sha256', $rawHash, $serectkey );
+    // public function momo($amount){
+    //     $endpoint = "https://test-payment.momo.vn/gw_payment/transactionProcessor";
+    //     $partnerCode = 'MOMOBKUN20180529';
+    //     $accessKey = 'klm05TvNBzhg7h7j';
+    //     $secretKey = 'at67qH6mk8w5Y1nAyMoYKMWACiEi2bsa';
+    //     $orderInfo = 'Thanh toán qua MoMo';
+    //     $amount = $amount;
+    //     $orderId = time() .'';
+    //     $returnUrl = 'http://localhost:8000/atm/result_atm.php';
+    //     $notifyurl = 'http://localhost:8000/atm/ipn_momo.php';
+    //     // Lưu ý: link notifyUrl không phải là dạng localhost
+    //     $bankCode = 'SML';
+    //     $requestId = time().'';
+    //     $requestType = 'captureWallet';
+    //     $extraData = '';
+    //     //before sign HMAC SHA256 signature
+    //     $rawHashArr =  array(
+    //         'partnerCode' => $partnerCode,
+    //         'accessKey' => $accessKey,
+    //         'requestId' => $requestId,
+    //         'amount' => $amount,
+    //         'orderId' => $orderId,
+    //         'orderInfo' => $orderInfo,
+    //         'bankCode' => $bankCode,
+    //         'returnUrl' => $returnUrl,
+    //         'notifyUrl' => $notifyurl,
+    //         'extraData' => $extraData,
+    //         'requestType' => $requestType
+    //     );
+    //     echo $secretKey;
+    //     die;
+    //     $rawHash = 'partnerCode='.$partnerCode.'&accessKey='.$accessKey.'&requestId='.$requestId.'&bankCode='.$bankCode.'&amount='.$amount.'&orderId='.$orderid.'&orderInfo='.$orderInfo.'&returnUrl='.$returnUrl.'&notifyUrl='.$notifyurl.'&extraData='.$extraData.'&requestType='.$requestType;
+    //     $signature = hash_hmac( 'sha256', $rawHash, $serectkey );
 
-        $data =  array( 'partnerCode' => $partnerCode,
-        'accessKey' => $accessKey,
-        'requestId' => $requestId,
-        'amount' => $amount,
-        'orderId' => $orderid,
-        'orderInfo' => $orderInfo,
-        'returnUrl' => $returnUrl,
-        'bankCode' => $bankCode,
-        'notifyUrl' => $notifyurl,
-        'extraData' => $extraData,
-        'requestType' => $requestType,
-        'signature' => $signature );
-        $result = $this->execPostRequest( $endpoint, json_encode( $data ) );
-        $jsonResult = json_decode( $result, true );
-        // decode json
-        return response()->json( [
-            'status'=>'success',
-            'link'=>$jsonResult[ 'payUrl' ],
-        ] );
-        error_log( print_r( $jsonResult, true ) );
-        header( 'Location: '.$jsonResult[ 'payUrl' ] );
-    }
+    //     $data =  array( 'partnerCode' => $partnerCode,
+    //     'accessKey' => $accessKey,
+    //     'requestId' => $requestId,
+    //     'amount' => $amount,
+    //     'orderId' => $orderid,
+    //     'orderInfo' => $orderInfo,
+    //     'returnUrl' => $returnUrl,
+    //     'bankCode' => $bankCode,
+    //     'notifyUrl' => $notifyurl,
+    //     'extraData' => $extraData,
+    //     'requestType' => $requestType,
+    //     'signature' => $signature );
+    //     $result = $this->execPostRequest( $endpoint, json_encode( $data ) );
+    //     $jsonResult = json_decode( $result, true );
+    //     // decode json
+    //     return response()->json( [
+    //         'status'=>'success',
+    //         'link'=>$jsonResult[ 'payUrl' ],
+    //     ] );
+    //     error_log( print_r( $jsonResult, true ) );
+    //     header( 'Location: '.$jsonResult[ 'payUrl' ] );
+    // }
 
 
     public function execPostRequest( $url, $data ) {
@@ -132,7 +128,7 @@ class add_cartController extends Controller {
 
     public function vnpay( $amount ) {
         $vnp_Url = 'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html';
-        $vnp_Returnurl = 'http://127.0.0.1:8000/api/vnpay/return';
+        $vnp_Returnurl = 'https://6e32-2402-800-6294-7591-b81f-c8f8-6c5f-66b9.ngrok-free.app/direction?fbclid=IwAR1wJzmlbTCmITiQ5nNIHINeIMu6cEylupOwP3Tfi6aXtDj65i1iRL2miis';
         $vnp_TmnCode = 'TKIKN7N0';
         //Mã website tại VNPAY
         $vnp_HashSecret = 'JRCQGHNEQULNVFQJWJQSICRRIFAEBSKK';
@@ -141,7 +137,7 @@ class add_cartController extends Controller {
         //Mã đơn hàng. Trong thực tế Merchant cần insert đơn hàng vào DB và gửi mã này sang VNPAY
         $vnp_OrderInfo = 'thanh toán đơn hàng';
         $vnp_OrderType = 'billpayment';
-        $vnp_Amount = $amount*1000 *100;
+        $vnp_Amount = $amount['thuc_tra']*1000 *100;
         $vnp_Locale = 'vn';
         $vnp_BankCode = '';
         $vnp_IpAddr = $_SERVER[ 'REMOTE_ADDR' ];
@@ -188,6 +184,9 @@ class add_cartController extends Controller {
         return response()->json( [
             'status'=>'success',
             'link'=>$vnp_Url,
+            'loai_thanh_toan'=>1,
+            'data'=>$amount
+
         ] );
     }
 
@@ -202,14 +201,8 @@ class add_cartController extends Controller {
                     ] );
                 }
             }
-            $cookie_name = 'donhang';
-            $cookie_value = json_encode( $request->all() );
-            // dd($_COOKIE['type']);
-            // dd($type);
-            setcookie( $cookie_name, $cookie_value, time() + ( 86400 ), '/' );
             if ( $type == 'vnpay' ) {
-                setcookie( 'type', '1', time() + ( 86400 ), '/' );
-                return $this->vnpay( $request->thuc_tra );
+                return $this->vnpay( $request->all());
             } else if ( $type == 'momo' ) {
                 setcookie( 'type', '2', time() + ( 86400 ), '/' );
                 $this->momo($request->thuc_tra);

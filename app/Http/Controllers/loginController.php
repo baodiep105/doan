@@ -18,54 +18,10 @@ use Illuminate\Support\Facades\Auth;
 
 class loginController extends Controller
 {
+
+
     public function login(Request $request)
     {
-        // $rules = [
-        //     'username'  => 'required',
-        //     'password'  =>'required',
-        // ];
-
-        // $input     = $request->all();
-
-        // $validator = Validator::make($input, $rules,[
-        //     'required'      =>  ':attribute không được để trống',
-        // ],[
-        //     'username'=>'username',
-        // ]);
-        // if ($validator->fails()) {
-        //     return response()->json([
-        //         'status' => 'error',
-        //         'error' => $validator->errors(),
-        //     ]);
-        // }
-        // if (!Auth('web')->attempt($request->only('username', 'password'))) {
-        //     return response()->json([
-        //         'status'=>'erorr',
-        //         'message' => 'Mật khẩu không đúng',
-        //     ], 401);
-        // }
-
-        // $user = User::where('username', $request['username'])->firstOrFail();
-        // dd($user);
-        // if ($user->is_email == 1) {
-        //     $token = $user->createToken('auth_token')->plainTextToken;
-        //     setcookie('bearer_token',$token,time()+(86400*30),"/");
-        //     // dd(Auth::guard('web')->user());
-        //     return response()->json([
-        //         'status' => 'success',
-        //         'user' => $user,
-        //         'access_token' => $token,
-        //     ]);
-        // } else {
-        //     return response()->json([
-        //         'status' => 'error',
-        //         'message' => 'bạn cần phải kích hoạt mail để login  ',
-        //     ]);
-        // }
-        // return response()->json([
-        //     'status' => 'error',
-        // ]);
-
         $validator =  Validator::make($request->all(), [
             'username'      =>  'required||exists:users,username',
             'password'     =>  'required',
@@ -90,12 +46,7 @@ class loginController extends Controller
         $user = User::where('username', $request['username'])->firstOrFail();
         if ($user->is_email == 1) {
             $token = $user->createToken('auth_token')->plainTextToken;
-            $cookie='Bearer '.$token;
-            //  $response =new Response;
-            //  $response->withCookie('token',$token,0.1);
-            // $cookie=cookie()->get('bearer_token', $token,30);
-           setcookie('bearer_token',$cookie,time()+(86400*30),"/");
-        // dd($token);
+
            if($user->id_loai==0){
                 return redirect('/admin');
            }else if($user->id_loai==1){
