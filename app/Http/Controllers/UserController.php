@@ -80,8 +80,8 @@ class UserController extends Controller {
                     'avatar' => $userData->picture,
                     'token' => $token,
                 ];
-                $user=DB::table('users')->insert([ 'username' => $social_user['name'], 'email' => $social_user['email'], 'id_loai' => 2, 'is_email' => 1 ]);
-                return json_encode( $user );
+                // $user=DB::table('users')->insert([ 'username' => $social_user['name'], 'email' => $social_user['email'], 'id_loai' => 2, 'is_email' => 1 ]);
+                return 'https://laravel.com/docs/10.x/redirects';
 
                 // return json_encode( $social_user );
                 // $user = User::where( 'email', $social_user[ 'email' ] )->where( 'id_loai', 2 )->first();
