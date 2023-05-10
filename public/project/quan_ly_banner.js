@@ -21,6 +21,7 @@ new Vue({
         pagination: {},
         url: [],
         index: 0,
+        link:'',
     },
 
     created() {
@@ -31,6 +32,7 @@ new Vue({
         fetchBanner(page_url) {
             page_url = page_url || "/admin/quan-ly-banner/getData";
             console.log(page_url);
+            this.link=page_url;
             let vm = this;
             let meta = {};
             let link = {};
@@ -86,7 +88,7 @@ new Vue({
                 .post('/admin/quan-ly-banner/create', this.add)
                 .then((res) => {
                     toastr.success("Đã thêm ảnh mới!");
-                    this.getData();
+                    this.fetchBanner( this.link);
                 })
                 .catch((res) => {
                     var errors = res.response.data.errors;
@@ -112,7 +114,7 @@ new Vue({
                     if (res.data.trangThai) {
                         toastr.success('Đã đổi trạng thái thành công!');
                         // Tình trạng mới là true
-                        this.getData();
+                        this.fetchBanner( this.link);
                     } else {
                         toastr.error('Vui lòng không can thiệp hệ thống!');
                     }
@@ -140,7 +142,7 @@ new Vue({
                 .then((res) => {
                     if (res.data.status) {
                         toastr.success('Đã xóa banner thành công');
-                        this.getData();
+                        this.fetchBanner( this.link);
                     } else {
                         toastr.error('Danh mục không tồn tại');
                     }
@@ -180,7 +182,7 @@ new Vue({
                 .then((res) => {
                     if (res) {
                         toastr.success('Cập nhật thành công banner!');
-                        this.getData();
+                        this.fetchBanner( this.link);
                     } else {
                         toastr.error('Cập nhật thất bại'); q
                     }

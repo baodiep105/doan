@@ -19,6 +19,8 @@ new Vue({
         pagination: {},
         url:[],
         index:0,
+        link:'',
+        
     },
     created() {
         // this.loadData();
@@ -28,6 +30,7 @@ new Vue({
         fetchCustomers(page_url) {
             page_url = page_url || "/admin/san-pham/getData";
             console.log(page_url);
+            this.link=page_url;
             let vm = this;
             let meta = {};
             let link = {};
@@ -75,14 +78,7 @@ new Vue({
             this.id_delete = id;
             console.log(this.id_delete);
         },
-        // loadData() {
-        //     axios
-        //         .get('/admin/san-pham/getData')
-        //         .then((res) => {
-        //             this.danhSachSanPham = res.data.danhSachSanPham;
-        //             this.danhSachDanhMuc=res.data.danhSachDanhMuc;
-        //         });
-        // },
+
         search() {
             var payload = {
                 'search': this.inputSearch,
@@ -99,7 +95,7 @@ new Vue({
                 .then((res) => {
                     if (res.data.status) {
                         toastr.success('Đã xóa sản thành công');
-                        this.loadData();
+                       this.fetchCustomers( this.link);
                     } else {
                         toastr.error('sản phẩm tồn tại');
                     }
@@ -145,7 +141,7 @@ new Vue({
                 .post('/admin/san-pham/update', payload)
                 .then((res) => {
                     console.log(res);
-                    this.loadData();
+                   this.fetchCustomers( this.link);
                     toastr.success('Cập thành công danh mục!');
 
                 })
@@ -161,7 +157,7 @@ new Vue({
                 .get('/admin/san-pham/changeStatus/' + id)
                 .then((res) => {
                     if (res.data.status) {
-                        this.loadData();
+                       this.fetchCustomers( this.link);
                         toastr.success('thay đổi trạng thái thành công');
                     }
                 });

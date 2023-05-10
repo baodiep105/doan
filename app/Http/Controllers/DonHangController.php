@@ -45,14 +45,15 @@ class DonHangController extends Controller
     public function changeStatus($id, Request $request)
     {
         $donhang = DonHang::find($id);
+        // dd($id);
         if (!$donhang) {
+            return response()->json([
+                'status' => false
+            ]);
+        }
             $donhang->status = $request->value;
             $donhang->save();
             return response()->json(['status' => true]);
-        }
-        return response()->json([
-            'status' => false
-        ]);
     }
 
     public function delete($id)

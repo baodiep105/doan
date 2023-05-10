@@ -21,6 +21,7 @@ new Vue({
         pagination: {},
         url:[],
         index:0,
+        link:'',
     },
 
     created(){
@@ -42,7 +43,8 @@ new Vue({
                 .then((res) => {
                     if(res.data.status){
                     toastr.success('Thêm chi tiết sản phẩm mới');
-                    this.getData();}
+                    this.fetchCustomers( this.link);
+                }
                     else{
                     toastr.error('chi tiết sản phẩm đã tồn tại');}
                 })
@@ -55,6 +57,7 @@ new Vue({
         },
         fetchCustomers(page_url) {
             page_url = page_url || "/admin/chi-tiet-san-pham/getData";
+            this.link=page_url;
             console.log(page_url);
             let vm = this;
             let meta = {};
@@ -101,16 +104,6 @@ new Vue({
             this.pagination = paginate;
             // console.log(!);
         },
-        getData(){
-            axios
-                .get('/admin/chi-tiet-san-pham/getData')
-                .then((res) => {
-                    this.danh_sach_san_pham = res.data.danh_sach_san_pham;
-                    this.danh_sach_mau      = res.data.danh_sach_mau;
-                    this.danh_sach_size     = res.data.danh_sach_size;
-                    this.danh_sach_chi_tiet = res.data.ds_chi_tiet_san_pham;
-                })
-        },
 
         doiTrangThai(id) {
             console.log(id);
@@ -120,7 +113,7 @@ new Vue({
                     if(res.data.status) {
                         toastr.success('Đã đổi trạng thái thành công!');
                         // Tình trạng mới là true
-                        this.getData();
+                        this.fetchCustomers(this.link);
                     } else {
                         toastr.error('Vui lòng không can thiệp hệ thống!');
                     }
@@ -148,7 +141,7 @@ new Vue({
                 .then((res) => {
                     if(res.data.status) {
                         toastr.success('Đã xóa chi tiết sản phẩm thành công');
-                        this.getData();
+                        this.fetchCustomers(this.link);
                     } else {
                         toastr.error('chi tiết sản phẩm không tồn tại');
                     }
@@ -190,7 +183,8 @@ new Vue({
                 .then((res) => {
                     if(res.data.status){
                     toastr.success('Cập thành công danh mục!');
-                    this.getData();}
+                    this.fetchCustomers(this.link);
+                }
                     else{
                         toastr.error('Chi tiết sản phẩm đã tồn tại')
                     }

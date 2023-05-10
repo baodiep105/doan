@@ -80,11 +80,11 @@ class KhuyenMaiController extends Controller {
     }
 
     public function edit( $id ) {
+        $khuyen_mai = KhuyenMai::find( $id );
         if (! $khuyen_mai ) {
         toastr()->error( 'Ảnh không tồn tại!' );
         return redirect()->back();
     } else {
-        $khuyen_mai = KhuyenMai::find( $id );
             return response()->json( [
                 'status'  =>  true,
                 'khuyen_mai'    =>  $khuyen_mai,

@@ -16,15 +16,17 @@
                 pagination: {},
                 url:[],
                 index:0,
+                link:'',
             },
 
             created() {
-                this.getData();
+                this.fetchCustomers();
             },
 
             methods: {
                 fetchCustomers(page_url) {
                     page_url = page_url || "/admin/quan-ly-nhan-vien/getData";
+                    this.link=page_url;
                     console.log(page_url);
                     let vm = this;
                     let meta = {};
@@ -84,7 +86,7 @@
                             if(res.data.status){
                             // console.log(res);
                             toastr.success('Thêm mới thành công!');
-                            this.getData();}
+                            this.fetchCustomers(this.link);}
                             else{
                                 var danh_sach_loi = res.data.error;
                                  $.each(danh_sach_loi, function(key, value) {
@@ -94,27 +96,7 @@
                         })
 
                 },
-                getData() {
-                    axios
-                        .get('/admin/quan-ly-nhan-vien/getData')
-                        .then((res) => {
-                            this.list_vue = res.data.user;
-                        })
-                },
 
-                // doiTrangThai(id) {
-                //     axios
-                //         .get('/admin/danh-muc/changeStatus/' + id)
-                //         .then((res) => {
-                //             if (res.data.trangThai) {
-                //                 toastr.success('Đã đổi trạng thái thành công!');
-                //                 // Tình trạng mới là true
-                //                 this.getData();
-                //             } else {
-                //                 toastr.error('Vui lòng không can thiệp hệ thống!');
-                //             }
-                //         })
-                // },
 
                 search() {
                     var payload = {
@@ -137,7 +119,7 @@
                         .then((res) => {
                             if (res.data.status) {
                                 toastr.success('Đã xóa nhân viên thành công');
-                                this.getData();
+                                this.fetchCustomers(this.link);
                             } else {
                                 toastr.error('nhân viên không tồn tại');
                             }
@@ -162,7 +144,7 @@
                         .then((res) => {
                             if(res.data.status){
                             toastr.success('Cập nhật thành công!');
-                            this.getData();}
+                            this.fetchCustomers(this.link);}
                             else{
                                 var danh_sach_loi = res.data.error;
                                  $.each(danh_sach_loi, function(key, value) {
@@ -170,12 +152,6 @@
                             });
                             }
                         })
-                        // .catch((res) => {
-                        //     var danh_sach_loi = res.response.data.errors;
-                        //     $.each(danh_sach_loi, function(key, value) {
-                        //         toastr.error(value[0]);
-                        //     });
-                        // });
                 },
             },
         });

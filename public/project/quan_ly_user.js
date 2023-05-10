@@ -8,6 +8,7 @@
             pagination: {},
             url: [],
             index: 0,
+            link:'',
         },
 
         created(){
@@ -17,6 +18,7 @@
         methods         : {
             fetchUser(page_url) {
                 page_url = page_url || "/admin/quan-ly-user/getData";
+                this.link=page_url;
                 console.log(page_url);
                 let vm = this;
                 let meta = {};
@@ -81,7 +83,7 @@
                         if(res.data.status) {
                             toastr.success('Đã đổi trạng thái thành công!');
                             // Tình trạng mới là true
-                            this.getData();
+                           this.fetchUser(this.link);
                         } else {
                             toastr.error('Vui lòng không can thiệp hệ thống!');
                         }
@@ -112,7 +114,7 @@
                     .then((res) => {
                         if(res.data.status) {
                             toastr.success('Đã xóa danh mục thành công');
-                            this.getData();
+                           this.fetchUser(this.link);
                         } else {
                             toastr.error('Danh mục không tồn tại');
                         }
@@ -150,7 +152,7 @@
                     .then((res) => {
                         // console.log(res);
                         toastr.success('Cập thành công danh mục!');
-                        this.getData();
+                       this.fetchUser(this.link);
                     })
                     .catch((res) => {
                         var danh_sach_loi = res.response.data.errors;

@@ -205,7 +205,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <input type="text" v-model="idEdit" hidden>
+                    <input type="text" v-model="idEdit" >
                     <div class="position-relative form-group">
                         <label>Tên sản phẩm</label>
                         <select v-model="id_sanpham_edit" id="issueinput6" class="form-control"

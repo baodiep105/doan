@@ -23,6 +23,7 @@ new Vue({
         pagination: {},
         url: [],
         index: 0,
+        link:'',
     },
 
     created() {
@@ -33,6 +34,7 @@ new Vue({
     methods: {
         fetchCatagory(page_url) {
             page_url = page_url || "/admin/danh-muc/getData";
+            this.link=page_url;
             console.log(page_url);
             let vm = this;
             let meta = {};
@@ -86,7 +88,7 @@ new Vue({
                 .post('/admin/danh-muc/create', this.add)
                 .then((res) => {
                     toastr.success("Đã thêm ảnh mới!");
-                    this.getData();
+                    this.fetchCatagory( this.link);
                 })
                 .catch((res) => {
                     var errors = res.response.data.errors;
@@ -94,36 +96,6 @@ new Vue({
                         toastr.error(v[0]);
                     });
                 });
-            // var payload = {
-            //     'ten_danh_muc': this.ten_danh_muc,
-            //     'hinh_anh': this.hinh_anh,
-            //     'id_danh_muc_cha': this.id_danh_muc_cha,
-            //     'is_open': this.is_open,
-
-            // };
-
-            // axios
-            //     .post('/admin/danh-muc/create', payload)
-            //     .then((res) => {
-            //         // console.log(res);
-            //         toastr.success('Thêm mới thành công danh mục!');
-            //         this.getData();
-            //     })
-            //     .catch((res) => {
-            //         var danh_sach_loi = res.response.data.errors;
-            //         $.each(danh_sach_loi, function(key, value) {
-            //             toastr.error(value[0]);
-            //         });
-            //     });
-        },
-
-        getData() {
-            axios
-                .get('/admin/danh-muc/getData')
-                .then((res) => {
-                    this.list_vue = res.data.list;
-                    this.danh_muc_cha_vue = res.data.danh_muc_cha;
-                })
         },
 
         doiTrangThai(id) {
@@ -133,7 +105,7 @@ new Vue({
                     if (res.data.trangThai) {
                         toastr.success('Đã đổi trạng thái thành công!');
                         // Tình trạng mới là true
-                        this.getData();
+                        this.fetchCatagory( this.link);
                     } else {
                         toastr.error('Vui lòng không can thiệp hệ thống!');
                     }
@@ -164,7 +136,7 @@ new Vue({
                 .then((res) => {
                     if (res.data.status) {
                         toastr.success('Đã xóa danh mục thành công');
-                        this.getData();
+                        this.fetchCatagory( this.link);
                     } else {
                         toastr.error('Danh mục không tồn tại');
                     }
@@ -206,7 +178,7 @@ new Vue({
                 .then((res) => {
                     // console.log(res);
                     toastr.success('Cập thành công danh mục!');
-                    this.getData();
+                    this.fetchCatagory( this.link);
                 })
                 .catch((res) => {
                     var danh_sach_loi = res.response.data.errors;

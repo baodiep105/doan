@@ -20,6 +20,7 @@ new Vue({
         pagination: {},
         url: [],
         index: 0,
+        link:'',
     },
 
     created() {
@@ -30,6 +31,7 @@ new Vue({
         fetchKhuyenMai(page_url) {
             page_url = page_url || "/admin/quan-ly-khuyen-mai/getData";
             console.log(page_url);
+            this.link=page_url;
             let vm = this;
             let meta = {};
             let link = {};
@@ -85,7 +87,7 @@ new Vue({
                 .then((res) => {
                     // console.log(res);
                     toastr.success('Thêm mới thành công!');
-                    this.getData();
+                    this.fetchKhuyenMai( this.link);
                 })
                 .catch((res) => {
                     var danh_sach_loi = res.response.data.errors;
@@ -110,7 +112,7 @@ new Vue({
                     if (res.data.trangThai) {
                         toastr.success('Đã đổi trạng thái thành công!');
                         // Tình trạng mới là true
-                        this.getData();
+                        this.fetchKhuyenMai( this.link);
                     } else {
                         toastr.error('Vui lòng không can thiệp hệ thống!');
                     }
@@ -141,7 +143,7 @@ new Vue({
                 .then((res) => {
                     if (res.data.status) {
                         toastr.success('Đã xóa khuyến mãi thành công');
-                        this.getData();
+                        this.fetchKhuyenMai( this.link);
                     } else {
                         toastr.error('mã khuyến mãi không tồn tại');
                     }
@@ -169,7 +171,7 @@ new Vue({
                 .then((res) => {
                     if (res.data.status) {
                         toastr.success('Đã cập nhật khuyến mãi thành công');
-                        this.getData();
+                        this.fetchKhuyenMai( this.link);
                     } else {
                         toastr.error('Id khuyến mãi không tồn tại');
                     }

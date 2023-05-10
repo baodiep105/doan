@@ -9,6 +9,7 @@ new Vue({
         pagination: {},
         url: [],
         index: 0,
+        link:''
     },
 
     created() {
@@ -19,6 +20,7 @@ new Vue({
         fetchDonHang(page_url) {
             page_url = page_url || "/admin/quan-ly-don-hang/getData";
             console.log(page_url);
+            this.link=page_url;
             let vm = this;
             let meta = {};
             let link = {};
@@ -62,17 +64,8 @@ new Vue({
             this.pagination = paginate;
             // console.log(!);
         },
-        getData() {
-            axios
-                .get('/admin/quan-ly-don-hang/getData')
-                .then((res) => {
-                    this.list_vue = res.data.donhang;
-                })
-        },
 
         doiTrangThai(id, event) {
-            console.log(id)
-            console.log(event)
             var payload = {
                 'value': event,
             }
@@ -82,7 +75,7 @@ new Vue({
                     if (res.data.status) {
                         toastr.success('Đã đổi trạng thái thành công!');
                         // Tình trạng mới là true
-                        this.getData();
+                        this.fetchDonHang( this.link)(this.link);
                     } else {
                         toastr.error('Vui lòng không can thiệp hệ thống!');
                     }
@@ -113,20 +106,15 @@ new Vue({
                 .then((res) => {
                     if (res.data.status) {
                         toastr.success('Đã xóa danh mục thành công');
-                        this.getData();
+                        this.fetchDonHang( this.link);
                     } else {
                         toastr.error('Danh mục không tồn tại');
                     }
                 })
         },
 
-        // seturl(id){
-        //     this.url='http://127.0.0.1:8000/admin/quan-ly-don-hang/chi-tiet/'.id;
-        //     console.log(this.url);
-        // },
 
         editDanhMuc(id) {
-
             axios
                 .get('/admin/quan-ly-don-hang/chi-tiet/' + id)
                 .then((res) => {
@@ -154,7 +142,7 @@ new Vue({
                 .then((res) => {
                     // console.log(res);
                     toastr.success('Cập thành công danh mục!');
-                    this.getData();
+                    this.fetchDonHang( this.link);
                 })
                 .catch((res) => {
                     var danh_sach_loi = res.response.data.errors;

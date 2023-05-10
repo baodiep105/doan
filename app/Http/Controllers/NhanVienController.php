@@ -122,7 +122,7 @@ class NhanVienController extends Controller
 
             $password = $request->password;
             $user->update([
-                'password' => $password,
+                'password' => bcrypt($password),
             ]);
             return response()->json([
                 'status' => true,

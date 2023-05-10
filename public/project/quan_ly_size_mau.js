@@ -17,6 +17,8 @@ new Vue({
         pagination_size: {},
         url_size: [],
         index_size: 0,
+        link_size:'',
+        link_mau:'',
     },
 
     created() {
@@ -28,6 +30,7 @@ new Vue({
         fetchMau(page_url) {
             page_url = page_url || "/admin/quan-ly-mau/getData";
             console.log(page_url);
+            this.link_mau=page_url;
             let vm = this;
             let meta = {};
             let link = {};
@@ -73,6 +76,7 @@ new Vue({
         fetchSize(page_url) {
             page_url = page_url || "/admin/quan-ly-size/getData";
             console.log(page_url);
+            this.size=page_url;
             let vm = this;
             let meta = {};
             let link = {};
@@ -125,7 +129,7 @@ new Vue({
                 .then((res) => {
                     // console.log(res);
                     toastr.success('Thêm mới thành công!');
-                    this.getData();
+                    this.fetchSize(this.link_size);
                 })
                 .catch((res) => {
                     var danh_sach_loi = res.response.data.errors;
@@ -145,7 +149,7 @@ new Vue({
                 .then((res) => {
                     // console.log(res);
                     toastr.success('Thêm mới thành công!');
-                    this.loadData();
+                    this.fetchMau(this.link_mau);
                 })
                 .catch((res) => {
                     var danh_sach_loi = res.response.data.errors;
@@ -153,13 +157,6 @@ new Vue({
                         toastr.error(value[0]);
                     });
                 });
-        },
-        loadData() {
-            axios
-                .get('/admin/quan-ly-mau/getData')
-                .then((res) => {
-                    this.list_mau = res.data.mau;
-                })
         },
         getData() {
             axios
@@ -192,7 +189,7 @@ new Vue({
                 .then((res) => {
                     if (res.data.status) {
                         toastr.success('Đã xóa thành công');
-                        this.getData();
+                        this.fetchSize(this.link_size);
                     } else {
                         toastr.error('mã size không tồn tại');
                     }
@@ -210,7 +207,7 @@ new Vue({
                 .then((res) => {
                     if (res.data.status) {
                         toastr.success('Đã xóa  thành công');
-                        this.loadData();
+                        this.fetchMau(this.link_mau);
                     } else {
                         toastr.error('mã màu không tồn tại');
                     }
