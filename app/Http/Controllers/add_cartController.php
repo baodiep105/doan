@@ -26,7 +26,7 @@ class add_cartController extends Controller {
             'tong_tien' => $request->data['tong_tien'],
             'tien_giam_gia' => $request->data['tien_giam'],
             'thuc_tra' => $request->data['thuc_tra'],
-            'status' => 2,
+            'status' => 1,
             'dia_chi' => $request->data['dia_chi'],
             'nguoi_nhan' => $request->data['nguoi_nhan'],
             'sdt' => $request->data['sdt'],
@@ -128,7 +128,7 @@ class add_cartController extends Controller {
 
     public function vnpay( $amount ) {
         $vnp_Url = 'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html';
-        $vnp_Returnurl = 'https://6e32-2402-800-6294-7591-b81f-c8f8-6c5f-66b9.ngrok-free.app/direction?fbclid=IwAR1wJzmlbTCmITiQ5nNIHINeIMu6cEylupOwP3Tfi6aXtDj65i1iRL2miis';
+        $vnp_Returnurl = config('global.link_user').'/direction?fbclid=IwAR1wJzmlbTCmITiQ5nNIHINeIMu6cEylupOwP3Tfi6aXtDj65i1iRL2miis';
         $vnp_TmnCode = 'TKIKN7N0';
         //Mã website tại VNPAY
         $vnp_HashSecret = 'JRCQGHNEQULNVFQJWJQSICRRIFAEBSKK';
@@ -204,7 +204,6 @@ class add_cartController extends Controller {
             if ( $type == 'vnpay' ) {
                 return $this->vnpay( $request->all());
             } else if ( $type == 'momo' ) {
-                setcookie( 'type', '2', time() + ( 86400 ), '/' );
                 $this->momo($request->thuc_tra);
             } else {
                 $donHang = DonHang::create( [
@@ -219,7 +218,6 @@ class add_cartController extends Controller {
                     'ghi_chu' => $request->ghi_chu,
                     'loai_thanh_toan'=>0,
                 ] );
-                // dd( $request->don_hang[ 0 ] );
                 foreach ( $request->don_hang as $value ) {
                     $chiTietDonHang = ChiTietDonHang::create( [
                         'id_chi_tiet_san_pham' => $value[ 'id_chi_tiet_san_pham' ],
@@ -247,7 +245,6 @@ class add_cartController extends Controller {
     }
 
     public function LichSuDonHang( Request $request ) {
-        // dd( $request->email );
         if ( $request->email != null ) {
             $donhang = DB::table( 'don_hangs' )
             ->where( 'email', $request->email )
@@ -275,8 +272,6 @@ class add_cartController extends Controller {
         ->select( 'chi_tiet_don_hangs.*', 'mau_sac.hex', 'chi_tiet_san_pham.*', 'san_phams.ten_san_pham', 'mau_sac.ten_mau', 'size.size', )
         ->get();
         $total = 0;
-        // $chitietdonhang->total = 0;
-        // dd( $chitietdonhang->donhang );
         foreach ( $chitietdonhang as $ey => $value ) {
             $sanpham = new stdClass;
             $sanpham = $value;

@@ -11,12 +11,7 @@ class mauController extends Controller
 
     public function getData()
     {
-
-        // $sanPham =DB::table('san_phams')
-        //             ->join('hinh_anh','san_phams.id','hinh_anh.id')
-        //             ->select('san_phams.ten_san_pham','hinh_anh.hinh_anh')
-        //             ->get();
-        $mau = MauSacModel::orderBy('created_at', 'DESC')->get();
+        $mau = MauSacModel::orderBy('created_at', 'DESC')->paginate(8);
         return response()->json([
             'mau'  => $mau,
         ]);
@@ -35,14 +30,14 @@ class mauController extends Controller
     public function delete($id)
     {
         $mau = MauSacModel::find($id);
-        if ($mau) {
+        if (!$mau) {
+            return response()->json([
+                'status'  =>  false,
+            ]);
+        } else {
             $mau->delete();
             return response()->json([
                 'status'  =>  true,
-            ]);
-        } else {
-            return response()->json([
-                'status'  =>  false,
             ]);
         }
     }

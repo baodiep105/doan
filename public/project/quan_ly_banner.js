@@ -18,13 +18,62 @@ new Vue({
             hinh_anh_4: '',
             hinh_anh_5: '',
         },
+        pagination: {},
+        url: [],
+        index: 0,
     },
 
     created() {
-        this.getData();
+        this.fetchBanner();
     },
 
     methods: {
+        fetchBanner(page_url) {
+            page_url = page_url || "/admin/quan-ly-banner/getData";
+            console.log(page_url);
+            let vm = this;
+            let meta = {};
+            let link = {};
+            axios
+                .get(page_url)
+                .then((res) => {
+                    this.list_vue = res.data.banner.data;
+                    console.log(this.list_vue);
+                    this.url = res.data.banner.links;
+                    link = {
+                        first_page_url: res.data.banner.first_page_url,
+                        last_page_url: res.data.banner.last_page_url,
+                        next_page_url: res.data.banner.next_page_url,
+                        prev_page_ur: res.data.banner.prev_page_url
+                    };
+                    // console.log(link)
+                    meta = {
+                        "current_page": res.data.banner.current_page,
+                        "from": res.data.banner.from,
+                        "last_page": res.data.banner.last_page,
+                        "path": res.data.banner.path,
+                        "to": res.data.banner.to,
+                        "total": res.data.banner.total,
+                    }
+                    this.index = this.url.length - 1;
+                    console.log(this.index);
+                    // console.log(this.danhSachSanPham);
+                    vm.paginate(link, meta);
+                });
+
+        },
+        paginate(link, meta) {
+            // console.log()
+            let paginate = {
+                current_page: meta.current_page,
+                // "from": meta.from,
+                last_page: meta.last_page,
+                next_page_url: link.next_page_url,
+                prev_page_url: link.prev_page_url
+            }
+            this.pagination = paginate;
+            // console.log(!);
+        },
         create(e) {
             this.add.hinh_anh_1 = $("#hinh_anh_1").val();
             this.add.hinh_anh_2 = $("#hinh_anh_2").val();
@@ -41,7 +90,7 @@ new Vue({
                 })
                 .catch((res) => {
                     var errors = res.response.data.errors;
-                    $.each(errors, function(k, v) {
+                    $.each(errors, function (k, v) {
                         toastr.error([0]);
                     });
                 });
@@ -132,14 +181,14 @@ new Vue({
                     if (res) {
                         toastr.success('Cập nhật thành công banner!');
                         this.getData();
-                    }else{
-                        toastr.error('Cập nhật thất bại');q
+                    } else {
+                        toastr.error('Cập nhật thất bại'); q
                     }
 
                 })
                 .catch((res) => {
                     var danh_sach_loi = res.response.data.errors;
-                    $.each(danh_sach_loi, function(key, value) {
+                    $.each(danh_sach_loi, function (key, value) {
                         toastr.error(value[0]);
                     });
                 });

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\profileRequest;
 use App\Mail\ForgetMail;
+use App\Http\Requests\donhangRequest;
 use App\Mail\SendMail;
 use App\Models\ChiTietDonHang;
 use App\Models\ChiTietSanPhamModel;
@@ -16,6 +17,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use App\Http\Controllers\add_cartController;
 use Socialite;
 use Config;
 use Google\Client as GoogleClient;
@@ -42,24 +44,27 @@ class UserController extends Controller {
         $client->addScope( 'email' );
         $client->addScope( 'profile' );
         $authUrl = $client->createAuthUrl();
+        // return redirect($authUrl);
+        // dd( $authUrl )
         return response()->json( [
             'status'=>'success',
-            'link'=>$authUrl
+            'url'=> $authUrl,
         ] );
     }
 
     public function google_login( Request $request ) {
+        // dd( $_GET[ 'email' ] );
         $user = User::where( 'email', $request->email )->where( 'id_loai', 2 )->first();
         if ( empty( $user ) || is_null( $user ) ) {
-            User::create( [ 'username' => $request->name, 'email' => $request->email, 'is_email'=>1, 'id_loai' => 2 ] );
-        } else {
-            $success[ 'token' ] = $user->createToken( 'myApp' )->accessToken->token;
-            return response()->json( [
-                'status' => 'success',
-                'user' => $user,
-                'token' => $success,
-            ] );
+            $user = User::create( [ 'username' => $request->name, 'email' => $request->email, 'is_email'=>1, 'id_loai' => 2 ] );
         }
+        $token = $user->createToken( 'auth_token' )->plainTextToken;
+        return response()->json( [
+            'status' => 'success',
+            'user' => $user,
+            'token' => $token,
+        ] );
+
     }
 
     public function callback( Request $request ) {
@@ -69,7 +74,6 @@ class UserController extends Controller {
         $client->setRedirectUri( config( 'services.google.redirect' ) );
         $client->addScope( 'email' );
         $client->addScope( 'profile' );
-
         if ( $request->get( 'code' ) ) {
             $token = $client->fetchAccessTokenWithAuthCode( $request->get( 'code' ) );
             $oauth = new Oauth2( $client );
@@ -81,21 +85,7 @@ class UserController extends Controller {
                 'avatar' => $userData->picture,
                 'token' => $token,
             ];
-            // $user = DB::table( 'users' )->insert( [ 'username' => $social_user[ 'name' ], 'email' => $social_user[ 'email' ], 'id_loai' => 2, 'is_email' => 1 ] );
-            return response()->json( [
-                'link'=> 'https://laravel.com/docs/10.x/redirects'
-            ] ) ;
-
-            // return json_encode( $social_user );
-            // $user = User::where( 'email', $social_user[ 'email' ] )->where( 'id_loai', 2 )->first();
-            // // dd( $social_user );
-            // } else {
-            //     $success[ 'token' ] = $user->createToken( 'myApp' )->accessToken->token;
-            //     return response()->json( [
-            //         'status' => 'success',
-            //         'user' => $user,
-            //         'token' => $success,
-            // ] );
+            return redirect( config('global.link_user').'/direction-login?email='.$social_user[ 'email' ].'&name='.$social_user[ 'name' ] );
         }
     }
 
@@ -153,8 +143,7 @@ class UserController extends Controller {
         } else {
             $user->is_email = 1;
             $user->save();
-            // $a = 'https://ab05-2402-800-629c-4cf2-5c25-9975-d834-68bf.ap.ngrok.io/login';
-            return "<h1>Tài khoản của bạn đã được kích hoạt!</h1> <a href='https://15e8-2402-9d80-439-7544-400d-2590-5e4f-fb98.ap.ngrok.io/login'><h3>Đăng nhập tại đây</h3></a>";
+            return "<h1>Tài khoản của bạn đã được kích hoạt!</h1> <a href=".config('global.link_user')."'/login'><h3>Đăng nhập tại đây</h3></a>";
         }
     }
 
@@ -187,7 +176,6 @@ class UserController extends Controller {
         $user = User::where( 'username', $request[ 'username' ] )->firstOrFail();
         if ( $user->is_email == 1 && $user->id_loai == 2 ) {
             $token = $user->createToken( 'auth_token' )->plainTextToken;
-            // dd( Auth::guard( 'web' )->user() );
             return response()->json( [
                 'status' => 'success',
                 'user' => $user,
@@ -221,14 +209,12 @@ class UserController extends Controller {
     }
 
     public function getme( Request $request ) {
-        // dd( $request->headers );
         return response()->json( [
             'user' => Auth::guard( 'users' )->user(),
         ] );
     }
 
     public function danhgiaUser( $id, Request $request ) {
-        // dd( auth()->user()->email );
         $rules = [
             'content' => 'required|min:3',
             'sao' => 'required|numeric',
@@ -241,24 +227,19 @@ class UserController extends Controller {
         if ( $validator->fails() ) {
             return response()->json( [ 'success' => false, 'error' => $validator->errors() ] );
         }
-        // $user = auth()->user()->email;
-        // $dh = DonHang::where( 'email', 'namhj1810@gmal.com' )->get();
-        // // dd( $user );
         $exist = DB::table( 'chi_tiet_don_hangs as ct' )
         ->join( 'chi_tiet_san_pham as ctsp', 'ct.id_chi_tiet_san_pham', 'ctsp.id' )
-        // ->join( 'san_phams as sp', 'ct.id_sanpham', 'sp.id' )
         ->join( 'don_hangs as dh', 'ct.don_hang_id', 'dh.id' )
         ->where( 'dh.email', auth()->user()->email )
         ->where( 'ctsp.id_sanpham', $id )
         ->get();
-        // return response()->json( [
-        //     'áda'=>$exist,
-        // ] );
-        // $exist = DB::table( 'don_hangs' )->where( 'email', $user )->get();
-        //             return response()->json( [
-        //                         'áda'=>$exist,
-        // ] );
-        if ( $exist ) {
+        if ( !$exist ) {
+            return response()->json( [
+                'status' => 'error',
+                'message' => 'bạn cần phải mua hàng để đánh giá',
+            ] );
+
+        } else {
             $danh_gia = DanhGia::create( [
                 'content' => $request->content,
                 'rate' => $request->sao,
@@ -269,22 +250,7 @@ class UserController extends Controller {
                 'status' => 'success',
                 'data' => $danh_gia,
             ] );
-        } else {
-            return response()->json( [
-                'status' => 'error',
-                'message' => 'bạn cần phải mua hàng để đánh giá',
-            ] );
         }
-        // $danh_gia = DanhGia::create( [
-        //     'content'   => $request->content,
-        //     'rate'       => $request->sao,
-        //     'email' => auth()->user()->email,
-        //     'id_san_pham' => $id,
-        // ] );
-        // return response()->json( [
-        //     'status' => 'success',
-        //     'data' => $danh_gia,
-        // ] );
     }
 
     public function forget_password( Request $request ) {
@@ -322,17 +288,7 @@ class UserController extends Controller {
 
     public function xac_nhan( Request $request ) {
         $user = User::where( 'reset_password', $request->otp )->first();
-        // return response()->json( [
-        //     'status'=>'success',
-        //     'email'=>$user,
-        // ] );
         if ( !is_null( $user ) || !empty( $user ) ) {
-            // $user = User::where( 'reset_password', $request->code );
-            // $user_exist->update( [
-            //    'reset_password'=>null;
-            // ] );
-            // $user->reset_password = null;
-            // $user->save();
             return response()->json( [
                 'status' => 'success',
                 'email' => $user->email,
@@ -397,65 +353,174 @@ class UserController extends Controller {
         ] );
     }
 
-    public function DonHang( Request $request ) {
-        $validator = Validator::make( [
-            $request->all(),
-        ], [
-            'nguoi_nhan' => 'required',
-            'sdt' => 'required|min:10|max:10',
-            'dia_chi' => 'required',
-        ], [
-            'required' => ':attribute không được để trống',
-            'max' => ':attribute quá dài',
-            'exists' => ':attribute không tồn tại',
-            'boolean' => ':attribute chỉ được chọn True/False',
-            'unique' => ':attribute đã tồn tại',
-        ], [
-            'nguoi_nhan' => 'người nhận',
-            'sdt' => 'số điện thoại',
-            'dia_chi' => 'địa chỉ',
-        ] );
-        foreach ( $request->don_hang as $value ) {
-            $san_pham = ChiTietSanPhamModel::find( $value[ 'id_chi_tiet_san_pham' ] );
-            if ( $value[ 'so_luong' ] > $san_pham->sl_chi_tiet ) {
-                return response()->json( [
-                    'status' => 'error',
-                    'message' => 'Số lượng trong kho không đủ',
-                ] );
-            }
+    public function vnpay( $amount ) {
+        $vnp_Url = 'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html';
+        $vnp_Returnurl = config('global.link_user').'/direction?fbclid=IwAR1wJzmlbTCmITiQ5nNIHINeIMu6cEylupOwP3Tfi6aXtDj65i1iRL2miis';
+        $vnp_TmnCode = 'TKIKN7N0';
+        //Mã website tại VNPAY
+        $vnp_HashSecret = 'JRCQGHNEQULNVFQJWJQSICRRIFAEBSKK';
+        //Chuỗi bí mật
+        $vnp_TxnRef = Carbon::now()->toDateTimeString();
+        //Mã đơn hàng. Trong thực tế Merchant cần insert đơn hàng vào DB và gửi mã này sang VNPAY
+        $vnp_OrderInfo = 'thanh toán đơn hàng';
+        $vnp_OrderType = 'billpayment';
+        $vnp_Amount = $amount[ 'thuc_tra' ]*1000 *100;
+        $vnp_Locale = 'vn';
+        $vnp_BankCode = '';
+        $vnp_IpAddr = $_SERVER[ 'REMOTE_ADDR' ];
+        $inputData = array(
+            'vnp_Version' => '2.1.0',
+            'vnp_TmnCode' => $vnp_TmnCode,
+            'vnp_Amount' => $vnp_Amount,
+            'vnp_Command' => 'pay',
+            'vnp_CreateDate' => date( 'YmdHis' ),
+            'vnp_CurrCode' => 'VND',
+            'vnp_IpAddr' => $vnp_IpAddr,
+            'vnp_Locale' => $vnp_Locale,
+            'vnp_OrderInfo' => $vnp_OrderInfo,
+            'vnp_OrderType' => $vnp_OrderType,
+            'vnp_ReturnUrl' => $vnp_Returnurl,
+            'vnp_TxnRef' => $vnp_TxnRef,
+        );
+
+        if ( isset( $vnp_BankCode ) && $vnp_BankCode != '' ) {
+            $inputData[ 'vnp_BankCode' ] = $vnp_BankCode;
         }
-        if ( $request->don_hang > 0 ) {
-            $donHang = DonHang::create( [
-                'email' => auth()->user()->email,
-                'tong_tien' => $request->tong_tien,
-                'tien_giam_gia' => $request->tien_giam,
-                'thuc_tra' => $request->thuc_tra,
-                'status' => 2,
-                'dia_chi' => $request->dia_chi,
-                'nguoi_nhan' => $request->nguoi_nhan,
-                'sdt' => $request->sdt,
-                'ghi_chu' => $request->ghi_chu,
-            ] );
-            foreach ( $request->don_hang as $value ) {
-                $chiTietDonHang = ChiTietDonHang::create( [
-                    'id_chi_tiet_san_pham' => $value[ 'id_chi_tiet_san_pham' ],
-                    'don_gia' => $value[ 'don_gia' ],
-                    'so_luong' => $value[ 'so_luong' ],
-                    'don_hang_id' => $donHang->id,
-                ] );
-                $chi_tiet_san_pham = ChiTietSanPhamModel::where( 'id', $value[ 'id_chi_tiet_san_pham' ] )->first();
-                $chi_tiet_san_pham->sl_chi_tiet -= $value[ 'so_luong' ];
-                $chi_tiet_san_pham->save();
+        if ( isset( $vnp_Bill_State ) && $vnp_Bill_State != '' ) {
+            $inputData[ 'vnp_Bill_State' ] = $vnp_Bill_State;
+        }
+        ksort( $inputData );
+        $query = '';
+        $i = 0;
+        $hashdata = '';
+        foreach ( $inputData as $key => $value ) {
+            if ( $i == 1 ) {
+                $hashdata .= '&' . urlencode( $key ) . '=' . urlencode( $value );
+            } else {
+                $hashdata .= urlencode( $key ) . '=' . urlencode( $value );
+                $i = 1;
             }
-
-            return response()->json( [
-                'status' => 'success',
-
-            ] );
+            $query .= urlencode( $key ) . '=' . urlencode( $value ) . '&';
+        }
+        $vnp_Url = $vnp_Url . '?' . $query;
+        if ( isset( $vnp_HashSecret ) ) {
+            $vnpSecureHash =   hash_hmac( 'sha512', $hashdata, $vnp_HashSecret );
+            //
+            $vnp_Url .= 'vnp_SecureHash=' . $vnpSecureHash;
         }
         return response()->json( [
-            'status' => 'success',
-            'message' => 'giỏ hàng rỗng',
+            'status'=>'success',
+            'link'=>$vnp_Url,
+            'loai_thanh_toan'=>1,
+            'data'=>$amount
+
         ] );
+    }
+
+    // public function DonHang( donhangRequest $request, $type ) {
+    //     if ( count( $request->don_hang ) > 0 ) {
+    //         foreach ( $request->don_hang as $value ) {
+    //             $san_pham = ChiTietSanPhamModel::find( $value[ 'id_chi_tiet_san_pham' ] );
+    //             if ( $value[ 'so_luong' ] > $san_pham->sl_chi_tiet ) {
+    //                 return response()->json( [
+    //                     'status' => 'error',
+    //                     'message' => 'Số lượng trong kho không đủ',
+    //                 ] );
+    //             }
+    //         }
+    //         if ( $type == 'vnpay' ) {
+    //             return $this->vnpay( $request->all() );
+    //         } else {
+    //             $donHang = DonHang::create( [
+    //                 'email' =>$request->email,
+    //                 'tong_tien' => $request->tong_tien,
+    //                 'tien_giam_gia' => $request->tien_giam,
+    //                 'thuc_tra' => $request->thuc_tra,
+    //                 'status' => 2,
+    //                 'dia_chi' => $request->dia_chi,
+    //                 'nguoi_nhan' => $request->nguoi_nhan,
+    //                 'sdt' => $request->sdt,
+    //                 'ghi_chu' => $request->ghi_chu,
+    //                 'loai_thanh_toan'=>0,
+    //             ] );
+    //             // dd( $request->don_hang[ 0 ] );
+    //             foreach ( $request->don_hang as $value ) {
+    //                 $chiTietDonHang = ChiTietDonHang::create( [
+    //                     'id_chi_tiet_san_pham' => $value[ 'id_chi_tiet_san_pham' ],
+    //                     'don_gia' => $value[ 'don_gia' ],
+    //                     'so_luong' => $value[ 'so_luong' ],
+    //                     'don_hang_id' => $donHang->id,
+    //                 ] );
+    //                 $chi_tiet_san_pham = ChiTietSanPhamModel::where( 'id', $value[ 'id_chi_tiet_san_pham' ] )->first();
+    //                 $chi_tiet_san_pham->sl_chi_tiet -= $value[ 'so_luong' ];
+    //                 $chi_tiet_san_pham->save();
+    //             }
+    //             // }
+    //             return response()->json( [
+    //                 'status' => 'success',
+    //                 'email' => $donHang->email,
+    //             ] );
+    //         }
+    //     } else {
+    //         return response()->json( [
+    //             'status' => 'error',
+    //             'message'=> 'hãy chọn sản phẩm cần mua',
+    //         ] );
+    //     }
+
+    // }
+    public function DonHang( donhangRequest $request ) {
+        // dd('ads');
+        if ( count( $request->don_hang ) > 0 ) {
+            foreach ( $request->don_hang as $value ) {
+                $san_pham = ChiTietSanPhamModel::find( $value[ 'id_chi_tiet_san_pham' ] );
+                if ( $value[ 'so_luong' ] > $san_pham->sl_chi_tiet ) {
+                    return response()->json( [
+                        'status' => 'error',
+                        'message' => 'Số lượng trong kho không đủ',
+                    ] );
+                }
+            }
+            // if ( $type == 'vnpay' ) {
+            //     return $this->vnpay( $request->all());
+            // } else if ( $type == 'momo' ) {
+            //     $this->momo($request->thuc_tra);
+            // } else {
+                $donHang = DonHang::create( [
+                    'email' => $request->email,
+                    'tong_tien' => $request->tong_tien,
+                    'tien_giam_gia' => $request->tien_giam,
+                    'thuc_tra' => $request->thuc_tra,
+                    'status' => 2,
+                    'dia_chi' => $request->dia_chi,
+                    'nguoi_nhan' => $request->nguoi_nhan,
+                    'sdt' => $request->sdt,
+                    'ghi_chu' => $request->ghi_chu,
+                    'loai_thanh_toan'=>0,
+                ] );
+                foreach ( $request->don_hang as $value ) {
+                    $chiTietDonHang = ChiTietDonHang::create( [
+                        'id_chi_tiet_san_pham' => $value[ 'id_chi_tiet_san_pham' ],
+                        'don_gia' => $value[ 'don_gia' ],
+                        'so_luong' => $value[ 'so_luong' ],
+                        'don_hang_id' => $donHang->id,
+                    ] );
+                    $chi_tiet_san_pham = ChiTietSanPhamModel::where( 'id', $value[ 'id_chi_tiet_san_pham' ] )->first();
+                    $chi_tiet_san_pham->sl_chi_tiet -= $value[ 'so_luong' ];
+                    $chi_tiet_san_pham->save();
+                }
+                // }
+                return response()->json( [
+                    'status' => 'success',
+                    'email' => $donHang->email,
+                ] );
+            // }
+        } else {
+            return response()->json( [
+                'status' => 'error',
+                'message'=> 'hãy chọn sản phẩm cần mua',
+            ] );
+        }
+
     }
 }

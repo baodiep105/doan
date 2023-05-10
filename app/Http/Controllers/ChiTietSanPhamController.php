@@ -27,12 +27,7 @@ class ChiTietSanPhamController extends Controller
             ->join('mau_sac', 'chi_tiet_san_pham.id_mau', '=', 'mau_sac.id')
             ->join('san_phams', 'chi_tiet_san_pham.id_sanpham', '=', 'san_phams.id')
             ->select('chi_tiet_san_pham.id', 'chi_tiet_san_pham.sl_chi_tiet', 'chi_tiet_san_pham.status', 'san_phams.ten_san_pham', 'mau_sac.ten_mau', 'size.size')
-            ->get();
-        $ds_chi_tiet=array();
-        $count=$ds_chi_tiet_san_pham->count();
-        for($i=$count-1;$i>=0;$i--){
-            array_push($ds_chi_tiet,$ds_chi_tiet_san_pham[$i]);
-        }
+            ->paginate(6);
         $danh_sach_mau = MauSacModel::all();
         $danh_sach_san_pham = SanPham::all();
         $danh_sach_size = sizeModel::all();
@@ -40,7 +35,7 @@ class ChiTietSanPhamController extends Controller
             'danh_sach_mau' => $danh_sach_mau,
             'danh_sach_san_pham' => $danh_sach_san_pham,
             'danh_sach_size' => $danh_sach_size,
-            'ds_chi_tiet_san_pham' => $ds_chi_tiet,
+            'ds_chi_tiet_san_pham' => $ds_chi_tiet_san_pham,
         ]);
     }
 
@@ -51,11 +46,7 @@ class ChiTietSanPhamController extends Controller
             ->where('id_mau', $request->id_mau,)
             ->where('id_size', $request->id_size)
             ->exists();
-        if ($exist) {
-            return response()->json([
-                'status'    => false,
-            ]);
-        } else {
+        if (!$exist) {
             $chi_tiet_san_pham = ChiTietSanPhamModel::create([
                 'id_sanpham' => $request->id_sanpham,
                 'id_mau' => $request->id_mau,
@@ -66,6 +57,10 @@ class ChiTietSanPhamController extends Controller
             return response()->json([
                 'status'    => true,
                 'chi_tiet_san_pham' => $chi_tiet_san_pham,
+            ]);
+        } else {
+            return response()->json([
+                'status'    => false,
             ]);
         }
     }
@@ -99,13 +94,6 @@ class ChiTietSanPhamController extends Controller
     }
     public function edit($id)
     {
-        // $chi_tiet_san_pham=DB::table('chi_tiet_san_pham')
-        // ->join('size','chi_tiet_san_pham.id_size','=','size.id')
-        // ->join('mau_sac','chi_tiet_san_pham.id_mau','=','mau_sac.id')
-        // ->join('san_phams','chi_tiet_san_pham.id_sanpham','=','san_phams.id')
-        // ->where('chi_tiet_san_pham.id',$id)
-        // ->select('chi_tiet_san_pham.id','chi_tiet_san_pham.sl_chi_tiet','chi_tiet_san_pham.status','san_phams.ten_san_pham','size.size','mau_sac.ten_mau')
-        // ->get();
         $chi_tiet_san_pham = ChiTietSanPhamModel::find($id);
         if ($chi_tiet_san_pham) {
             return response()->json([
@@ -127,7 +115,7 @@ class ChiTietSanPhamController extends Controller
                 ->where('id_mau', $request->id_mau,)
                 ->where('id_size', $request->id_size)
                 ->first();
-                // dd($exist);
+
 
             if ($exist==null) {
                 $chi_tiet_san_pham->update([

@@ -19,15 +19,66 @@ new Vue({
         hinh_anh_edit: '',
         id_danh_muc_cha_edit: '',
         is_open_edit: 1,
-        anh:'',
+        anh: '',
+        pagination: {},
+        url: [],
+        index: 0,
     },
 
     created() {
-        this.getData();
+        this.fetchCatagory();
         // console.log(this.list_vue)
     },
 
     methods: {
+        fetchCatagory(page_url) {
+            page_url = page_url || "/admin/danh-muc/getData";
+            console.log(page_url);
+            let vm = this;
+            let meta = {};
+            let link = {};
+            axios
+                .get(page_url)
+                .then((res) => {
+                    this.list_vue = res.data.danh_muc.data;
+                    console.log(res.data.danh_muc.data);
+                    this.danh_muc_cha_vue = res.data.danh_muc_cha;
+
+                    this.url = res.data.danh_muc.links;
+                    link = {
+                        first_page_url: res.data.danh_muc.first_page_url,
+                        last_page_url: res.data.danh_muc.last_page_url,
+                        next_page_url: res.data.danh_muc.next_page_url,
+                        prev_page_ur: res.data.danh_muc.prev_page_url
+                    };
+                    // console.log(link)
+                    meta = {
+                        "current_page": res.data.danh_muc.current_page,
+                        "from": res.data.danh_muc.from,
+                        "last_page": res.data.danh_muc.last_page,
+                        "path": res.data.danh_muc.path,
+                        "to": res.data.danh_muc.to,
+                        "total": res.data.danh_muc.total,
+                    }
+                    this.index = this.url.length - 1;
+                    console.log(this.index);
+                    // console.log(this.danhSachSanPham);
+                    vm.paginate(link, meta);
+                });
+
+        },
+        paginate(link, meta) {
+            // console.log()
+            let paginate = {
+                current_page: meta.current_page,
+                // "from": meta.from,
+                last_page: meta.last_page,
+                next_page_url: link.next_page_url,
+                prev_page_url: link.prev_page_url
+            }
+            this.pagination = paginate;
+            // console.log(!);
+        },
         create(e) {
             e.preventDefault();
             this.add.hinh_anh = $("#hinh_anh").val();
@@ -39,7 +90,7 @@ new Vue({
                 })
                 .catch((res) => {
                     var errors = res.response.data.errors;
-                    $.each(errors, function(k, v) {
+                    $.each(errors, function (k, v) {
                         toastr.error(v[0]);
                     });
                 });
@@ -91,13 +142,13 @@ new Vue({
 
         search() {
             var payload = {
-                'search'    :   this.inputSearch,
+                'search': this.inputSearch,
             };
             console.log(this.inputSearch)
             axios
                 .post('/admin/danh-muc/search', payload)
                 .then((res) => {
-                    this.list_vue    = res.data.search;
+                    this.list_vue = res.data.search;
                     console.log(this.list_vue);
                 });
         },
@@ -121,7 +172,7 @@ new Vue({
         },
 
         editDanhMuc(id) {
-            this.idEdit=id;
+            this.idEdit = id;
             axios
                 .get('/admin/danh-muc/edit/' + id)
                 .then((res) => {
@@ -140,15 +191,15 @@ new Vue({
         },
 
         acceptUpdate() {
-            this.anh=$("#hinh_anh_edit").val();
+            this.anh = $("#hinh_anh_edit").val();
             var payload = {
-                    'idEdit'    : this.idEdit,
-                 'ten_danh_muc_edit': this.ten_danh_muc_edit,
-                 'hinh_anh_edit': this.anh,
-                 'id_danh_muc_cha_edit': this.id_danh_muc_cha_edit,
-                 'is_open_edit': this.is_open_edit,
+                'idEdit': this.idEdit,
+                'ten_danh_muc_edit': this.ten_danh_muc_edit,
+                'hinh_anh_edit': this.anh,
+                'id_danh_muc_cha_edit': this.id_danh_muc_cha_edit,
+                'is_open_edit': this.is_open_edit,
 
-             };
+            };
             //  console.log(this.anh);
             axios
                 .post('/admin/danh-muc/update', payload)
@@ -159,7 +210,7 @@ new Vue({
                 })
                 .catch((res) => {
                     var danh_sach_loi = res.response.data.errors;
-                    $.each(danh_sach_loi, function(key, value) {
+                    $.each(danh_sach_loi, function (key, value) {
                         toastr.error(value[0]);
                     });
                 });

@@ -25,29 +25,34 @@
                             <thead>
                                 <tr class="text-center">
                                     <th>#</th>
-                                    <th>Email</th>
-                                    <th>Tổng Tiền</th>
-                                    <th>Tiền Giảm Giá</th>
-                                    <th>Thực Trả</th>
-                                    <th>Người Nhận</th>
-                                    <th>Số Điện Thoại</th>
-                                    <th>Địa Chỉ</th>
-                                    <th>Ngày Tạo</th>
+                                    <th style="padding:0%">Email</th>
+                                    <th style="width:0px; padding:0px ">Tổng Tiền</th>
+                                    <th style="width:0px; padding:0px ">Người Nhận</th>
+                                    <th style="width:60px; padding:0px ">Số Điện Thoại</th>
+                                    <th style="width:170px">Địa Chỉ</th>
+                                    <th style="width:70px; padding:0px ">Loại thanh toán</th>
+                                    <th style="width:70px; padding:0px ">Ngày Tạo</th>
                                     <th style="width:170px">Trạng Thái</th>
-                                    <th>Chi Tiết</th>
-                                    <th>Action</th>
+                                    <th style="width:70px; padding:0px ">Chi Tiết</th>
+                                    <th style="width:70px; padding:0px ">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr v-for="(value, key) in list_vue">
-                                    <th class="text-center align-middle">@{{ key + 1 }}</th>
+                                    <th  class="text-center align-middle">@{{ key + 1 }}</th>
                                     <td class="text-center align-middle">@{{ value.email }}</td>
                                     <td class="text-center align-middle">@{{ value.tong_tien }}</td>
-                                    <td class="align-middle">@{{ value.tien_giam_gia }}</td>
-                                    <td class="text-center align-middle">@{{ value.thuc_tra }}</td>
+                                    {{-- <td class="align-middle">@{{ value.tien_giam_gia }}</td> --}}
+                                    {{-- <td class="text-center align-middle">@{{ value.thuc_tra }}</td> --}}
                                     <td class="text-center align-middle">@{{ value.nguoi_nhan }}</td>
                                     <td class="text-center align-middle">@{{ value.sdt }}</td>
                                     <td class="text-center align-middle">@{{ value.dia_chi }}</td>
+                                    <template v-if="value.loai_thanh_toan==0">
+                                        <td class="text-center align-middle">Thanh toán trực tiếp</td>
+                                    </template>
+                                    <template v-else>
+                                        <td class="text-center align-middle">vnpay</td>
+                                    </template>
                                     <td class="text-center align-middle">@{{ value.created_at }}</td>
                                     <td>
                                         <template>
@@ -91,6 +96,31 @@
                                 </tr>
                             </tbody>
                         </table>
+                        <nav style="margin-top: 3px" aria-label="Page navigation example">
+                            <ul class="pagination justify-content-center">
+                                <li class="page-item" >
+                                    <a class="page-link"  v-on:click="fetchDonHang(pagination.prev_page_url)" aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                        <span class="sr-only">Trang trước</span>
+                                    </a>
+                                </li>
+                                <template v-for="(value, key) in url">
+                                        {{-- <template v-if="key!=0 && key!=index">
+                                        </template> --}}
+                                    <li v-if="key!=0 && key!=index" class="page-item">
+                                        <a  class="page-link" v-on:click="fetchDonHang(value.url)">@{{value.label}}</a>
+                                    </li>
+                                </template>
+
+                                <li class="page-item" >
+
+                                    <a class="page-link"  v-on:click="fetchDonHang(pagination.next_page_url)" aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                        <span class="sr-only">Trang sau</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
                     </div>
                 </div>
             </div>

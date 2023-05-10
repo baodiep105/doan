@@ -14,6 +14,7 @@ class DanhGia extends Model
         'content',
         'rate',
         'email',
+        'children_content',
         'id_san_pham'
     ];
 }

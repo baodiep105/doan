@@ -37,12 +37,13 @@ class SanPhamController extends Controller
     }
     public function getData()
     {
-
         $danhSachSanPham=DB::table('san_phams')
                 ->join('danh_muc_san_phams','danh_muc_san_phams.id','=','san_phams.id_danh_muc')
+                ->leftJoin('khuyen_mai','san_phams.id','khuyen_mai.id_san_pham')
                 ->select('san_phams.*','danh_muc_san_phams.ten_danh_muc',)
+                ->selectRaw('round((san_phams.gia_ban-(khuyen_mai.ty_le * san_phams.gia_ban)/100),2) as gia_khuyen_mai')
                 ->orderBy('created_at','DESC')
-                ->get();
+                ->paginate(8);
         $danhSachDanhMuc = DanhMucSanPham::all();
         return response()->json([
             'danhSachSanPham'   => $danhSachSanPham,
@@ -53,7 +54,6 @@ class SanPhamController extends Controller
     {
         $sanPham = SanPham::create([
             'ten_san_pham'=>$request->ten_san_pham,
-            'slug_san_pham'=>Str::slug($request->ten_san_pham),
             'gia_ban'=>$request->gia_ban  ,
             'brand'=>$request->brand,
             'mo_ta_ngan'=>$request->mo_ta_ngan,

@@ -128,23 +128,23 @@
                                         <th class="text-nowrap text-center">@{{ key + 1 }}</th>
                                         <td>
                                             <img style="height: 50px;width:50px"
-                                            v-bind:src="'{{env('APP_URL')}}'+value.banner_1" alt="">
+                                            v-bind:src="value.banner_1" alt="">
                                         </td>
                                         <td>
                                             <img style="height: 50px;width:50px"
-                                                v-bind:src="'{{env('APP_URL')}}'+value.banner_2" alt="">
+                                                v-bind:src="value.banner_2" alt="">
                                         </td>
                                         <td>
                                             <img style="height: 50px;width:50px"
-                                                v-bind:src="'{{env('APP_URL')}}'+value.banner_3" alt="">
+                                                v-bind:src="value.banner_3" alt="">
                                         </td>
                                         <td>
                                             <img style="height: 50px;width:50px"
-                                                v-bind:src="'{{env('APP_URL')}}'+value.banner_4" alt="">
+                                                v-bind:src="value.banner_4" alt="">
                                         </td>
                                         <td>
                                             <img style="height: 50px;width:50px"
-                                                v-bind:src="'{{env('APP_URL')}}'+value.banner_5" alt="">
+                                                v-bind:src="value.banner_5" alt="">
                                         </td>
                                         <td>
                                             <template v-if="value.is_open==1">
@@ -173,6 +173,31 @@
                                 </template>
                             </tbody>
                         </table>
+                        <nav style="margin-top: 3px" aria-label="Page navigation example">
+                            <ul class="pagination justify-content-center">
+                                <li class="page-item" >
+                                    <a class="page-link"  v-on:click="fetchBanner(pagination.prev_page_url)" aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                        <span class="sr-only">Trang trước</span>
+                                    </a>
+                                </li>
+                                <template v-for="(value, key) in url">
+                                        {{-- <template v-if="key!=0 && key!=index">
+                                        </template> --}}
+                                    <li v-if="key!=0 && key!=index" class="page-item">
+                                        <a  class="page-link" v-on:click="fetchBanner(value.url)">@{{value.label}}</a>
+                                    </li>
+                                </template>
+
+                                <li class="page-item" >
+
+                                    <a class="page-link"  v-on:click="fetchBanner(pagination.next_page_url)" aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                        <span class="sr-only">Trang sau</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
                     </div>
                 </div>
             </div>

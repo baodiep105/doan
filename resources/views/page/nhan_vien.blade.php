@@ -122,6 +122,31 @@
                                         </tr>
                                     </tbody>
                                 </table>
+                                <nav style="margin-top: 3px" aria-label="Page navigation example">
+                                    <ul class="pagination justify-content-center">
+                                        <li class="page-item" >
+                                            <a class="page-link"  v-on:click="fetchEmployee(pagination.prev_page_url)" aria-label="Previous">
+                                                <span aria-hidden="true">&laquo;</span>
+                                                <span class="sr-only">Trang trước</span>
+                                            </a>
+                                        </li>
+                                        <template v-for="(value, key) in url">
+                                                {{-- <template v-if="key!=0 && key!=index">
+                                                </template> --}}
+                                            <li v-if="key!=0 && key!=index" class="page-item">
+                                                <a  class="page-link" v-on:click="fetchEmployee(value.url)">@{{value.label}}</a>
+                                            </li>
+                                        </template>
+
+                                        <li class="page-item" >
+
+                                            <a class="page-link"  v-on:click="fetchEmployee(pagination.next_page_url)" aria-label="Next">
+                                                <span aria-hidden="true">&raquo;</span>
+                                                <span class="sr-only">Trang sau</span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </nav>
                             </div>
                         </div>
                     </div>

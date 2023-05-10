@@ -14,7 +14,7 @@ class qluserController extends Controller
 
     public function getData()
     {
-        $user = User::where('id_loai', 2)->get();
+        $user = User::where('id_loai', 2)->paginate(6);
         return response()->json([
             'user' => $user,
         ]);
@@ -38,20 +38,19 @@ class qluserController extends Controller
     public function delete($id)
     {
         $user = User::find($id);
-        if ($user) {
-            $user->delete();
-            return response()->json(['status' => true]);
-        } else {
+        if (!$user) {
             return response()->json([
                 'status'  =>  false,
             ]);
+        } else {
+            $user->delete();
+            return response()->json(['status' => true]);
         }
     }
     public function search(Request $request)
     {
         // dd($request->search);
         $search=$request->search;
-        // dd($search); 
         if($search==""){
             $data=User::where('id_loai',2)->get();
         }else{
@@ -59,7 +58,6 @@ class qluserController extends Controller
             $query->where('username', 'like', '%' .$search. '%');
             $query->orWhere('email', 'like', '%' . $search . '%');
         })->get();
-        // dd($data);
         }
         return response()->json(['data' => $data]);
     }

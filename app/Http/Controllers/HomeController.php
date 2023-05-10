@@ -118,33 +118,6 @@ class HomeController extends Controller
             'yeuthich' => $yeuthich,
         ]);
     }
-
-    // public function test(){
-    //     session_start();
-    //     $a=new stdClass;
-    //     $a->email= "hoangthanhwork123@gmail.com";
-    //     $a->tong_tien= 81.26;
-    //     $a->thuc_tra= 81.26;
-    //     $a->tien_giam= 0;
-    //     $a->dia_chi= "Thành phố Hà Nội - Quận Hoàn Kiếm -  - 12343";
-    //     $a->nguoi_nhan= "Quang Nguyễn";
-    //     $a->sdt= "0772531816";
-    //     $a->ghi_chu= "rẻwe";
-    //     // dd($a);
-    //     // $cookie_name='a';
-    //     // $cookie_value='b';
-    //     // setcookie($cookie_name, $cookie_value, time() + (86400 * 30),'/');
-    //     // setcookie("asd","", time()-(86400 * 30));
-    //     // // setcookie('asd', 'adsasd', time() + (86400 * 30), "/");
-    //     //     // setcookie('bao','adsads',time()+ (86400 * 30));
-    //     // dd($_COOKIE);
-    //     // dd( Config::get('global_a.global'));
-    // }
-    // public function test_session(){
-    //     // session_start();
-    // //    dd($_SESSION['a']);
-    //    dd(Config::get('services.facebook'));
-    // }
     public function yeu()
     {
         $data = DB::table('san_pham_yeu_thich')->join('san_phams', 'san_pham_yeu_thich.id_san_pham', 'san_phams.id')
@@ -165,9 +138,6 @@ class HomeController extends Controller
                     break;
                 }
             }
-        // return response()->json([
-        //     'anh'=>$dat,
-        // ]);
         foreach ($data as $value) {
             $a=ChiTietSanPhamModel::where('id_sanpham',$value->id)->sum('sl_chi_tiet');
             $value->tinh_trang=($a==0)?0:1;

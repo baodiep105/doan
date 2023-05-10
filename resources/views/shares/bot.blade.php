@@ -41,4 +41,3 @@ $.widget.bridge('uibutton', $.ui.button)
 {{-- <script src="owlcarousel/owl.carousel.min.js"></script> --}}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-

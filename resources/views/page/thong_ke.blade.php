@@ -23,14 +23,9 @@
                             <div class="small-box bg-danger">
                                 <div class="inner">
                                     <h3>{{ $doanhThu }}$</h3>
-                                    <p>Doanh Thu</p>
+                                    <p>Doanh Số</p>
 
                                 </div>
-                                <div class="icon">
-                                    <i class="ion ion-person-add"></i>
-                                </div>
-                                <a href="#" class="small-box-footer">More info <i
-                                        class="fas fa-arrow-circle-right"></i></a>
                             </div>
                         </div>
                         <div class="owl-item col-8">
@@ -39,25 +34,18 @@
                                     <h3>{{ $khuyenMai }}/{{ $all }}</h3>
                                     <p>Sản phẩm dang khuyến mãi</p>
                                 </div>
-                                <div class="icon">
-                                    <i class="ion ion-person-add"></i>
-                                </div>
-                                <a href="#" class="small-box-footer">More info <i
-                                        class="fas fa-arrow-circle-right"></i></a>
                             </div>
                         </div>
                         <div class="owl-item col-8">
                             <div class="small-box bg-success">
                                 <div class="inner">
                                     <h3>{{ $tyLe }}%</h3>
-                                    <p>Sản Phẩm Bán chạy nhất:<b> {{ $sanPham[0]->ten_san_pham }}</b></p>
+                                    <p>Sản Phẩm Bán chạy nhất<br><b> {{ $sanPham[0]->ten_san_pham }}</b><br> </p>
                                     {{-- <p>{{$sanPham[0]->ten_san_pham}}</p> --}}
                                 </div>
                                 <div class="icon">
                                     <i class="ion ion-bag"></i>
                                 </div>
-                                <a href="#" class="small-box-footer">More info <i
-                                        class="fas fa-arrow-circle-right"></i></a>
                             </div>
                         </div>
                         <div class="owl-item col-8">
@@ -69,8 +57,19 @@
                                 <div class="icon">
                                     <i class="ion ion-bag"></i>
                                 </div>
-                                <a href="#" class="small-box-footer">More info <i
-                                        class="fas fa-arrow-circle-right"></i></a>
+                            </div>
+                        </div>
+                        <div class="owl-item col-8">
+                            <div class="small-box bg-success">
+                                <div class="inner">
+                                    <h3>{{ $tyLeDanhMuc }}%</h3>
+                                    <p>Danh mục bán chạy nhất
+                                       <br> <b> {{ $danhMuc[0]->ten_danh_muc }}</b><br>
+                                    </p>
+                                </div>
+                                <div class="icon">
+                                    <i class="ion ion-bag"></i>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -84,7 +83,7 @@
         <div class="col-md-9">
             <div class="card card-success " style="height: 616px;  ">
                 <div class="card-header">
-                    <h3 class="card-title">Doanh thu</h3>
+                    <h3 class="card-title">Doanh số</h3>
 
                     <div class="card-tools">
                         <button type="button" class="btn btn-tool" data-card-widget="collapse">

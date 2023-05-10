@@ -5,21 +5,68 @@
             list_vue                :   [],
             idDelete                :   0,
             inputSearch:'',
+            pagination: {},
+            url: [],
+            index: 0,
         },
 
         created(){
-            this.getData();
+            this.fetchUser();
         },
 
         methods         : {
+            fetchUser(page_url) {
+                page_url = page_url || "/admin/quan-ly-user/getData";
+                console.log(page_url);
+                let vm = this;
+                let meta = {};
+                let link = {};
+                axios
+                    .get(page_url)
+                    .then((res) => {
+                        this.list_vue           = res.data.user.data;
 
+                        this.url = res.data.user.links;
+                        link = {
+                            first_page_url: res.data.user.first_page_url,
+                            last_page_url: res.data.user.last_page_url,
+                            next_page_url: res.data.user.next_page_url,
+                            prev_page_ur: res.data.user.prev_page_url
+                        };
+                        // console.log(link)
+                        meta = {
+                            "current_page": res.data.user.current_page,
+                            "from": res.data.user.from,
+                            "last_page": res.data.user.last_page,
+                            "path": res.data.user.path,
+                            "to": res.data.user.to,
+                            "total": res.data.user.total,
+                        }
+                        this.index = this.url.length - 1;
+                        console.log(this.index);
+                        // console.log(this.danhSachSanPham);
+                        vm.paginate(link, meta);
+                    });
 
+            },
+            paginate(link, meta) {
+                // console.log()
+                let paginate = {
+                    current_page: meta.current_page,
+                    // "from": meta.from,
+                    last_page: meta.last_page,
+                    next_page_url: link.next_page_url,
+                    prev_page_url: link.prev_page_url
+                }
+                this.pagination = paginate;
+                // console.log(!);
+            },
             getData(){
                 axios
                     .get('/admin/quan-ly-user/getData')
                     .then((res) => {
-                        this.list_vue           = res.data.user;
-                        this.danh_muc_cha_vue   = res.data.danh_muc_cha;
+                        this.list_vue           = res.data.user.data;
+                        // this.danh_muc_cha_vue   = res.data.danh_muc_cha;
                     })
             },
 

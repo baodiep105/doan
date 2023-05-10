@@ -20,7 +20,7 @@ class NhanVienController extends Controller
 
     public function getData()
     {
-        $user = User::where('id_loai', 1)->orWhere('id_loai', 0)->get();
+        $user = User::where('id_loai', 1)->orWhere('id_loai', 0)->paginate(8);
         return response()->json([
             'user' => $user,
         ]);
@@ -83,26 +83,16 @@ class NhanVienController extends Controller
             'status' => 'error',
         ]);
     }
-    public function logout()
-    {
-        Auth::guard("web")->logout();
-        return response()->json([
-
-            'status'    => 1,
-            'message'   => 'User Logout',
-
-        ], 200);
-    }
     public function delete($id)
     {
         $user = User::find($id);
-        if ($user) {
-            $user->delete();
-            return response()->json(['status' => true]);
-        } else {
+        if (!$user) {
             return response()->json([
                 'status'  =>  false,
             ]);
+        } else {
+            $user->delete();
+            return response()->json(['status' => true]);
         }
     }
 
@@ -140,21 +130,6 @@ class NhanVienController extends Controller
             ]);
         }
     }
-
-    public function edit($id)
-    {
-
-        $san_pham = SanPham::find($id);
-        if ($san_pham) {
-            return response()->json([
-                'status'  =>  true,
-                'san_pham' => $san_pham,
-            ]);
-        } else {
-            toastr()->error("Danh mục không tồn tại!");
-            return redirect()->back();
-        }
-    }
     public function search(Request $request)
     {
         if ($request->all() == null) {
@@ -165,12 +140,4 @@ class NhanVienController extends Controller
 
         return response()->json(['data' => $data]);
     }
-
-    public function check(){
-
-            return response()->json([
-                // 'status'=>'true',
-                'role'=>auth()->user(),
-            ]);
-        }
 }

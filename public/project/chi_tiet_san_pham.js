@@ -18,10 +18,13 @@ new Vue({
         id_size_edit     :0,
         sl_edit          :0,
         trang_thai_edit  :1,
+        pagination: {},
+        url:[],
+        index:0,
     },
 
     created(){
-        this.getData();
+        this.fetchCustomers();
     },
 
     methods         : {
@@ -50,7 +53,54 @@ new Vue({
                     });
                 });
         },
+        fetchCustomers(page_url) {
+            page_url = page_url || "/admin/chi-tiet-san-pham/getData";
+            console.log(page_url);
+            let vm = this;
+            let meta = {};
+            let link = {};
+            axios
+                .get(page_url)
+                .then((res) => {
+                    this.danh_sach_san_pham = res.data.danh_sach_san_pham;
+                    this.danh_sach_mau      = res.data.danh_sach_mau;
+                    this.danh_sach_size     = res.data.danh_sach_size;
+                    this.danh_sach_chi_tiet = res.data.ds_chi_tiet_san_pham.data;
+                    this.url=res.data.ds_chi_tiet_san_pham.links;
+                    link = {
+                        first_page_url: res.data.ds_chi_tiet_san_pham.first_page_url,
+                        last_page_url: res.data.ds_chi_tiet_san_pham.last_page_url,
+                        next_page_url: res.data.ds_chi_tiet_san_pham.next_page_url,
+                        prev_page_ur: res.data.ds_chi_tiet_san_pham.prev_page_url
+                    };
+                    // console.log(link)
+                    meta = {
+                        "current_page": res.data.ds_chi_tiet_san_pham.current_page,
+                        "from": res.data.ds_chi_tiet_san_pham.from,
+                        "last_page": res.data.ds_chi_tiet_san_pham.last_page,
+                        "path": res.data.ds_chi_tiet_san_pham.path,
+                        "to": res.data.ds_chi_tiet_san_pham.to,
+                        "total": res.data.ds_chi_tiet_san_pham.total,
+                    }
+                    this.index=this.url.length-1;
+                    // console.log(this.index);
+                    // console.log(this.danhSachSanPham);
+                    vm.paginate(link, meta);
+                });
 
+        },
+        paginate(link, meta) {
+            // console.log()
+            let paginate = {
+                current_page: meta.current_page,
+                // "from": meta.from,
+                last_page: meta.last_page,
+                next_page_url:link.next_page_url ,
+                prev_page_url:link.prev_page_url
+            }
+            this.pagination = paginate;
+            // console.log(!);
+        },
         getData(){
             axios
                 .get('/admin/chi-tiet-san-pham/getData')

@@ -3,7 +3,7 @@
     <h1>Quản lý ảnh</h1>
 @endsection
 @section('content')
-  @include('page.ql_anh')
+    @include('page.ql_anh')
 @endsection
 @section('js')
     <script src="/vendor/laravel-filemanager/js/lfm.js"></script>
@@ -16,22 +16,73 @@
             data: {
                 danhSachSanPham: [],
                 danhSachDanhMuc: [],
-                id_delete:0,
+                id_delete: 0,
                 inputSearch: '',
                 idEdit: 0,
                 ds_anh: [],
-                anh:'',
-                hinh_anh_edit:'',
-                id_san_pham_edit:0,
+                anh: '',
+                hinh_anh_edit: '',
+                id_san_pham_edit: 0,
                 add: {
                     hinh_anh: '',
                     id_san_pham: 0,
-                }
+                },
+                pagination: {},
+                url: [],
+                index: 0,
             },
             created() {
-                this.loadData();
+                this.fetchCustomers();
             },
             methods: {
+                fetchCustomers(page_url) {
+                    page_url = page_url || "/admin/quan-ly-anh/getData";
+                    // console.log("/admin/san-pham/getData");
+                    let vm = this;
+                    let meta = {};
+                    let link = {};
+                    axios
+                        .get(page_url)
+                        .then((res) => {
+                            console.log(res.data);
+                            this.danhSachSanPham = res.data.data;
+                            // this.danhSachDanhMuc = res.data.danhSachDanhMuc;
+                            this.ds_anh = res.data.sanPham.data;
+                            this.url = res.data.sanPham.links;
+                            link = {
+                                first_page_url: res.data.sanPham.first_page_url,
+                                last_page_url: res.data.sanPham.last_page_url,
+                                next_page_url: res.data.sanPham.next_page_url,
+                                prev_page_ur: res.data.sanPham.prev_page_url
+                            };
+                            // console.log(link)
+                            meta = {
+                                "current_page": res.data.sanPham.current_page,
+                                "from": res.data.sanPham.from,
+                                "last_page": res.data.sanPham.last_page,
+                                "path": res.data.sanPham.path,
+                                "to": res.data.sanPham.to,
+                                "total": res.data.sanPham.total,
+                            }
+                            this.index = this.url.length - 1;
+                            console.log(this.index);
+                            // console.log(this.danhSachSanPham);
+                            vm.paginate(link, meta);
+                        });
+
+                },
+                paginate(link, meta) {
+                    // console.log()
+                    let paginate = {
+                        current_page: meta.current_page,
+                        // "from": meta.from,
+                        last_page: meta.last_page,
+                        next_page_url: link.next_page_url,
+                        prev_page_url: link.prev_page_url
+                    }
+                    this.pagination = paginate;
+                    console.log(this.pagination);
+                },
                 create(e) {
                     e.preventDefault();
                     this.add.hinh_anh = $("#hinh_anh").val();
@@ -65,14 +116,22 @@
                             }
                         })
                 },
-                loadData() {
+                getData() {
                     axios
                         .get('/admin/quan-ly-anh/getData')
                         .then((res) => {
                             this.danhSachSanPham = res.data.data;
                             this.ds_anh = res.data.sanPham;
-                        });
+                        })
                 },
+                // loadData() {
+                //     axios
+                //         .get('/admin/quan-ly-anh/getData')
+                //         .then((res) => {
+                //             this.danhSachSanPham = res.data.data;
+                //             this.ds_anh = res.data.sanPham;
+                //         });
+                // },
 
                 search() {
                     var payload = {
@@ -86,7 +145,7 @@
                 },
 
                 editDanhMuc(id) {
-                    this.idEdit=id;
+                    this.idEdit = id;
                     axios
                         .get('/admin/quan-ly-anh/edit/' + id)
                         .then((res) => {
@@ -101,11 +160,11 @@
                 },
 
                 acceptUpdate() {
-                    this.anh=$("#hinh_anh_edit").val();
+                    this.anh = $("#hinh_anh_edit").val();
                     var payload = {
                         'id': this.idEdit,
                         'id_san_pham': this.id_san_pham_edit,
-                        'hinh_anh':this.anh,
+                        'hinh_anh': this.anh,
                     };
                     axios
                         .post('/admin/quan-ly-anh/update', payload)

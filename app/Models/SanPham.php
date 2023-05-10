@@ -13,7 +13,6 @@ class SanPham extends Model
 
     protected $fillable=[
         'ten_san_pham',
-        'slug_san_pham',
         'gia_ban',
         'gia_khuyen_mai',
         'brand',

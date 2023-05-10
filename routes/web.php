@@ -36,7 +36,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/redirect', function(){
     return Socialite::driver('google')->redirect();
 });
-Route::get('/check-cookie',[loginController::class,'check']);
+// Route::get('/check-cookie',[loginController::class,'check']);
 Route::middleware('auth:sanctum')->group(function(){
     Route::get('/auth/me',[UserController::class,'getme']);
     Route::get('/logout',[loginController::class,'logout']);
@@ -138,7 +138,6 @@ Route::middleware('all')->prefix('/admin')->group( function () {
         Route::post('/update', [NhanVienController::class, 'update']);
         Route::delete('/delete/{id}', [NhanVienController::class, 'delete']);
         Route::post('/search', [NhanVienController::class, 'search']);
-        // Route::post('/login', [NhanVienController::class, 'login']);
 
     });
     Route::group(['prefix' => '/quan-ly-anh'], function () {
@@ -185,7 +184,10 @@ Route::middleware('all')->prefix('/admin')->group( function () {
     Route::group(['prefix' => '/quan-ly-danh-gia'], function () {
 
         Route::get('/getData', [DanhGiaController::class, 'getData']);
+        Route::get('/get-danh-gia/{id}', [DanhGiaController::class, 'getDanhGia']);
+        Route::put('/reply/{id}', [DanhGiaController::class, 'reply']);
         Route::delete('/delete/{id}', [DanhGiaController::class, 'delete']);
+
     });
     Route::middleware('admin')->prefix('/thong-ke')->group( function () {
         // Route::get('/index', [thongKeController::class,'index']);
@@ -197,17 +199,4 @@ Route::middleware('all')->prefix('/admin')->group( function () {
     });
     Route::get('/active/{hash}', [UserController::class, 'active']);
 });
-// Route::get('/active/{id}', function ($id) {
-//     return $id;
-// });
-// Route::middleware('auth:sanctum')->group(function () {
-//     Route::get('/check', [NhanVienController::class, 'check']);
-// });
 
-// Route::get('/thong-ke',function(){
-//     return view('admin.thong_ke');
-// });
-
-// Route::group(['prefix' => 'laravel-filemanager'], function () {
-//     \UniSharp\LaravelFilemanager\Lfm::routes();
-// });

@@ -137,45 +137,5 @@ class SearchController extends Controller
             'data' => $data,
         ]);
     }
-    public function locSanPham(Request $request)
-    {
-        //     if ($request->mau == null && $size == null) {
-        //         $data = DB::table('san_phams')->paginate(8);
-
-        //         return response()->json([
-        //             'status' => true,
-        //             'data' =>  $data,
-        //         ]);
-        //     } else if ($request->mau == null) {
-        //         $data = DB::table('chi_tiet_san_pham')->join('mau_sac', 'chi_tiet_san_pham.id_mau', 'mau_sac.id')
-        //             ->join('san_phams', 'chi_tiet_san_pham.id_sanpham', 'san_phams.id')
-        //             ->where('chi_tiet_san_pham.id_size', $size)
-        //             ->select('san_phams.*')->paginate(8);
-        //         return response()->json([
-        //             'status' => true,
-        //             'data' =>  $data,
-        //         ]);
-        //     } else if ($size == null) {
-        //         $data = DB::table('chi_tiet_san_pham')
-        //             ->join('san_phams', 'chi_tiet_san_pham.id_sanpham', 'san_phams.id')
-        //             ->Where('chi_tiet_san_pham.id_mau', $request->mau)
-        //             ->select('san_phams.*')->paginate(8);
-        //         return response()->json([
-        //             'status' => true,
-        //             'data' =>  $data,
-        //         ]);
-        //     } else if ($size == null) {
-        //         $data = DB::table('chi_tiet_san_pham')
-        //             ->join('san_phams', 'chi_tiet_san_pham.id_sanpham', 'san_phams.id')
-        //             ->Where('chi_tiet_san_pham.id_size',  $size)
-        //             ->Where('chi_tiet_san_pham.id_mau',  $request->mau)
-        //             ->select('san_phams.*')->paginate(8);
-        //         return response()->json([
-        //             'status' => true,
-        //             'data' =>  $data,
-        //         ]);
-        //     }
-
-
-    }
+    
 }

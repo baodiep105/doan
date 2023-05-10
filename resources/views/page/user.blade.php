@@ -20,49 +20,74 @@
                             </div>
                         </div>
                     </div>
-                    <div class="table-responsive">
-                        <table class="table table-bordered mb-0">
-                            <thead>
-                                <tr class="text-center">
-                                    <th>#</th>
-                                    <th>User name </th>
-                                    <th>Email</th>
-                                    <th>Họ Và tên</th>
-                                    <th>Số Điện Thoại</th>
-                                    <th>Địa Chỉ</th>
-                                    <th>Ngày Tạo</th>
-                                    <th>Tình Trạng</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr v-for="(value, key) in list_vue">
-                                    <th class="text-center align-middle">@{{ key + 1 }}</th>
-                                    <td class="text-center align-middle">@{{ value.username }}</td>
-                                    <td class="text-center align-middle">@{{ value.email }}</td>
-                                    <td class="align-middle">@{{ value.ho_lot }} @{{ value.ten }}</td>
-                                    <td class="text-center align-middle">@{{ value.sdt }}</td>
-                                    <td class="text-center align-middle">@{{ value.dia_chi }}</td>
-                                    <td class="text-center align-middle">@{{ value.created_at }}</td>
-                                    <td>
-                                        <template v-if="value.is_block==1">
-                                            <button v-on:click="doiTrangThai(value.id)" class="btn btn-primary">hiển
-                                                thị</button>
-                                        </template>
-                                        <template v-else>
-                                            <button v-on:click="doiTrangThai(value.id)" class="btn btn-danger">tạm
-                                                tắt</button>
-                                        </template>
-                                    </td>
-                                    <td class="text-center">
-                                        <a href="" data-toggle="modal" data-target="#deleteModal"
-                                            v-on:click="deleteDanhMuc(value.id)"><i class="far fa-trash-alt"></i></a>
-                                        {{-- <button class="btn btn-danger" data-toggle="modal" data-target="#deleteModal" v-on:click="deleteDanhMuc(value.id)">Delete</button> --}}
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                    <table class="table table-bordered mb-0" style="width: 100%;">
+                        <thead>
+                            <tr class="text-center">
+                                <th>#</th>
+                                <th>User name </th>
+                                <th style="width: 5px;">Email</th>
+                                {{-- <th>Họ Và tên</th> --}}
+                                <th>Số Điện Thoại</th>
+                                <th>Địa Chỉ</th>
+                                <th>Ngày Tạo</th>
+                                <th>Tình Trạng</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="(value, key) in list_vue">
+                                <th class="text-center align-middle">@{{ key + 1 }}</th>
+                                <td class="text-center align-middle">@{{ value.username }}</td>
+                                <td class="text-center align-middle" >@{{value.email}}</td>
+                                {{-- <td class="align-middle">@{{ value.ho_lot }} @{{ value.ten }}</td> --}}
+                                <td class="text-center align-middle">@{{ value.sdt }}</td>
+                                <td class="text-center align-middle" style="width: 0em" >@{{ value.dia_chi }} </td>
+                                <td class="text-center align-middle">@{{ value.created_at }}</td>
+                                <td>
+                                    <template v-if="value.is_block==1">
+                                        <button v-on:click="doiTrangThai(value.id)" class="btn btn-primary">hiển
+                                            thị</button>
+                                    </template>
+                                    <template v-else>
+                                        <button v-on:click="doiTrangThai(value.id)" class="btn btn-danger">tạm
+                                            tắt</button>
+                                    </template>
+                                </td>
+                                <td class="text-center">
+                                    <a href="" data-toggle="modal" data-target="#deleteModal"
+                                        v-on:click="deleteDanhMuc(value.id)"><i class="far fa-trash-alt"></i></a>
+                                    {{-- <button class="btn btn-danger" data-toggle="modal" data-target="#deleteModal" v-on:click="deleteDanhMuc(value.id)">Delete</button> --}}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <nav style="margin-top: 3px" aria-label="Page navigation example">
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item" >
+                                <a class="page-link"  v-on:click="fetchUser(pagination.prev_page_url)" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                    <span class="sr-only">Trang trước</span>
+                                </a>
+                            </li>
+                            <template v-for="(value, key) in url">
+                                    {{-- <template v-if="key!=0 && key!=index">
+                                    </template> --}}
+                                <li v-if="key!=0 && key!=index" class="page-item">
+                                    <a  class="page-link" v-on:click="fetchUser(value.url)">@{{value.label}}</a>
+                                </li>
+                            </template>
+
+                            <li class="page-item" >
+
+                                <a class="page-link"  v-on:click="fetchUser(pagination.next_page_url)" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                    <span class="sr-only">Trang sau</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                    {{-- <div class="table">
+                    </div> --}}
                 </div>
             </div>
         </div>

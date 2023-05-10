@@ -1,6 +1,6 @@
 <div id="app">
-    <div class="row mt-2 ml-2">
-        <div class="col-md-4">
+    <div class="row justify-content-end mt-2 ml-2">
+        <div class="col-md-5">
             <div class="input-group mb-2 ">
                 <input type="text" v-model="inputSearch" class="form-control" placeholder="search"
                     aria-label="Nhập danh mục cần tìm" aria-describedby="button-addon2">
@@ -90,8 +90,8 @@
                     <div class="card">
                         <div class="card-header">
                             <div class="row">
-                                <div class="col-md-4">
-                                    <h4 class="card-title">Danh sách chi tiết sản phẩm</h4>
+                                <div class="col-md-6">
+                                    <p class="card-title">Danh sách chi tiết sản phẩm</p>
                                 </div>
                             </div>
 
@@ -140,6 +140,31 @@
                                         </tr>
                                     </tbody>
                                 </table>
+                                <nav style="margin-top: 5px" aria-label="Page navigation example">
+                                    <ul class="pagination justify-content-center">
+                                        <li class="page-item" >
+                                            <a class="page-link"  v-on:click="fetchCustomers(pagination.prev_page_url)" aria-label="Previous">
+                                                <span aria-hidden="true">&laquo;</span>
+                                                <span class="sr-only">Trang trước</span>
+                                            </a>
+                                        </li>
+                                        <template v-for="(value, key) in url">
+                                                {{-- <template v-if="key!=0 && key!=index">
+                                                </template> --}}
+                                            <li v-if="key!=0 && key!=index" class="page-item">
+                                                <a  class="page-link" v-on:click="fetchCustomers(value.url)">@{{value.label}}</a>
+                                            </li>
+                                        </template>
+
+                                        <li class="page-item" >
+
+                                            <a class="page-link"  v-on:click="fetchCustomers(pagination.next_page_url)" aria-label="Next">
+                                                <span aria-hidden="true">&raquo;</span>
+                                                <span class="sr-only">Trang sau</span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </nav>
                             </div>
                         </div>
                     </div>

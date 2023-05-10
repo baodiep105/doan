@@ -29,7 +29,7 @@ class DonHangController extends Controller
         $donhang = DB::table('don_hangs')
             ->leftjoin('users', 'don_hangs.email', 'users.email')
             ->select('don_hangs.*', 'users.username')
-            ->get();
+            ->paginate(8);
 
         return response()->json([
             'donhang' => $donhang,
@@ -45,25 +45,28 @@ class DonHangController extends Controller
     public function changeStatus($id, Request $request)
     {
         $donhang = DonHang::find($id);
-        if ($donhang) {
+        if (!$donhang) {
             $donhang->status = $request->value;
             $donhang->save();
             return response()->json(['status' => true]);
         }
+        return response()->json([
+            'status' => false
+        ]);
     }
 
     public function delete($id)
     {
         $donHang = DonHang::find($id);
 
-        if ($donHang) {
-            $donHang->delete();
-            $chiTietDonHang = ChiTietDonHang::where('don_hang_id', $id)->delete();
-            return response()->json(['status' => true]);
-        } else {
+        if (!$donHang) {
             return response()->json([
                 'status'  =>  false,
             ]);
+        } else {
+            $donHang->delete();
+            $chiTietDonHang = ChiTietDonHang::where('don_hang_id', $id)->delete();
+            return response()->json(['status' => true]);
         }
     }
 
