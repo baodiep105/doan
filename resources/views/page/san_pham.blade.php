@@ -24,7 +24,7 @@
                                     <div class="col-md-4">
                                         <fieldset class="form-group">
                                             <label>Giá Bán</label>
-                                            <input v-model="sanPhamCreate.gia_ban" type="number" class="form-control"
+                                            <input v-model="sanPhamCreate.gia_ban" type="number" min="1" class="form-control"
                                                 placeholder="Nhập vào giá bán">
                                         </fieldset>
                                     </div>

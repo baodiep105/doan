@@ -25,11 +25,11 @@
                             <tr class="text-center">
                                 <th>#</th>
                                 <th>User name </th>
-                                <th style="width: 5px;">Email</th>
+                                <th style="width:120px">Email</th>
                                 {{-- <th>Họ Và tên</th> --}}
                                 <th>Số Điện Thoại</th>
-                                <th>Địa Chỉ</th>
-                                <th>Ngày Tạo</th>
+                                <th style="width:450px">Địa Chỉ</th>
+                                <th style="width:100px">Ngày Tạo</th>
                                 <th>Tình Trạng</th>
                                 <th>Action</th>
                             </tr>

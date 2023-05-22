@@ -93,7 +93,7 @@
                                                     class="far fa-trash-alt"></i></a>
                                             {{-- <button class="btn btn-primary" data-toggle="modal"
                                                 data-target="#editModal"
-                                                v-on:click="editDanhMuc(value.id)">Edit</button>
+                                                v-on:click="editAnh(value.id)">Edit</button>
                                             <button class="btn btn-danger" data-toggle="modal"
                                                 data-target="#deleteModal"
                                                 v-on:click="deleteAnh(value.id)">Delete</button> --}}
@@ -197,7 +197,7 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     <button type="button" class="btn btn-success" data-dismiss="modal"
-                        v-on:click="acceptUpdate()">Cập Nhật Danh Mục</button>
+                        v-on:click="acceptUpdate()">Cập Nhật Ảnh</button>
                 </div>
             </div>
         </div>

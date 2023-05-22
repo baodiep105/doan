@@ -39,6 +39,7 @@
                                     <th>Email</th>
                                     <th>Nội dung</th>
                                     <th>sao</th>
+                                    <th>sản phẩm</th>
                                     <th>Ngày Đăng</th>
                                     <th>Action</th>
                                 </tr>
@@ -49,44 +50,21 @@
                                     <td class="text-center align-middle">@{{ value.email }}</td>
                                     <td class="text-center align-middle">@{{ value.content }}</td>
                                     <td class="text-center align-middle">@{{ value.rate }}</td>
+                                    <td class="text-center align-middle">@{{ value.ten_san_pham }}</td>
                                     <td class="text-center align-middle"> @{{ value.created_at }}</td>
                                     <td class="text-center">
                                         <a href=""data-toggle="modal" data-target="#deleteModal"
                                             v-on:click="deleteDanhMuc(value.id)"><i class="far fa-trash-alt"></i></a>
                                         {{-- <button class="btn btn-danger" data-toggle="modal" data-target="#deleteModal" v-on:click="deleteDanhMuc(value.id)">Delete</button> --}}
                                         <a href=""data-toggle="modal" data-target="#replyModel"
-                                            v-on:click="getDanhGia(value.id)"><i class="far fa-trash-alt"></i></a>
+                                            v-on:click="getDanhGia(value.id)" style="margin-left: 5px"><i class="fas fa-comment-dots"></i></a>
                                         {{-- <button class="btn btn-danger" data-toggle="modal" data-target="#deleteModal" v-on:click="deleteDanhMuc(value.id)">Delete</button> --}}
                                     </td>
 
                                 </tr>
                             </tbody>
                         </table>
-                        <nav style="margin-top: 3px" aria-label="Page navigation example">
-                            <ul class="pagination justify-content-center">
-                                <li class="page-item" >
-                                    <a class="page-link"  v-on:click="fetchCustomers(pagination.prev_page_url)" aria-label="Previous">
-                                        <span aria-hidden="true">&laquo;</span>
-                                        <span class="sr-only">Trang trước</span>
-                                    </a>
-                                </li>
-                                <template v-for="(value, key) in url">
-                                        {{-- <template v-if="key!=0 && key!=index">
-                                        </template> --}}
-                                    <li v-if="key!=0 && key!=index" class="page-item">
-                                        <a  class="page-link" v-on:click="fetchCustomers(value.url)">@{{value.label}}</a>
-                                    </li>
-                                </template>
 
-                                <li class="page-item" >
-
-                                    <a class="page-link"  v-on:click="fetchCustomers(pagination.next_page_url)" aria-label="Next">
-                                        <span aria-hidden="true">&raquo;</span>
-                                        <span class="sr-only">Trang sau</span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </nav>
                     </div>
                 </div>
             </div>
@@ -141,7 +119,7 @@
                     <div class="row">
                         <div class="col row justify-content-end">
                             <template v-if="child_content!=null">
-                                <a v-on:click="updateReply()"style="margin-right: 5px"><i class="fa-regular fa-pen-fancy"></i></a>
+                                <a  v-show="value"id='update' class='update' v-on:click="updateReply()"style="margin-right: 5px" ><i class="far fa-edit"></i></a>
                             </template>
                             <p style="font-size: 15px"> @{{ child_content }}</p>
                         </div>
@@ -152,7 +130,7 @@
                         <input type="text" v-model="reply" class="form-control" placeholder="Recipient's username"
                             aria-label="Recipient's username" aria-describedby="button-addon2">
                         <button class="btn btn-outline-secondary" v-on:click="replyDanhGia()" type="button"
-                            id="button-addon2">Button</button>
+                            id="button-addon2">Trả lời</button>
                     </div>
 
                 </div>

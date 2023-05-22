@@ -61,7 +61,7 @@
                                     <div class="form-group col-12">
                                         <label>Số lượng</label>
                                         <input v-model="sl" type="number" class="form-control"
-                                            placeholder="Nhập vào ten sản phẩm">
+                                            placeholder="nhập vào số lượng" min="1">
                                     </div>
                                 </div>
 

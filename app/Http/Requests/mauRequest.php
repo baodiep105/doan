@@ -33,7 +33,7 @@ class mauRequest extends FormRequest
             'exists'        =>  ':attribute không tồn tại',
             'boolean'       =>  ':attribute chỉ được chọn True/False',
             'unique'        =>  ':attribute đã tồn tại',
-            'regex'         =>  ':attribute phải bắt đầu bằng #',
+            'regex'         =>  ':attribute không đúng định dạng',
         ];
     }
 

@@ -69,7 +69,7 @@
                         <div class="card-header">
                             <div class="row">
                                 <div class="col-md-4">
-                                    <h4 class="card-title">Danh sách nhan vien</h4>
+                                    <h4 class="card-title">Danh sách khuyến mãi</h4>
                                 </div>
                             </div>
 
@@ -156,7 +156,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Xóa tài khoản</h5>
+                    <h5 class="modal-title">Xóa khuyến mãi</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -177,7 +177,7 @@
         <div class="modal-dialog modal-fullscreen-sm-down">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Chỉnh sửa nhân viên</h5>
+                    <h5 class="modal-title">Chỉnh sửa khuyến mãi</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -201,7 +201,7 @@
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label for="userinput1">Tỷ lệ khuyến mãi</label>
-                                    <input type="number" v-model='update.ty_le_edit'class="form-control"
+                                    <input type="number" min="1" max="100" v-model='update.ty_le_edit'class="form-control"
                                         v-model="re_password" name="ten_danh_muc">
                                 </div>
                             </div>

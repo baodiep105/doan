@@ -99,7 +99,7 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Xóa Danh Mục Sản Phẩm</h5>
+                        <h5 class="modal-title">Xóa Sản Phẩm</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -112,7 +112,7 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                         <button type="button" class="btn btn-danger" data-dismiss="modal"
-                            v-on:click="acceptDelete()">Xóa Danh Mục</button>
+                            v-on:click="acceptDelete()">Xóa </button>
                     </div>
                 </div>
             </div>

@@ -20,7 +20,7 @@ new Vue({
         url:[],
         index:0,
         link:'',
-        
+
     },
     created() {
         // this.loadData();
@@ -94,8 +94,8 @@ new Vue({
                 .get('/admin/san-pham/delete/' + this.id_delete)
                 .then((res) => {
                     if (res.data.status) {
-                        toastr.success('Đã xóa sản thành công');
-                       this.fetchCustomers( this.link);
+                        toastr.success('Đã xóa sản phẩm thành công');
+                       this.fetchCustomers(this.link);
                     } else {
                         toastr.error('sản phẩm tồn tại');
                     }
@@ -117,7 +117,7 @@ new Vue({
                         this.id_danh_muc_edit = res.data.san_pham.id_danh_muc;
                         this.trang_thai_edit = Number(res.data.san_pham.is_open);
                     } else {
-                        toastr.error('Danh mục không tồn tại');
+                        toastr.error('Sản phẩm không tồn tại');
                     }
                 })
         },
@@ -142,7 +142,7 @@ new Vue({
                 .then((res) => {
                     console.log(res);
                    this.fetchCustomers( this.link);
-                    toastr.success('Cập thành công danh mục!');
+                    toastr.success('Cập sản phẩm thành công!');
 
                 })
                 .catch((res) => {

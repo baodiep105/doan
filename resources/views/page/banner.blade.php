@@ -229,7 +229,7 @@
         <div class="modal-dialog modal-fullscreen-sm-down">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Chỉnh Sửa Ảnh</h5>
+                    <h5 class="modal-title">Chỉnh Sửa Banner</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -320,7 +320,7 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     <button type="button" class="btn btn-success" data-dismiss="modal"
-                        v-on:click="acceptUpdate()">Cập Nhật Danh Mục</button>
+                        v-on:click="acceptUpdate()">Cập Nhật Banner</button>
                 </div>
             </div>
         </div>

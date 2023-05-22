@@ -40,7 +40,7 @@ Route::middleware('cors')->group(function () {
         Route::post('/auth/danh-gia/{id}', [UserController::class, 'danhgiaUser']);
         Route::put('/auth/update-profile', [UserController::class, 'UpdateProfile']);
         Route::get('/auth/lich-su-don-hang', [lich_su_mua_hangController::class, 'getData']);
-        Route::post('/auth/don-hang', [UserController::class, 'DonHang']);
+        Route::post('/auth/don-hang/{type}', [UserController::class, 'DonHang']);
         Route::get('/check', [NhanVienController::class, 'check']);
     });
 
@@ -51,16 +51,16 @@ Route::middleware('cors')->group(function () {
     Route::post('/forget-password', [UserController::class, 'forget_password']);
     Route::post('/confirm', [UserController::class, 'xac_nhan']);
     Route::post('/reset-password', [UserController::class, 'reset_password']);
-    Route::post('/login',[loginController::class,'login']);
+    // Route::post('/login',[loginController::class,'login']);
     Route::post('/redirect-google/login',[UserController::class,'google_login']);
 
-    Route::get('/test',function(){
-        $sanpham = DB::table( 'san_phams' )->leftJoin( 'khuyen_mai', 'san_phams.id', 'khuyen_mai.id_san_pham' )
-        ->where( 'san_phams.is_open', 1 )->where( 'brand', 'nike' )->whereBetween( 'gia_ban', [ 500, 1000 ] )->select( 'san_phams.*' )->paginate( 8 );
-        return response()->json([
-            'data'=>$sanpham
-        ]);
-    });
+    // Route::get('/test',function(){
+    //     $sanpham = DB::table( 'san_phams' )->leftJoin( 'khuyen_mai', 'san_phams.id', 'khuyen_mai.id_san_pham' )
+    //     ->where( 'san_phams.is_open', 1 )->where( 'brand', 'nike' )->whereBetween( 'gia_ban', [ 500, 1000 ] )->select( 'san_phams.*' )->paginate( 8 );
+    //     return response()->json([
+    //         'data'=>$sanpham
+    //     ]);
+    // });
 
 
 
@@ -69,7 +69,7 @@ Route::middleware('cors')->group(function () {
         Route::get('/product', [HomeController::class, 'product']);
         Route::get('/category', [HomeController::class, 'danhMuc']);
         Route::get('/banner', [HomeController::class, 'banner']);
-        Route::get('/danh-muc/{id}', [filterController::class, 'danhmuc']);
+        // Route::get('/danh-muc/{id}', [filterController::class, 'danhmuc']);
     });
     Route::group(['prefix' => 'search'], function () {
         Route::get('/data',[SearchController::class,'dataProduct']);
@@ -85,15 +85,16 @@ Route::middleware('cors')->group(function () {
         Route::get('/product/{id}', [detailController::class, 'detail']);
         Route::post('/danh-gia/{id}', [detailController::class, 'danhGia']);
         Route::get('/danh-gia/data/{id}', [detailController::class, 'listDanhGia']);
-        Route::post('/add-cart', [detailController::class, 'addCart']);
+        // Route::post('/add-cart', [detailController::class, 'addCart']);
     });
     Route::group(['prefix' => 'don-hang'], function () {
-        Route::post('/create/{type}', [add_cartController::class, 'DonHang']);
+        Route::post('/create/vnpay', [add_cartController::class, 'DonHang']);
         Route::get('/lich-su-don-hang', [add_cartController::class, 'LichSuDonHang']);
         Route::get('/lich-su-mua-hang/detail/{id}', [add_cartController::class, 'detail']);
     });
     Route::post('/login', [NhanVienController::class, 'login']);
-    Route::get('/payment/{type}', [add_cartController::class, 'payment']);
-    Route::get('/payment', [add_cartController::class, 'vnpay']);
+    Route::get('/home/best-sell',[HomeController::class, 'BestSell']);
+    // Route::get('/payment', [add_cartController::class, 'vnpay']);
     Route::post('vnpay/return', [add_cartController::class, 'ReturnURL']);
+
 });

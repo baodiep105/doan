@@ -14,7 +14,8 @@ class qluserController extends Controller
 
     public function getData()
     {
-        $user = User::where('id_loai', 2)->paginate(6);
+        $user = User::where('id_loai', 2)->orderBy('created_at','DESC')
+        ->paginate(6);
         return response()->json([
             'user' => $user,
         ]);
@@ -52,12 +53,12 @@ class qluserController extends Controller
         // dd($request->search);
         $search=$request->search;
         if($search==""){
-            $data=User::where('id_loai',2)->get();
+            $data=User::where('id_loai',2)->orderBy('created_at','DESC')->get();
         }else{
         $data = User::where('id_loai', 2)->where(function ($query) use($search){
             $query->where('username', 'like', '%' .$search. '%');
             $query->orWhere('email', 'like', '%' . $search . '%');
-        })->get();
+        })->orderBy('created_at','DESC')->get();
         }
         return response()->json(['data' => $data]);
     }

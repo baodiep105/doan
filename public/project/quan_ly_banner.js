@@ -91,9 +91,9 @@ new Vue({
                     this.fetchBanner( this.link);
                 })
                 .catch((res) => {
-                    var errors = res.response.data.errors;
-                    $.each(errors, function (k, v) {
-                        toastr.error([0]);
+                    var danh_sach_loi = res.response.data.errors;
+                    $.each(danh_sach_loi, function (key, value) {
+                        toastr.error(value[0]);
                     });
                 });
 
@@ -144,7 +144,7 @@ new Vue({
                         toastr.success('Đã xóa banner thành công');
                         this.fetchBanner( this.link);
                     } else {
-                        toastr.error('Danh mục không tồn tại');
+                        toastr.error('Banner không tồn tại');
                     }
                 })
         },
@@ -162,7 +162,7 @@ new Vue({
                         this.update.hinh_anh_4_edit = res.data.banner.banner_4;
                         this.update.hinh_anh_5_edit = res.data.banner.banner_5;
                     } else {
-                        toastr.error('Danh mục không tồn tại');
+                        toastr.error('Banner không tồn tại');
                     }
                 })
 
@@ -184,7 +184,7 @@ new Vue({
                         toastr.success('Cập nhật thành công banner!');
                         this.fetchBanner( this.link);
                     } else {
-                        toastr.error('Cập nhật thất bại'); q
+                        toastr.error('Cập nhật thất bại');
                     }
 
                 })

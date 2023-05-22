@@ -44,9 +44,9 @@ class bannerrequest extends FormRequest
     public function attributes()
     {
         return [
-            'banner_1'      =>  'banner 1',
-            'banner_2'     =>  'banner 2',
-            'banner_3'   =>  'banner 3'
+            'hinh_anh_1'      =>  'banner 1',
+            'hinh_anh_2'     =>  'banner 2',
+            'hinh_anh_3'   =>  'banner 3'
         ];
     }
 }

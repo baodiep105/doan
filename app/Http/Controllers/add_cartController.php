@@ -17,23 +17,30 @@ use Illuminate\Cookie\CookieJar;
 use Illuminate\Http\Response;
 // use App\Http\Controllers\Illuminate\Http\Response;
 // use Cookie;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Cookie;
 
 class add_cartController extends Controller {
-    public function ReturnURL(Request $request) {
+    public function ReturnURL( Request $request ) {
+        // dd(!$request->all());
+        if(!$request->all()){
+            return response()->json([
+                'status'=>'error'
+            ]);
+        }
         $don_hang = DonHang::create( [
-            'email' => $request->data['email'],
-            'tong_tien' => $request->data['tong_tien'],
-            'tien_giam_gia' => $request->data['tien_giam'],
-            'thuc_tra' => $request->data['thuc_tra'],
+            'email' => $request->data[ 'email' ],
+            'tong_tien' => $request->data[ 'tong_tien' ],
+            'tien_giam_gia' => $request->data[ 'tien_giam' ],
+            'thuc_tra' => $request->data[ 'thuc_tra' ],
             'status' => 1,
-            'dia_chi' => $request->data['dia_chi'],
-            'nguoi_nhan' => $request->data['nguoi_nhan'],
-            'sdt' => $request->data['sdt'],
-            'ghi_chu' => $request->data['ghi_chu'],
+            'dia_chi' => $request->data[ 'dia_chi' ],
+            'nguoi_nhan' => $request->data[ 'nguoi_nhan' ],
+            'sdt' => $request->data[ 'sdt' ],
+            'ghi_chu' => $request->data[ 'ghi_chu' ],
             'loai_thanh_toan'=>$request->type,
         ] );
-        foreach ( $request->data['don_hang']  as $value ) {
+        foreach ( $request->data[ 'don_hang' ]  as $value ) {
             $chiTietDonHang = ChiTietDonHang::create( [
                 'id_chi_tiet_san_pham' => $value[ 'id_chi_tiet_san_pham' ],
                 'don_gia' => $value[ 'don_gia' ],
@@ -50,8 +57,8 @@ class add_cartController extends Controller {
         ] );
     }
 
-    // public function momo($amount){
-    //     $endpoint = "https://test-payment.momo.vn/gw_payment/transactionProcessor";
+    // public function momo( $amount ) {
+    //     $endpoint = 'https://test-payment.momo.vn/gw_payment/transactionProcessor';
     //     $partnerCode = 'MOMOBKUN20180529';
     //     $accessKey = 'klm05TvNBzhg7h7j';
     //     $secretKey = 'at67qH6mk8w5Y1nAyMoYKMWACiEi2bsa';
@@ -78,7 +85,7 @@ class add_cartController extends Controller {
     //         'notifyUrl' => $notifyurl,
     //         'extraData' => $extraData,
     //         'requestType' => $requestType
-    //     );
+    // );
     //     echo $secretKey;
     //     die;
     //     $rawHash = 'partnerCode='.$partnerCode.'&accessKey='.$accessKey.'&requestId='.$requestId.'&bankCode='.$bankCode.'&amount='.$amount.'&orderId='.$orderid.'&orderInfo='.$orderInfo.'&returnUrl='.$returnUrl.'&notifyUrl='.$notifyurl.'&extraData='.$extraData.'&requestType='.$requestType;
@@ -102,11 +109,10 @@ class add_cartController extends Controller {
     //     return response()->json( [
     //         'status'=>'success',
     //         'link'=>$jsonResult[ 'payUrl' ],
-    //     ] );
+    // ] );
     //     error_log( print_r( $jsonResult, true ) );
     //     header( 'Location: '.$jsonResult[ 'payUrl' ] );
     // }
-
 
     public function execPostRequest( $url, $data ) {
         $ch = curl_init( $url );
@@ -128,7 +134,7 @@ class add_cartController extends Controller {
 
     public function vnpay( $amount ) {
         $vnp_Url = 'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html';
-        $vnp_Returnurl = config('global.link_user').'/direction?fbclid=IwAR1wJzmlbTCmITiQ5nNIHINeIMu6cEylupOwP3Tfi6aXtDj65i1iRL2miis';
+        $vnp_Returnurl = config( 'global.link_user' ).'/direction?fbclid=IwAR1wJzmlbTCmITiQ5nNIHINeIMu6cEylupOwP3Tfi6aXtDj65i1iRL2miis';
         $vnp_TmnCode = 'TKIKN7N0';
         //Mã website tại VNPAY
         $vnp_HashSecret = 'JRCQGHNEQULNVFQJWJQSICRRIFAEBSKK';
@@ -137,7 +143,7 @@ class add_cartController extends Controller {
         //Mã đơn hàng. Trong thực tế Merchant cần insert đơn hàng vào DB và gửi mã này sang VNPAY
         $vnp_OrderInfo = 'thanh toán đơn hàng';
         $vnp_OrderType = 'billpayment';
-        $vnp_Amount = $amount['thuc_tra']*1000 *100;
+        $vnp_Amount = $amount[ 'thuc_tra' ]*100;
         $vnp_Locale = 'vn';
         $vnp_BankCode = '';
         $vnp_IpAddr = $_SERVER[ 'REMOTE_ADDR' ];
@@ -190,8 +196,43 @@ class add_cartController extends Controller {
         ] );
     }
 
-    public function DonHang( donhangRequest $request, $type ) {
+
+    public function DonHang( Request $request ) {
+
+        $validator =  Validator::make( $request->all(), [
+            'email'        =>  'required|email',
+            'nguoi_nhan'      =>   'required',
+            'sdt'           =>  'required|min:10|max:10',
+            'dia_chi'                =>  'required',
+        ], [
+            'required'      =>  ':attribute không được để trống',
+            'max'           =>  ':attribute phải đúng 10 chữ số',
+            'min'           =>  ':attribute phải đúng 10 chữ số',
+            'exists'        =>  ':attribute không tồn tại',
+            'boolean'       =>  ':attribute chỉ được chọn True/False',
+            'unique'        =>  ':attribute đã tồn tại',
+        ], [
+            'email'      =>  'email',
+            'nguoi_nhan'     =>  'người nhận',
+            'sdt'   =>  'số điện thoại',
+            'dia_chi'   =>  'địa chỉ',
+        ] );
+        if ( $validator->fails() ) {
+            $error = array();
+            $danh_sach_loi = $validator->errors()->messages();
+
+            foreach ( $danh_sach_loi as  $key=>$value ) {
+
+                array_push( $error, $value );
+
+            }
+            return response()->json( [
+                'status'=>'error',
+                'error'=>$error,
+            ] );
+        }
         if ( count( $request->don_hang ) > 0 ) {
+            
             foreach ( $request->don_hang as $value ) {
                 $san_pham = ChiTietSanPhamModel::find( $value[ 'id_chi_tiet_san_pham' ] );
                 if ( $value[ 'so_luong' ] > $san_pham->sl_chi_tiet ) {
@@ -201,40 +242,7 @@ class add_cartController extends Controller {
                     ] );
                 }
             }
-            if ( $type == 'vnpay' ) {
-                return $this->vnpay( $request->all());
-            } else if ( $type == 'momo' ) {
-                $this->momo($request->thuc_tra);
-            } else {
-                $donHang = DonHang::create( [
-                    'email' => $request->email,
-                    'tong_tien' => $request->tong_tien,
-                    'tien_giam_gia' => $request->tien_giam,
-                    'thuc_tra' => $request->thuc_tra,
-                    'status' => 2,
-                    'dia_chi' => $request->dia_chi,
-                    'nguoi_nhan' => $request->nguoi_nhan,
-                    'sdt' => $request->sdt,
-                    'ghi_chu' => $request->ghi_chu,
-                    'loai_thanh_toan'=>0,
-                ] );
-                foreach ( $request->don_hang as $value ) {
-                    $chiTietDonHang = ChiTietDonHang::create( [
-                        'id_chi_tiet_san_pham' => $value[ 'id_chi_tiet_san_pham' ],
-                        'don_gia' => $value[ 'don_gia' ],
-                        'so_luong' => $value[ 'so_luong' ],
-                        'don_hang_id' => $donHang->id,
-                    ] );
-                    $chi_tiet_san_pham = ChiTietSanPhamModel::where( 'id', $value[ 'id_chi_tiet_san_pham' ] )->first();
-                    $chi_tiet_san_pham->sl_chi_tiet -= $value[ 'so_luong' ];
-                    $chi_tiet_san_pham->save();
-                }
-                // }
-                return response()->json( [
-                    'status' => 'success',
-                    'email' => $donHang->email,
-                ] );
-            }
+            return $this->vnpay( $request->all());
         } else {
             return response()->json( [
                 'status' => 'error',
@@ -277,25 +285,27 @@ class add_cartController extends Controller {
             $sanpham = $value;
             $sanpham->total = $value->don_gia*$value->so_luong;
             $total += $value->so_luong * $value->don_gia;
+            // dd( $sanpham );
             array_push( $san_pham, $sanpham );
         }
         $hinh_anh = DB::table( 'hinh_anh' )->get();
         $id = array();
         foreach ( $chitietdonhang as $value ) {
-            array_push( $id, $value->id );
+            array_push( $id, $value->id_sanpham );
         }
         $anh = array();
-        foreach ( $id as $key )
-        foreach ( $hinh_anh as $value ) {
-            if ( $key == $value->id_san_pham ) {
-                array_push( $anh, $value );
-                break;
+        foreach ( $id as $key ) {
+            foreach ( $hinh_anh as $value ) {
+                if ( $key == $value->id_san_pham ) {
+                    array_push( $anh, $value );
+                    break;
+                }
             }
         }
 
-        foreach ( $chitietdonhang as $value ) {
+        foreach ( $san_pham as $value ) {
             foreach ( $anh as $key ) {
-                if ( $value->id == $key->id_san_pham ) {
+                if ( $value->id_sanpham == $key->id_san_pham ) {
                     $value->hinh_anh = $key->hinh_anh;
                     break;
                 }

@@ -9,14 +9,14 @@ use Illuminate\Support\Facades\DB;
 class DanhGiaController extends Controller
 {
     public function index(){
-        return view('nhan_vien.danh_gia');
+        return view('admin.danh_gia');
     }
 
    public function getData(){
-        $all=DanhGia::all();
-        $non_rep=DanhGia::where('children_content',NULl)->orderBy('created_at','DESC')->get()->toArray();
-        $items =DanhGia::whereNotIn('id',function($query) {
-                $query->select('id')->from('danh_gias')->where('children_content',NULL);})->get();
+        $all=DB::table('danh_gias')->join('san_phams','danh_gias.id_san_pham','san_phams.id')->select('san_phams.ten_san_pham','danh_gias.*')->orderBy('created_at','DESC')->get();
+        $items=DB::table('danh_gias')->join('san_phams','danh_gias.id_san_pham','san_phams.id')->select('san_phams.ten_san_pham','danh_gias.*')->where('children_content','<>',NULl)->orderBy('updated_at','DESC')->get()->toArray();
+        $non_rep =DB::table('danh_gias')->join('san_phams','danh_gias.id_san_pham','san_phams.id')->whereNotIn('danh_gias.id',function($query) {
+                $query->select('id')->from('danh_gias')->where('children_content','<>',NULl);})->orderBy('updated_at','DESC')->select('danh_gias.*','san_phams.ten_san_pham')->get();
         return response()->json([
             'status'=>'success',
             'all'=>$all,

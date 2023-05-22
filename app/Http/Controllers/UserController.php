@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use App\Http\Controllers\add_cartController;
 use Socialite;
+use Carbon\Carbon;
 use Config;
 use Google\Client as GoogleClient;
 use Google\Service\Oauth2;
@@ -44,7 +45,7 @@ class UserController extends Controller {
         $client->addScope( 'email' );
         $client->addScope( 'profile' );
         $authUrl = $client->createAuthUrl();
-        // return redirect($authUrl);
+        // return redirect( $authUrl );
         // dd( $authUrl )
         return response()->json( [
             'status'=>'success',
@@ -85,14 +86,14 @@ class UserController extends Controller {
                 'avatar' => $userData->picture,
                 'token' => $token,
             ];
-            return redirect( config('global.link_user').'/direction-login?email='.$social_user[ 'email' ].'&name='.$social_user[ 'name' ] );
+            return redirect( config( 'global.link_user' ).'/direction-login?email='.$social_user[ 'email' ].'&name='.$social_user[ 'name' ] );
         }
     }
 
     public function register( Request $request ) {
         $rules = [
             'username' => 'required|unique:users,username',
-            'email' => 'required|unique:users,email',
+            'email' => 'required|unique:users,email|email:rfc,dns',
             'password' => 'required|min:6',
             're_password' => 'required|same:password',
         ];
@@ -101,21 +102,30 @@ class UserController extends Controller {
 
         $validator = Validator::make( $input, $rules, [
             'required' => ':attribute không được để trống',
-            'min' => ':attribute quá ngắn',
+            'min' => ':attribute lớn hơn 5 ký tự',
             'unique' => ':attribute đã tồn tại',
             'numeric' => ':attribute phải là số',
             'same' => ':attribute phải giống password',
+            'email'=>':attribute không đúng định dạng'
         ], [
             'username' => 'username',
             'email' => 'email',
-            'password' => 'passwoed',
+            'password' => 'password',
             're_password' => 're_password',
         ] );
 
         if ( $validator->fails() ) {
+            $error = array();
+            $danh_sach_loi = $validator->errors()->messages();
+            // dd( $danh_sach_loi );
+            foreach ( $danh_sach_loi as  $key=>$value ) {
+                // echo $key;
+                array_push( $error, $value );
+                // toastr()->error( $value[ 0 ] );
+            }
             return response()->json( [
-                'status' => 'error',
-                'error' => $validator->errors(),
+                'status'=>'error',
+                'errors'=>$error,
             ] );
         }
         $username = $request->username;
@@ -143,7 +153,7 @@ class UserController extends Controller {
         } else {
             $user->is_email = 1;
             $user->save();
-            return "<h1>Tài khoản của bạn đã được kích hoạt!</h1> <a href=".config('global.link_user')."'/login'><h3>Đăng nhập tại đây</h3></a>";
+            return "<h1>Tài khoản của bạn đã được kích hoạt!</h1> <a href='https://1978-2402-800-6294-1c26-b8ff-ff4e-85b0-c1a7.ngrok-free.app/login'><h3>Đăng nhập tại đây</h3></a>";
         }
     }
 
@@ -161,19 +171,30 @@ class UserController extends Controller {
             'username' => 'username',
         ] );
         if ( $validator->fails() ) {
+            $error = array();
+            $danh_sach_loi = $validator->errors()->messages();
+            // dd( $danh_sach_loi );
+            foreach ( $danh_sach_loi as  $key=>$value ) {
+                // echo $key;
+                array_push( $error, $value );
+                // toastr()->error( $value[ 0 ] );
+            }
             return response()->json( [
-                'status' => 'error',
-                'error' => $validator->errors(),
+                'status'=>'error',
+                'errors'=>$error,
             ] );
         }
         if ( !Auth( 'web' )->attempt( $request->only( 'username', 'password' ) ) ) {
             return response()->json( [
                 'status' => 'erorr',
-                'message' => 'Mật khẩu không đúng',
+                'message' => 'Username hoặc mật khẩu không đúng',
             ], 401 );
         }
 
         $user = User::where( 'username', $request[ 'username' ] )->firstOrFail();
+        if ( $user->id_loai != 2 ) {
+            return response()->json( [ 'status'=>'error', 'message'=>'Username hoặc mật khẩu không đúng' ] );
+        }
         if ( $user->is_email == 1 && $user->id_loai == 2 ) {
             $token = $user->createToken( 'auth_token' )->plainTextToken;
             return response()->json( [
@@ -187,9 +208,6 @@ class UserController extends Controller {
                 'message' => 'bạn cần phải kích hoạt mail để login  ',
             ] );
         }
-        return response()->json( [
-            'status' => 'error',
-        ] );
     }
 
     public function logout() {
@@ -215,17 +233,34 @@ class UserController extends Controller {
     }
 
     public function danhgiaUser( $id, Request $request ) {
-        $rules = [
-            'content' => 'required|min:3',
-            'sao' => 'required|numeric',
-        ];
 
-        $input = $request->all();
-
-        $validator = Validator::make( $input, $rules );
-
+        $validator =  Validator::make( $request->all(), [
+            'content' => 'required',
+            'sao' => 'required',
+        ], [
+            'required'      =>  ':attribute k được để trố',
+            'max'           =>  ':attribute phải đúng 10 số',
+            'exists'        =>  ':attribute không tồn tại',
+            'boolean'       =>  ':attribute chỉ được chọn True/False',
+            'unique'        =>  ':attribute đã tồn tại',
+            'min'           =>  ':attribute phải đúng 10 số'
+        ], [
+            'content'=>'đánh giá',
+            'sao'=>'sao'
+        ] );
         if ( $validator->fails() ) {
-            return response()->json( [ 'success' => false, 'error' => $validator->errors() ] );
+            $error = array();
+            $danh_sach_loi = $validator->errors()->messages();
+            // dd( $danh_sach_loi );
+            foreach ( $danh_sach_loi as  $key=>$value ) {
+                // echo $key;
+                array_push( $error, $value );
+                // toastr()->error( $value[ 0 ] );
+            }
+            return response()->json( [
+                'status'=>'error',
+                'errors'=>$error,
+            ] );
         }
         $exist = DB::table( 'chi_tiet_don_hangs as ct' )
         ->join( 'chi_tiet_san_pham as ctsp', 'ct.id_chi_tiet_san_pham', 'ctsp.id' )
@@ -258,10 +293,25 @@ class UserController extends Controller {
             'email' => 'required|exists:users,email',
         ];
         $input = $request->all();
-        $validator = Validator::make( $input, $rules );
+        $validator = Validator::make( $input, $rules, [
+            'required' => ':attribute không được để trống',
+            'exists' => ':attribute  chưa được đăng ký',
+            'email' => ':attribute phải đúng định dạng ',
+        ] );
 
         if ( $validator->fails() ) {
-            return response()->json( [ 'status' => 'error', 'error' => $validator->errors() ] );
+            $error = array();
+            $danh_sach_loi = $validator->errors()->messages();
+            // dd( $danh_sach_loi );
+            foreach ( $danh_sach_loi as  $key=>$value ) {
+                // echo $key;
+                array_push( $error, $value );
+                // toastr()->error( $value[ 0 ] );
+            }
+            return response()->json( [
+                'status'=>'error',
+                'errors'=>$error,
+            ] );
         }
         $email = $request->email;
         $user = User::where( 'email', $email )->first();
@@ -289,14 +339,16 @@ class UserController extends Controller {
     public function xac_nhan( Request $request ) {
         $user = User::where( 'reset_password', $request->otp )->first();
         if ( !is_null( $user ) || !empty( $user ) ) {
+            $user->reset_password=NULL;
+            $user->save();
             return response()->json( [
                 'status' => 'success',
                 'email' => $user->email,
             ] );
         }
         return response()->json( [
-            'status' => 'false',
-            'message' => 'wrong code!!!',
+            'status' => 'error',
+            'message' => 'mã otp sai',
         ] );
     }
 
@@ -320,9 +372,17 @@ class UserController extends Controller {
             ] );
 
             if ( $validator->fails() ) {
+                $error = array();
+                $danh_sach_loi = $validator->errors()->messages();
+                // dd( $danh_sach_loi );
+                foreach ( $danh_sach_loi as  $key=>$value ) {
+                    // echo $key;
+                    array_push( $error, $value );
+                    // toastr()->error( $value[ 0 ] );
+                }
                 return response()->json( [
-                    'status' => 'error',
-                    'error' => $validator->errors(),
+                    'status'=>'error',
+                    'errors'=>$error,
                 ] );
             } else {
                 $user->update( [
@@ -336,11 +396,41 @@ class UserController extends Controller {
         }
     }
 
-    public function UpdateProfile( profileRequest $request ) {
-
+    public function UpdateProfile( Request $request ) {
+        $validator =  Validator::make( $request->all(), [
+            'ho_ten'        =>  'required',
+            'sdt'           =>  'required|min:10|max:10',
+            'dia_chi'                =>  'required',
+        ], [
+            'required'      =>  ':attribute không được để trống',
+            'max'           =>  ':attribute phải đúng 10 số',
+            'exists'        =>  ':attribute không tồn tại',
+            'boolean'       =>  ':attribute chỉ được chọn True/False',
+            'unique'        =>  ':attribute đã tồn tại',
+            'min'           =>  ':attribute phải đúng 10 số'
+        ], [
+            'id_san_pham'      =>  'sản phẩm',
+            'id_mau'     =>  'màu',
+            'id_size'   =>  'size',
+            'sl'   =>  'số lượng',
+            'is_open'      =>  'Tình trạng',
+        ] );
         $id = auth()->user()->id;
         $user = User::find( $id );
-
+        if ( $validator->fails() ) {
+            $error = array();
+            $danh_sach_loi = $validator->errors()->messages();
+            // dd( $danh_sach_loi );
+            foreach ( $danh_sach_loi as  $key=>$value ) {
+                // echo $key;
+                array_push( $error, $value );
+                // toastr()->error( $value[ 0 ] );
+            }
+            return response()->json( [
+                'status'=>'error',
+                'errors'=>$error,
+            ] );
+        }
         $user->update( [
             'fullname' => $request->ho_ten,
             'sdt' => $request->sdt,
@@ -355,7 +445,7 @@ class UserController extends Controller {
 
     public function vnpay( $amount ) {
         $vnp_Url = 'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html';
-        $vnp_Returnurl = config('global.link_user').'/direction?fbclid=IwAR1wJzmlbTCmITiQ5nNIHINeIMu6cEylupOwP3Tfi6aXtDj65i1iRL2miis';
+        $vnp_Returnurl = config( 'global.link_user' ).'/direction?fbclid=IwAR1wJzmlbTCmITiQ5nNIHINeIMu6cEylupOwP3Tfi6aXtDj65i1iRL2miis';
         $vnp_TmnCode = 'TKIKN7N0';
         //Mã website tại VNPAY
         $vnp_HashSecret = 'JRCQGHNEQULNVFQJWJQSICRRIFAEBSKK';
@@ -364,7 +454,7 @@ class UserController extends Controller {
         //Mã đơn hàng. Trong thực tế Merchant cần insert đơn hàng vào DB và gửi mã này sang VNPAY
         $vnp_OrderInfo = 'thanh toán đơn hàng';
         $vnp_OrderType = 'billpayment';
-        $vnp_Amount = $amount[ 'thuc_tra' ]*1000 *100;
+        $vnp_Amount = $amount[ 'thuc_tra' ]*100;
         $vnp_Locale = 'vn';
         $vnp_BankCode = '';
         $vnp_IpAddr = $_SERVER[ 'REMOTE_ADDR' ];
@@ -417,60 +507,35 @@ class UserController extends Controller {
         ] );
     }
 
-    // public function DonHang( donhangRequest $request, $type ) {
-    //     if ( count( $request->don_hang ) > 0 ) {
-    //         foreach ( $request->don_hang as $value ) {
-    //             $san_pham = ChiTietSanPhamModel::find( $value[ 'id_chi_tiet_san_pham' ] );
-    //             if ( $value[ 'so_luong' ] > $san_pham->sl_chi_tiet ) {
-    //                 return response()->json( [
-    //                     'status' => 'error',
-    //                     'message' => 'Số lượng trong kho không đủ',
-    //                 ] );
-    //             }
-    //         }
-    //         if ( $type == 'vnpay' ) {
-    //             return $this->vnpay( $request->all() );
-    //         } else {
-    //             $donHang = DonHang::create( [
-    //                 'email' =>$request->email,
-    //                 'tong_tien' => $request->tong_tien,
-    //                 'tien_giam_gia' => $request->tien_giam,
-    //                 'thuc_tra' => $request->thuc_tra,
-    //                 'status' => 2,
-    //                 'dia_chi' => $request->dia_chi,
-    //                 'nguoi_nhan' => $request->nguoi_nhan,
-    //                 'sdt' => $request->sdt,
-    //                 'ghi_chu' => $request->ghi_chu,
-    //                 'loai_thanh_toan'=>0,
-    //             ] );
-    //             // dd( $request->don_hang[ 0 ] );
-    //             foreach ( $request->don_hang as $value ) {
-    //                 $chiTietDonHang = ChiTietDonHang::create( [
-    //                     'id_chi_tiet_san_pham' => $value[ 'id_chi_tiet_san_pham' ],
-    //                     'don_gia' => $value[ 'don_gia' ],
-    //                     'so_luong' => $value[ 'so_luong' ],
-    //                     'don_hang_id' => $donHang->id,
-    //                 ] );
-    //                 $chi_tiet_san_pham = ChiTietSanPhamModel::where( 'id', $value[ 'id_chi_tiet_san_pham' ] )->first();
-    //                 $chi_tiet_san_pham->sl_chi_tiet -= $value[ 'so_luong' ];
-    //                 $chi_tiet_san_pham->save();
-    //             }
-    //             // }
-    //             return response()->json( [
-    //                 'status' => 'success',
-    //                 'email' => $donHang->email,
-    //             ] );
-    //         }
-    //     } else {
-    //         return response()->json( [
-    //             'status' => 'error',
-    //             'message'=> 'hãy chọn sản phẩm cần mua',
-    //         ] );
-    //     }
+    public function DonHang( Request $request, $type ) {
+        $validator =  Validator::make( $request->all(), [
+            'email'        =>  'required|email',
+            'nguoi_nhan'      =>   'required',
+            'sdt'           =>  'required|min:10|max:10',
+            'dia_chi'                =>  'required',
+        ], [
+            'required'      =>  ':attribute không được để trống',
+            'max'           =>  ':attribute phải đúng 10 chữ số',
+            'min'           =>  ':attribute phải đúng 10 chữ số',
+            'unique'        =>  ':attribute đã tồn tại',
+        ],[
+            'email'      =>  'email',
+            'nguoi_nhan'     =>  'người nhận',
+            'sdt'   =>  'số điện thoại',
+            'dia_chi'   =>  'địa chỉ',
+        ] );
+        if ( $validator->fails() ) {
 
-    // }
-    public function DonHang( donhangRequest $request ) {
-        // dd('ads');
+            $error=array();
+            $danh_sach_loi = $validator->errors()->messages();
+            foreach ( $danh_sach_loi as  $key=>$value ) {
+                array_push($error,$value);
+            }
+            return response()->json([
+                'status'=>'error',
+                'errorsp'=>$error,
+            ]);
+        }
         if ( count( $request->don_hang ) > 0 ) {
             foreach ( $request->don_hang as $value ) {
                 $san_pham = ChiTietSanPhamModel::find( $value[ 'id_chi_tiet_san_pham' ] );
@@ -481,13 +546,15 @@ class UserController extends Controller {
                     ] );
                 }
             }
-            // if ( $type == 'vnpay' ) {
-            //     return $this->vnpay( $request->all());
-            // } else if ( $type == 'momo' ) {
-            //     $this->momo($request->thuc_tra);
-            // } else {
+            if ( $type == 1 ) {
+                return $this->vnpay( $request->all() );
+            } else {
+
+                // return response()->json([
+                //     'adsads'=>$request->all(),
+                // ]);
                 $donHang = DonHang::create( [
-                    'email' => $request->email,
+                    'email' =>$request->email,
                     'tong_tien' => $request->tong_tien,
                     'tien_giam_gia' => $request->tien_giam,
                     'thuc_tra' => $request->thuc_tra,
@@ -498,6 +565,7 @@ class UserController extends Controller {
                     'ghi_chu' => $request->ghi_chu,
                     'loai_thanh_toan'=>0,
                 ] );
+                // dd( $request->don_hang[ 0 ] );
                 foreach ( $request->don_hang as $value ) {
                     $chiTietDonHang = ChiTietDonHang::create( [
                         'id_chi_tiet_san_pham' => $value[ 'id_chi_tiet_san_pham' ],
@@ -514,13 +582,67 @@ class UserController extends Controller {
                     'status' => 'success',
                     'email' => $donHang->email,
                 ] );
-            // }
+            }
         } else {
             return response()->json( [
                 'status' => 'error',
                 'message'=> 'hãy chọn sản phẩm cần mua',
             ] );
         }
-
     }
+
+    // public function DonHang( donhangRequest $request ) {
+    //     // dd( 'ads' );
+    //     if ( count( $request->don_hang ) > 0 ) {
+    //         foreach ( $request->don_hang as $value ) {
+    //             $san_pham = ChiTietSanPhamModel::find( $value[ 'id_chi_tiet_san_pham' ] );
+    //             if ( $value[ 'so_luong' ] > $san_pham->sl_chi_tiet ) {
+    //                 return response()->json( [
+    //                     'status' => 'error',
+    //                     'message' => 'Số lượng trong kho không đủ',
+    // ] );
+    //             }
+    //         }
+    //         // if ( $type == 'vnpay' ) {
+    //         //     return $this->vnpay( $request->all() );
+    //         // } else if ( $type == 'momo' ) {
+    //         //     $this->momo( $request->thuc_tra );
+    //         // } else {
+    //         $donHang = DonHang::create( [
+    //             'email' => $request->email,
+    //             'tong_tien' => $request->tong_tien,
+    //             'tien_giam_gia' => $request->tien_giam,
+    //             'thuc_tra' => $request->thuc_tra,
+    //             'status' => 2,
+    //             'dia_chi' => $request->dia_chi,
+    //             'nguoi_nhan' => $request->nguoi_nhan,
+    //             'sdt' => $request->sdt,
+    //             'ghi_chu' => $request->ghi_chu,
+    //             'loai_thanh_toan'=>0,
+    // ] );
+    //         foreach ( $request->don_hang as $value ) {
+    //             $chiTietDonHang = ChiTietDonHang::create( [
+    //                 'id_chi_tiet_san_pham' => $value[ 'id_chi_tiet_san_pham' ],
+    //                 'don_gia' => $value[ 'don_gia' ],
+    //                 'so_luong' => $value[ 'so_luong' ],
+    //                 'don_hang_id' => $donHang->id,
+    // ] );
+    //             $chi_tiet_san_pham = ChiTietSanPhamModel::where( 'id', $value[ 'id_chi_tiet_san_pham' ] )->first();
+    //             $chi_tiet_san_pham->sl_chi_tiet -= $value[ 'so_luong' ];
+    //             $chi_tiet_san_pham->save();
+    //         }
+    //         // }
+    //         return response()->json( [
+    //             'status' => 'success',
+    //             'email' => $donHang->email,
+    // ] );
+    //         // }
+    //     } else {
+    //         return response()->json( [
+    //             'status' => 'error',
+    //             'message'=> 'hãy chọn sản phẩm cần mua',
+    // ] );
+    //     }
+
+    // }
 }

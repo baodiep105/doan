@@ -182,7 +182,7 @@ new Vue({
                 .post('/admin/chi-tiet-san-pham/update', payload)
                 .then((res) => {
                     if(res.data.status){
-                    toastr.success('Cập thành công danh mục!');
+                    toastr.success('Cập nhật thành công Chi tiết sản phẩm!');
                     this.fetchCustomers(this.link);
                 }
                     else{

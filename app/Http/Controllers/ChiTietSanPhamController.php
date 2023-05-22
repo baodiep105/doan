@@ -26,7 +26,7 @@ class ChiTietSanPhamController extends Controller {
         ->select( 'chi_tiet_san_pham.id', 'chi_tiet_san_pham.sl_chi_tiet', 'chi_tiet_san_pham.status', 'san_phams.ten_san_pham', 'mau_sac.ten_mau', 'size.size' )
         ->paginate( 6 );
         $danh_sach_mau = MauSacModel::all();
-        $danh_sach_san_pham = SanPham::all();
+        $danh_sach_san_pham = SanPham::where('is_open',1)->get();
         $danh_sach_size = sizeModel::all();
         return response()->json( [
             'danh_sach_mau' => $danh_sach_mau,
@@ -113,7 +113,7 @@ class ChiTietSanPhamController extends Controller {
                 ->where( 'id_size', $request->id_size )
                 ->first();
 
-                // dd($chi_tiet_san_pham['id'] === $exist['id']);   
+                // dd($chi_tiet_san_pham['id'] === $exist['id']);
                 if ( is_null( $exist ) ||$chi_tiet_san_pham['id'] === $exist['id'] ) {
                 $chi_tiet_san_pham->update( [
                     'id_sanpham' => $request->id_sanpham,
@@ -138,17 +138,21 @@ class ChiTietSanPhamController extends Controller {
             ->join( 'size', 'chi_tiet_san_pham.id_size', '=', 'size.id' )
             ->join( 'mau_sac', 'chi_tiet_san_pham.id_mau', '=', 'mau_sac.id' )
             ->join( 'san_phams', 'chi_tiet_san_pham.id_sanpham', '=', 'san_phams.id' )
+            ->where('san_phams.is_open',1)
             ->select( 'chi_tiet_san_pham.id', 'chi_tiet_san_pham.sl_chi_tiet', 'chi_tiet_san_pham.status', 'san_phams.ten_san_pham', 'mau_sac.ten_mau', 'size.size' )
+            ->orderBy('created_at','DESC')
             ->get();
         } else {
             $data = DB::table( 'chi_tiet_san_pham' )
             ->join( 'size', 'chi_tiet_san_pham.id_size', '=', 'size.id' )
             ->join( 'mau_sac', 'chi_tiet_san_pham.id_mau', '=', 'mau_sac.id' )
             ->join( 'san_phams', 'chi_tiet_san_pham.id_sanpham', '=', 'san_phams.id' )
+            ->where('san_phams.is_open',1)
             ->select( 'chi_tiet_san_pham.id', 'chi_tiet_san_pham.sl_chi_tiet', 'chi_tiet_san_pham.status', 'san_phams.ten_san_pham', 'mau_sac.ten_mau', 'size.size' )
             ->where( 'san_phams.ten_san_pham', 'like', '%' . $request->search . '%' )
             ->orwhere( 'mau_sac.ten_mau', 'like', '%' . $request->search . '%' )
             ->orwhere( 'size.size', 'like', '%' . $request->search . '%' )
+            ->orderBy('created_at','DESC')
             ->get();
         }
         return response()->json( [ 'data' => $data ] );

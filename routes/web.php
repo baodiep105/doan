@@ -32,6 +32,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 
+// Route::get('/bao', [SanPhamController::class, 'test']);
 
 Route::get('/redirect', function(){
     return Socialite::driver('google')->redirect();

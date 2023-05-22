@@ -29,36 +29,33 @@ class loginController extends Controller {
         ] );
 
         if ( $validator->fails() ) {
-            return response()->json( [
-                'status' => 'error',
-                'error' => $validator->errors(),
-            ] );
+            $error=array();
+            $danh_sach_loi = $validator->errors()->messages();
+            // dd($danh_sach_loi);
+            foreach ( $danh_sach_loi as  $key=>$value ) {
+                // echo $key;
+                array_push($error,$value);
+                // toastr()->error( $value[ 0 ] );
+            }
+            return response()->json([
+                'lỗi'=>$error,
+            ]);
+            // return redirect()->back();
         }
         if ( !Auth( 'web' )->attempt( $request->only( 'username', 'password' ) ) ) {
-            return response()->json( [
-                'status'=>'erorr',
-                'message' => 'Mật khẩu không đúng',
-            ], 401 );
+            toastr()->error( 'username hoặc password sai!' );
+            return redirect()->back();
         }
 
         $user = User::where( 'username', $request[ 'username' ] )->firstOrFail();
-        if ( $user->is_email == 1 ) {
-            $token = $user->createToken( 'auth_token' )->plainTextToken;
 
-            if ( $user->id_loai == 0 ) {
-                return redirect( '/admin' );
-            } else if ( $user->id_loai == 1 ) {
-                return redirect( '/nhan-vien' );
-            }
-        } else {
-            return response()->json( [
-                'status' => 'error',
-                'message' => 'bạn cần phải kích hoạt mail để login  ',
-            ] );
+        $token = $user->createToken( 'auth_token' )->plainTextToken;
+
+        if ( $user->id_loai == 0 ) {
+            return redirect( '/admin' );
+        } else if ( $user->id_loai == 1 ) {
+            return redirect( '/nhan-vien' );
         }
-        return response()->json( [
-            'status' => 'error',
-        ] );
     }
 
     public function home() {
@@ -79,9 +76,6 @@ class loginController extends Controller {
         if ( Auth::check() ) {
             Auth::user()->tokens()->delete();
             Auth::guard( 'web' )->logout();
-            // $value = $_COOKIE[ 'bearer_token' ];
-            //   dd( $_COOKIE[ 'bearer_token' ] );
-            //  setcookie( 'bearer_token', $value, time()-( 86400*31 ), '/' );
             return redirect( '/login' );
         } else {
             return response()->json( [

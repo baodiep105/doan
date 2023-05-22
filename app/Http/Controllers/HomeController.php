@@ -24,27 +24,30 @@ use Google\Client as GoogleClient;
 
 class HomeController extends Controller
 {
-    public function arrival()
-    {
-        $sanPham =DB::table('san_phams')->leftjoin('khuyen_mai','san_phams.id','khuyen_mai.id_san_pham')->where('san_phams.is_open',1)->where(function($query){
-            $query->where('san_phams.created_at', '>', Carbon::now()->subDay(365));
-            $query->orwhere('san_phams.created_at', '=', Carbon::now()->subDay(365));
-        })->orderBy('created_at','DESC')->take(8)->select('san_phams.*','khuyen_mai.ty_le as khuyen_mai')->get();
+    public function BestSell(){
+        $best_sell=DB::table( 'chi_tiet_don_hangs' )
+        ->join( 'chi_tiet_san_pham', 'chi_tiet_don_hangs.id_chi_tiet_san_pham', 'chi_tiet_san_pham.id' )
+        ->rightJoin( 'san_phams', 'chi_tiet_san_pham.id_sanpham', 'san_phams.id' )
+        // ->leftJoin('khuyen_mai','san_phams.id','khuyen_mai.id_san_pham')
+        ->select( 'chi_tiet_san_pham.id_sanpham' )
+        ->select( 'san_phams.ten_san_pham','san_phams.id','san_phams.gia_ban','san_phams.gia_ban','san_phams.mo_ta_ngan','san_phams.mo_ta_chi_tiet','san_phams.id_danh_muc','san_phams.is_open','san_phams.brand')
+        ->selectRaw( 'count(chi_tiet_san_pham.id_sanpham) as luot_mua_hang' )
+        ->groupBy( 'chi_tiet_san_pham.id_sanpham', 'san_phams.ten_san_pham','san_phams.id','san_phams.gia_ban','san_phams.gia_ban','san_phams.mo_ta_ngan','san_phams.mo_ta_chi_tiet','san_phams.id_danh_muc','san_phams.is_open','san_phams.brand')
+        ->orderBy( 'so_luong', 'desc' )
+        ->take( 8 )
+        ->get();
         $hinh_anh = DB::table('hinh_anh')->get();
-        $id = array();
-        foreach ($sanPham as $value) {
-            array_push($id, $value->id);
-        }
         $anh = array();
-        foreach ($id as $key)
+        foreach ($best_sell as $key)
             foreach ($hinh_anh as $value) {
-                if ($key == $value->id_san_pham) {
+                if ($key->id == $value->id_san_pham) {
                     array_push($anh, $value);
                     break;
                 }
             }
-
-        foreach ($sanPham as $value) {
+        foreach ($best_sell as $value) {
+            $a=ChiTietSanPhamModel::where('id_sanpham',$value->id)->sum('sl_chi_tiet');
+            $value->so_luong=(int)$a;
             foreach ($anh as $key) {
                 if ($value->id == $key->id_san_pham) {
                     $value->hinh_anh = $key->hinh_anh;
@@ -53,12 +56,44 @@ class HomeController extends Controller
             }
         }
         return response()->json([
+            'status'=>'success',
+            'data'=>$best_sell,
+        ]);
+
+    }
+    public function arrival()
+    {
+        $sanPham =DB::table('san_phams')->leftjoin('khuyen_mai','san_phams.id','khuyen_mai.id_san_pham')->where('san_phams.is_open',1)->where(function($query){
+            $query->where('san_phams.created_at', '>', Carbon::now()->subDay(365));
+            $query->orwhere('san_phams.created_at', '=', Carbon::now()->subDay(365));
+        })->orderBy('created_at','DESC')->take(8)->select('san_phams.*','khuyen_mai.ty_le as khuyen_mai')->get();
+        $hinh_anh = DB::table('hinh_anh')->get();
+        $anh = array();
+        foreach ($sanPham as $key)
+            foreach ($hinh_anh as $value) {
+                if ($key->id == $value->id_san_pham) {
+                    array_push($anh, $value);
+                    break;
+                }
+            }
+        foreach ($sanPham as $value) {
+            $a=ChiTietSanPhamModel::where('id_sanpham',$value->id)->sum('sl_chi_tiet');
+            $value->so_luong=(int)$a;
+            foreach ($anh as $key) {
+                if ($value->id == $key->id_san_pham) {
+                    $value->hinh_anh = $key->hinh_anh;
+                    break;
+                }
+            }
+        }
+        return response()->json([
+            'status' => 'success',
             'sanPham' => $sanPham,
         ]);
     }
     public function danhMuc()
     {
-        $data = ModelsDanhMucSanPham::all();
+        $data = ModelsDanhMucSanPham::where('is_open',1)->get();
         return response()->json([
             'status' => 'success',
             'data'  => $data,
@@ -71,20 +106,17 @@ class HomeController extends Controller
                                         ->select('san_phams.*','khuyen_mai.ty_le as khuyen_mai')
                                         ->take(8)->get();
         $hinh_anh = DB::table('hinh_anh')->get();
-        $id = array();
-        foreach ($sanPham as $value) {
-            array_push($id, $value->id);
-        }
         $anh = array();
-        foreach ($id as $key)
+        foreach ($sanPham as $key)
             foreach ($hinh_anh as $value) {
-                if ($key == $value->id_san_pham) {
+                if ($key->id == $value->id_san_pham) {
                     array_push($anh, $value);
                     break;
                 }
             }
-
         foreach ($sanPham as $value) {
+            $a=ChiTietSanPhamModel::where('id_sanpham',$value->id)->sum('sl_chi_tiet');
+            $value->so_luong=(int)$a;
             foreach ($anh as $key) {
                 if ($value->id == $key->id_san_pham) {
                     $value->hinh_anh = $key->hinh_anh;
@@ -93,6 +125,7 @@ class HomeController extends Controller
             }
         }
         return response()->json([
+            'status' => 'success',
             'product' => $sanPham,
         ]);
     }
@@ -126,21 +159,17 @@ class HomeController extends Controller
             ->get();
 
         $hinh_anh = DB::table('hinh_anh')->get();
-        $id = array();
-        foreach ($data as $value) {
-            array_push($id, $value->id);
-        }
         $anh = array();
-        foreach ($id as $key)
+        foreach ($data as $key)
             foreach ($hinh_anh as $value) {
-                if ($key == $value->id_san_pham) {
+                if ($key->id == $value->id_san_pham) {
                     array_push($anh, $value);
                     break;
                 }
             }
         foreach ($data as $value) {
             $a=ChiTietSanPhamModel::where('id_sanpham',$value->id)->sum('sl_chi_tiet');
-            $value->tinh_trang=($a==0)?0:1;
+            $value->so_luong=(int)$a;
             foreach ($anh as $key) {
                 if ($value->id == $key->id_san_pham) {
                     $value->hinh_anh = $key->hinh_anh;

@@ -54,7 +54,7 @@ class DanhMucSanPhamController extends Controller {
                 FROM `danh_muc_san_phams` a LEFT JOIN `danh_muc_san_phams` b
                 on a.id_danh_muc_cha = b.id';
 
-        $data = DB::table( 'danh_muc_san_phams as dm1' )->leftJoin( 'danh_muc_san_phams as dm2', 'dm1.id_danh_muc_cha', 'dm2.id' )->select( 'dm1.*', 'dm2.ten_danh_muc as ten_danh_muc_cha' )->paginate( 8 );
+        $data = DB::table( 'danh_muc_san_phams as dm1' )->leftJoin( 'danh_muc_san_phams as dm2', 'dm1.id_danh_muc_cha', 'dm2.id' )->select( 'dm1.*', 'dm2.ten_danh_muc as ten_danh_muc_cha' )->orderBy('created_at','DESC')->paginate( 8 );
         return response()->json( [
             'danh_muc'          => $data,
             'danh_muc_cha'  => $danh_muc_cha,
@@ -120,8 +120,11 @@ class DanhMucSanPhamController extends Controller {
             toastr()->error( 'Danh mục tồn tại!' );
             return redirect()->back();
         } else {
-            DB::table( 'san_phams' )->join( 'chi_tiet_san_pham', 'san_phams.id', 'chi_tiet_san_pham.id_sanpham' )->where( 'id_danh_muc', $id )->delete();
-            $danh_muc->delete();
+            DB::table( 'danh_muc_san_phams as dm' )->leftJoin( 'san_phams as sp', 'dm.id', 'sp.id_danh_muc' )
+            ->leftJoin( 'chi_tiet_san_pham', 'sp.id', 'chi_tiet_san_pham.id_sanpham' )
+            ->leftJoin( 'hinh_anh', 'sp.id', 'hinh_anh.id_san_pham' )
+            ->leftJoin( 'khuyen_mai', 'sp.id', 'khuyen_mai.id_san_pham' )->where( 'dm.id', $id )->delete();
+            // $danh_muc->delete();
             return response()->json( [
                 'status'  =>  true,
             ] );
@@ -130,13 +133,14 @@ class DanhMucSanPhamController extends Controller {
 
     public function search( Request $request ) {
         if ( is_null( $request->search ) ) {
-            $data = DB::table( 'danh_muc_san_phams as a' )->leftJoin( 'danh_muc_san_phams as b', 'a.id_danh_muc_cha', 'b.id' )->select( 'a.*', 'b.ten_danh_muc as ten_danh_muc_cha' )->get();
+            $data = DB::table( 'danh_muc_san_phams as a' )->leftJoin( 'danh_muc_san_phams as b', 'a.id_danh_muc_cha', 'b.id' )->select( 'a.*', 'b.ten_danh_muc as ten_danh_muc_cha' )->orderBy('created_at','DESC')->get();
         } else {
             $data = DB::table( 'danh_muc_san_phams as a' )
             ->leftJoin( 'danh_muc_san_phams as b', 'a.id_danh_muc_cha', 'b.id' )
             ->select( 'a.*', 'b.ten_danh_muc as ten_danh_muc_cha' )
             ->Where( 'a.ten_danh_muc', 'like', '%' . $request->search . '%' )
-            ->orWhere( 'a.created_at', 'like', '%' . $request->search . '%' )
+            // ->orWhere( 'a.created_at', 'like', '%' . $request->search . '%' )
+            ->orderBy('created_at','DESC')
             ->get();
         }
         return response()->json( [

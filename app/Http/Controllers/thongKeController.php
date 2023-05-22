@@ -23,12 +23,14 @@ class thongKeController extends Controller {
                 ->join( 'san_phams', 'chi_tiet_san_pham.id_sanpham', 'san_phams.id' )
                 ->select( 'chi_tiet_san_pham.id_sanpham' )
                 ->select( 'san_phams.ten_san_pham' )
-                ->selectRaw( 'count(chi_tiet_san_pham.id_sanpham) as so_luong' )
+                ->selectRaw( 'sum(chi_tiet_don_hangs.so_luong) as so_luong' )
                 ->groupBy( 'chi_tiet_san_pham.id_sanpham', 'san_phams.ten_san_pham' )
                 ->orderBy( 'so_luong', 'desc' )
                 ->whereYear( 'chi_tiet_don_hangs.created_at', Carbon::now()->year )
                 ->take( 10 )
                 ->get();
+                // dd($sanPham);
+                // dd($alldonhang);
         $khuyenMai = KhuyenMai::where( 'is_open', 1 )->count();
         $khachHang = DB::table( 'don_hangs' )->select( 'email' )
                         ->selectRaw( 'sum(don_hangs.thuc_tra) as so_luong' )
@@ -36,11 +38,11 @@ class thongKeController extends Controller {
                         ->orderBy( 'so_luong', 'desc' )
                         ->take( 10 )
                         ->get();
-        $alldonhang = ChiTietDonHang::count();
-        $allKhachHang=DonHang::selectRaw( 'sum(don_hangs.thuc_tra) as so_luong' )->select('email')->get();
+        $alldonhang = ChiTietDonHang::sum('so_luong');
+        $allKhachHang=DonHang::selectRaw( 'sum(don_hangs.thuc_tra) as so_luong' )->get();
         // dd($allKhachHang);
         $all = SanPham::where( 'is_open', 1 )->count();
-        $tyLeKhachHang = round( ( $khachHang[ 0 ]->so_luong / $alldonhang * 100 ), 2 );
+        $tyLeKhachHang = round( ( $khachHang[ 0 ]->so_luong / $allKhachHang[0]->so_luong * 100 ), 2 );
         $tyLe = round( ( ( $sanPham[ 0 ]->so_luong / $alldonhang ) * 100 ), 2 );
         $danhMuc = DB::table( 'chi_tiet_don_hangs' )
                     ->join( 'chi_tiet_san_pham as ctsp', 'chi_tiet_don_hangs.id_chi_tiet_san_pham', 'ctsp.id' )
@@ -52,8 +54,6 @@ class thongKeController extends Controller {
                     ->groupBy( 'dm.id', 'dm.ten_danh_muc' )
                     ->orderBy( 'so_luong', 'desc' )
                     ->get();
-
-
         $allDanhMuc=0;
         foreach($danhMuc as $value){
             $allDanhMuc+=$value->so_luong;
@@ -114,14 +114,14 @@ class thongKeController extends Controller {
         ->join( 'san_phams', 'chi_tiet_san_pham.id_sanpham', 'san_phams.id' )
         ->select( 'chi_tiet_san_pham.id_sanpham' )
         ->select( 'san_phams.ten_san_pham' )
-        ->selectRaw( 'count(chi_tiet_san_pham.id_sanpham) as so_luong' )
+        ->selectRaw( 'sum(chi_tiet_don_hangs.so_luong) as so_luong' )
         ->whereYear( 'chi_tiet_don_hangs.created_at', Carbon::now()->year )
         ->groupBy( 'chi_tiet_san_pham.id_sanpham', 'san_phams.ten_san_pham' )
         ->orderBy( 'so_luong', 'desc' )
         ->take( 5 )
         ->get();
         // dd( $sanPham );
-        $tong = ChiTietDonHang::whereYear( 'created_at', Carbon::now()->year )->count();
+        $tong = ChiTietDonHang::whereYear( 'created_at', Carbon::now()->year )->sum('so_luong');
         $con_lai = 100;
         $products = array();
         $tyles = array();

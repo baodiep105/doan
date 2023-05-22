@@ -13,7 +13,7 @@
         <div class="col-md-6">
             <div class="card" style="height: auto">
                 <div class="card-header">
-                    <h4 class="card-title" id="basic-layout-colored-form-control">Quản lý Size & Mau</h4>
+                    <h4 class="card-title" id="basic-layout-colored-form-control">Quản lý Size</h4>
                 </div>
                 <div class="card-content collapse show">
                     <div class="card-body">
@@ -23,8 +23,7 @@
                                     <div class="col-md-12">
                                         <div class="form-group">
                                             <label for="userinput1">Size</label>
-                                            <input type="number" v-model='size'class="form-control"
-                                                name="ten_danh_muc">
+                                            <input type="number" v-model='size'class="form-control">
                                         </div>
                                     </div>
                                 </div>

@@ -112,21 +112,5 @@ class KhuyenMaiController extends Controller {
         }
     }
 
-    public function search( Request $request ) {
-
-        if ( $request->all() == null ) {
-            $data = DB::table( 'khuyen_mai' )
-            ->join( 'san_phams', 'khuyen_mai.id_san_pham', 'san_phams.id' )
-            ->select( 'khuyen_mai.*', 'san_phams.ten_san_pham' )
-            ->get();
-        } else {
-            $data = DB::table( 'khuyen_mai' )
-            ->join( 'san_phams', 'khuyen_mai.id_san_pham', 'san_phams.id' )
-            ->where( 'san_phams.ten_san_pham', 'like', '%' . $request->search .'%' )
-            ->orwhere( 'khuyen_mai.ty_le', 'like', '%' . $request->search .'%' )
-            ->select( 'khuyen_mai.*', 'san_phams.ten_san_pham' )
-            ->get();
-        }
-        return response()->json( [ 'dataProduct' => $data ] );
-    }
+  
 }

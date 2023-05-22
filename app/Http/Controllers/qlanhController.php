@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\editAnhRequest;
+use App\Http\Requests\AnhRequest;
 use App\Models\Anh;
 use App\Models\SanPham;
 use Illuminate\Http\Request;
@@ -14,25 +15,11 @@ class qlanhController extends Controller {
         return view( 'admin.SanPham.ql_anh' );
     }
 
-    public function create( Request $request ) {
-        $rules = [
-            'hinh_anh'  => 'required',
-            'id_san_pham'     => 'required',
-        ];
-
-        $input     = $request->all();
-
-        $validator = Validator::make( $input, $rules, [
-            'required'      =>  ':attribute không được để trống',
-        ], [
-            'hinh_anh' => 'hinh ảnh',
-            'id_san_pham' => 'sản phẩm',
-        ] );
+    public function create( AnhRequest $request ) {
         $anh = Anh::create( [
             'hinh_anh' => $request->hinh_anh,
             'id_san_pham' => $request->id_san_pham,
         ] );
-
         return response()->json( [
             'trangThai'         =>  true,
             'anh' => $anh,

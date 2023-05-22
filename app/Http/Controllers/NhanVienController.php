@@ -7,6 +7,7 @@ use App\Models\User;
 use GrahamCampbell\ResultType\Success;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Role;
 use Users;
@@ -20,7 +21,8 @@ class NhanVienController extends Controller
 
     public function getData()
     {
-        $user = User::where('id_loai', 1)->orWhere('id_loai', 0)->paginate(8);
+        $user = User::where('id_loai', 1)->orWhere('id_loai', 0)->orderBy('created_at','DESC')
+        ->paginate(8);
         return response()->json([
             'user' => $user,
         ]);
@@ -133,11 +135,13 @@ class NhanVienController extends Controller
     public function search(Request $request)
     {
         if ($request->all() == null) {
-            $data = user::all();
+            $data = user::where('id_loai','<>',2)->get();
+        }else{
+            $data=DB::table('users')->where('id_loai','<>',2)->Where(function ($query) use($request) {
+                    $query->orwhere('username', 'like', '%' . $request->search . '%')
+                    ->orWhere('email', 'like', '%' . $request->search . '%');
+                    })->orderBy('created_at','DESC')->get();
         }
-        $data = User::where('username', 'like', '%' . $request->search . '%')->orWhere('email', 'like', '%' . $request->search . '%')
-            ->get();
-
         return response()->json(['data' => $data]);
     }
 }

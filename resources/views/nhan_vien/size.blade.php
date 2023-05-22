@@ -1,6 +1,6 @@
 @extends('nhan_vien.master')
 @section('title')
-    <h1>Quản Lý Size</h1>
+    <h1>Quản lý Size & Màu</h1>
 @endsection
 @section('content')
     @include('page.size')

@@ -105,51 +105,12 @@ new Vue({
                 .delete('/admin/quan-ly-don-hang/delete/' + this.idDelete)
                 .then((res) => {
                     if (res.data.status) {
-                        toastr.success('Đã xóa danh mục thành công');
+                        toastr.success('Đã xóa đơn hàng thành công');
                         this.fetchDonHang( this.link);
                     } else {
-                        toastr.error('Danh mục không tồn tại');
+                        toastr.error('Đơn hàng không tồn tại');
                     }
                 })
-        },
-
-
-        editDanhMuc(id) {
-            axios
-                .get('/admin/quan-ly-don-hang/chi-tiet/' + id)
-                .then((res) => {
-                    if (res.data.status) {
-                        this.don_hang = res.data.don_hang;
-                        console.log(this.don_hang);
-                    } else {
-                        toastr.error('Danh mục không tồn tại');
-                    }
-                })
-        },
-
-        acceptUpdate() {
-            var payload = {
-                'id': this.idEdit,
-                'ten_danh_muc': this.ten_danh_muc_edit,
-                'id_danh_muc_cha': this.id_danh_muc_cha_edit,
-                'is_open': this.is_open_edit,
-            };
-
-            // console.log(payload);
-
-            axios
-                .post('/admin/danh-muc/update', payload)
-                .then((res) => {
-                    // console.log(res);
-                    toastr.success('Cập thành công danh mục!');
-                    this.fetchDonHang( this.link);
-                })
-                .catch((res) => {
-                    var danh_sach_loi = res.response.data.errors;
-                    $.each(danh_sach_loi, function (key, value) {
-                        toastr.error(value[0]);
-                    });
-                });
         },
     },
 });

@@ -28,6 +28,7 @@ class detailController extends Controller {
         ->join( 'mau_sac', 'chi_tiet_san_pham.id_mau', 'mau_sac.id' )
         ->where( 'chi_tiet_san_pham.id_sanpham', $id )
         ->where( 'chi_tiet_san_pham.status', 1 )
+        // ->selectRaw( 'sum(chi_tiet_san_pham.so_luong) as so_luong' )
         ->select( 'mau_sac.id', 'mau_sac.ten_mau', 'mau_sac.hex' )
         ->groupBy( 'mau_sac.id', 'mau_sac.ten_mau', 'mau_sac.hex' )
         ->get();
@@ -151,15 +152,38 @@ class detailController extends Controller {
     public function danhGia( $id, Request $request ) {
 
         $rules = [
+            'sao' => 'required|numeric|min:1',
             'email' => 'required|email',
-            'content'  => 'required|min:6',
-            'sao' => 'required|numeric',
+            'content'  => 'required',
         ];
         // dd( $request->email );
         $input     = $request->all();
-        $validator = Validator::make( $input, $rules );
+        $validator = Validator::make( $input, $rules,[
+            'required'      =>  'vui lòng nhập:attribute ',
+            'max'           =>  ':attribute phải đúng 10 chữ số',
+            'min'           =>  'vui lòng nhập số :attribute ',
+            'exists'        =>  ':attribute không tồn tại',
+            'boolean'       =>  ':attribute chỉ được chọn True/False',
+            'unique'        =>  ':attribute đã tồn tại',
+        ],[
+            'sao'      =>  'email',
+            'email'     =>  'người nhận',
+            'content'   =>  'số điện thoại',
+
+        ] );
         if ( $validator->fails() ) {
-            return response()->json( [ 'success' => false, 'error' => $validator->errors() ] );
+            $error = array();
+            $danh_sach_loi = $validator->errors()->messages();
+            // dd( $danh_sach_loi );
+            foreach ( $danh_sach_loi as  $key=>$value ) {
+                // echo $key;
+                array_push( $error, $value );
+                // toastr()->error( $value[ 0 ] );
+            }
+            return response()->json( [
+                'status'=>'error',
+                'errors'=>$error,
+            ] );
         }
         $exist = DB::table( 'chi_tiet_don_hangs as ct' )
         ->join( 'don_hangs as dh', 'ct.don_hang_id', 'dh.id' )
@@ -186,7 +210,7 @@ class detailController extends Controller {
         } else {
             return response()->json( [
                 'status' => 'error',
-                'message' => 'bạn cần phải mua hàng để đánh giá'
+                'message' => 'bạn cần phải mua sản phẩm để đánh giá'
             ] );
         }
     }
@@ -200,25 +224,25 @@ class detailController extends Controller {
         ] );
     }
 
-    public function addCart( Request $request ) {
-        $chi_tiet_san_pham = ChiTietSanPhamModel::where( 'id', $request->id_chi_tiet_san_pham )->first();
-        if ( $chi_tiet_san_pham ) {
-            if ( $chi_tiet_san_pham->sl_chi_tiet - $request->so_luong >= 0 ) {
-                $chi_tiet_san_pham->sl_chi_tiet = $chi_tiet_san_pham->sl_chi_tiet - $request->so_luong;
-                $chi_tiet_san_pham->save();
-                return response()->json( [
-                    'status'  => 'success',
-                    'data'  => $chi_tiet_san_pham->sl_chi_tiet,
-                ] );
-            }
-            return response()->json( [
-                'status' => 'erros',
-                'message' => 'số lượng không đủ',
-            ] );
-        }
-        return response()->json( [
-            'status'    => 'error',
-            'message'   => 'sản phẩm không tồn tại',
-        ] );
-    }
+    // public function addCart( Request $request ) {
+    //     $chi_tiet_san_pham = ChiTietSanPhamModel::where( 'id', $request->id_chi_tiet_san_pham )->first();
+    //     if ( $chi_tiet_san_pham ) {
+    //         if ( $chi_tiet_san_pham->sl_chi_tiet - $request->so_luong >= 0 ) {
+    //             $chi_tiet_san_pham->sl_chi_tiet = $chi_tiet_san_pham->sl_chi_tiet - $request->so_luong;
+    //             $chi_tiet_san_pham->save();
+    //             return response()->json( [
+    //                 'status'  => 'success',
+    //                 'data'  => $chi_tiet_san_pham->sl_chi_tiet,
+    //             ] );
+    //         }
+    //         return response()->json( [
+    //             'status' => 'erros',
+    //             'message' => 'số lượng không đủ',
+    //         ] );
+    //     }
+    //     return response()->json( [
+    //         'status'    => 'error',
+    //         'message'   => 'sản phẩm không tồn tại',
+    //     ] );
+    // }
 }

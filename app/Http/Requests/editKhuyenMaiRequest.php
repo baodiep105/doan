@@ -26,7 +26,7 @@ class editKhuyenMaiRequest extends FormRequest
         return [
             'idEdit'                    =>'required',
             'id_san_pham_edit'          =>   'required|exists:san_phams,id|unique:khuyen_mai,id_san_pham,'.$this->idEdit,
-            'ty_le_edit'                 =>'required|numeric|digits_between:0,100',
+            'ty_le_edit'                 =>'required|numeric|min:1|max:100',
             'is_open_edit'           =>   'required|boolean',
 
         ];
@@ -36,9 +36,9 @@ class editKhuyenMaiRequest extends FormRequest
     {
         return [
             'required'      =>  ':attribute không được để trống',
-            'max'           =>  ':attribute quá dài',
-            'min'           =>  ':attribute quá ngắn',
-            'min_digists'           =>  ':attribute lớn hơn 1',
+            'max'           =>  ':attribute không được lớn hơn 100 ',
+            'min'           =>  ':attribute không được nhỏ hơn 1',
+            'digits_between'=>  ':attribute lớn hơn 1 và nhỏ hơn 100',
             'exists'        =>  ':attribute không tồn tại',
             'boolean'       =>  ':attribute chỉ được chọn True/False',
             'unique'        =>  ':attribute đã tồn tại',
@@ -50,7 +50,7 @@ class editKhuyenMaiRequest extends FormRequest
     {
         return [
             'id_san_pham'=>'sản phẩm',
-            'ty_le'=>'tỷ lệ khuyến mãi',
+            'ty_le_edit'=>'tỷ lệ khuyến mãi',
             'trang_thai'=>'status',
         ];
     }

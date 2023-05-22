@@ -189,12 +189,12 @@
                     <input type="text" v-model="idEdit" hidden>
                     <div class="position-relative form-group">
                         <label>password</label>
-                        <input placeholder="Nhập vào tên danh mục" v-model="password_edit" type="password"
+                        <input placeholder="Nhập vào password" v-model="password_edit" type="password"
                             class="form-control">
                     </div>
                     <div class="position-relative form-group">
                         <label>re-password</label>
-                        <input placeholder="Nhập vào tên danh mục" v-model="re_password_edit" type="password"
+                        <input placeholder="Nhập vào re-password" v-model="re_password_edit" type="password"
                             class="form-control">
                     </div>
 

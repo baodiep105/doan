@@ -92,7 +92,7 @@ new Vue({
                 })
                 .catch((res) => {
                     var errors = res.response.data.errors;
-                    $.each(errors, function (k, v) {
+                    $.each(errors, function (key, value) {
                         toastr.error(v[0]);
                     });
                 });

@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class KhuyenMaiRequest extends FormRequest
+class AnhRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,10 +24,8 @@ class KhuyenMaiRequest extends FormRequest
     public function rules()
     {
         return [
-            'id_san_pham'          =>   'required|exists:san_phams,id|unique:khuyen_mai,id_san_pham',
-            'ty_le'                 =>'required|numeric|min:1|max:100',
-            'is_open'           =>   'required|boolean',
-
+            'hinh_anh'      =>  'required',
+            'id_san_pham'      =>  'required',
         ];
     }
 
@@ -35,22 +33,18 @@ class KhuyenMaiRequest extends FormRequest
     {
         return [
             'required'      =>  ':attribute không được để trống',
-            'max'           =>  ':attribute không được lớn hơn 100',
-            'min'           =>  ':attribute không được nhỏ hơn 1',
-            // 'digits_between'=>  ':attribute phải > 0 và < 100 ',
+            'max'           =>  ':attribute quá dài',
             'exists'        =>  ':attribute không tồn tại',
             'boolean'       =>  ':attribute chỉ được chọn True/False',
             'unique'        =>  ':attribute đã tồn tại',
-            'numeric'       =>  ':attribute phải là số',
         ];
     }
 
     public function attributes()
     {
         return [
-            'id_san_pham'=>'Sản phẩm',
-            'ty_le'=>'tỷ lệ khuyến mãi',
-            'trang_thai'=>'Tình trạng',
+            'hinh_anh'      =>  'Hình ảnh',
+            'id_san_pham'     =>  'Tên sản phẩm',
         ];
     }
 }

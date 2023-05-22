@@ -15,6 +15,7 @@ new Vue({
         child_content: '',
         id_san_pham: '',
         reply:'',
+        value:true,
     },
 
     created() {
@@ -27,10 +28,12 @@ new Vue({
             console.log(this.a);
             this.list_vue = this.removelines == '0' ? this.list_all : this.removelines == '1'  ? this.list_non_reply : this.list_replied;
             // this.removelines=null;
+            console.log(this.list_vue);
 
         },
-        updateReply(){
-            this.reply=this.child_content
+        updateReply(event){
+            this.value=false;
+            this.reply=this.child_content;
             this.child_content="";
         },
         replyDanhGia() {
@@ -51,16 +54,19 @@ new Vue({
                 })
         },
         getDanhGia($id) {
+            // console.log($id);
+            // let data=null;
             axios
                 .get('/admin/quan-ly-danh-gia/get-danh-gia/' + $id)
                 .then((res) => {
+                    // data=res.data.data;
                     this.id = res.data.data.id;
                     this.content = res.data.data.content;
                     this.email = res.data.data.email;
                     this.child_content=res.data.data.children_content;
                     this.id_san_pham=res.data.data.id_san_pham;
                     console.log(res.data.data.children_content);
-                    // console.log(this);
+                    // console.log(res.data.data);
                 })
         },
 

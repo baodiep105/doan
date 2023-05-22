@@ -6,6 +6,7 @@ use App\Http\Requests\sizeRequest;
 use App\Models\sizeModel;
 use Illuminate\Http\Request;
 use Size;
+use Illuminate\Support\Facades\DB;
 
 class sizeController extends Controller {
     public function index() {
@@ -31,15 +32,16 @@ class sizeController extends Controller {
 
     public function delete( $id ) {
         $size = sizeModel::find( $id );
-        if ( $size ) {
-            $size->delete();
+        if ( !$size ) {
+            return response()->json( [
+                'status'  =>  false,
+            ] );
+
+        } else {
+            DB::table( 'size' )->leftJoin( 'chi_tiet_san_pham', 'size.id', 'chi_tiet_san_pham.id_size' )->where( 'size.id', $id )->delete();
             return response()->json( [
                 'status'  =>  true,
 
-            ] );
-        } else {
-            return response()->json( [
-                'status'  =>  false,
             ] );
         }
     }

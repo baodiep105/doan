@@ -113,53 +113,12 @@
                     .delete('/admin/quan-ly-user/delete/' + this.idDelete)
                     .then((res) => {
                         if(res.data.status) {
-                            toastr.success('Đã xóa danh mục thành công');
+                            toastr.success('Đã xóa user thành công');
                            this.fetchUser(this.link);
                         } else {
-                            toastr.error('Danh mục không tồn tại');
+                            toastr.error('User không tồn tại');
                         }
                     })
-            },
-
-            editDanhMuc(id){
-                this.idEdit = id;
-                axios
-                    .get('/admin/danh-muc/edit/' + id)
-                    .then((res) => {
-                        console.log(res);
-                        if(res.data.status) {
-                            this.ten_danh_muc_edit      =   res.data.danhMuc.ten_danh_muc;
-                            this.id_danh_muc_cha_edit   =   res.data.danhMuc.id_danh_muc_cha;
-                            this.is_open_edit           =   res.data.danhMuc.is_open;
-                        } else {
-                            toastr.error('Danh mục không tồn tại');
-                        }
-                    })
-            },
-
-            acceptUpdate() {
-                var payload = {
-                    'id'                :   this.idEdit,
-                    'ten_danh_muc'       :   this.ten_danh_muc_edit,
-                    'id_danh_muc_cha'    :   this.id_danh_muc_cha_edit,
-                    'is_open'            :   this.is_open_edit,
-                };
-
-                // console.log(payload);
-
-                axios
-                    .post('/admin/danh-muc/update', payload)
-                    .then((res) => {
-                        // console.log(res);
-                        toastr.success('Cập thành công danh mục!');
-                       this.fetchUser(this.link);
-                    })
-                    .catch((res) => {
-                        var danh_sach_loi = res.response.data.errors;
-                        $.each(danh_sach_loi, function(key, value){
-                            toastr.error(value[0]);
-                        });
-                    });
             },
         },
     });
