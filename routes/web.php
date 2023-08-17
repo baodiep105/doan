@@ -33,7 +33,15 @@ use Illuminate\Support\Facades\Route;
 
 
 // Route::get('/bao', [SanPhamController::class, 'test']);
-
+// Route::group(['prefix' => 'laravel-filemanager',], function () {
+//     \UniSharp\LaravelFilemanager\Lfm::routes();
+// });
+Route::group(['prefix' => 'admin/laravel-filemanager'], function () {
+    \UniSharp\LaravelFilemanager\Lfm::routes();
+});
+Route::get('/redirect', function(){
+    return Socialite::driver('google')->redirect();
+});
 Route::get('/redirect', function(){
     return Socialite::driver('google')->redirect();
 });

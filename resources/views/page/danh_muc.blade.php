@@ -49,7 +49,7 @@
                                             <input id="hinh_anh" v-model="add.hinh_anh" class="form-control lfm"
                                                 type="text" name="filepath">
                                             <span class="input-group-prepend">
-                                                <a data-input="hinh_anh" data-preview="holder"
+                                                <a id="lfm" data-input="hinh_anh" data-preview="holder"
                                                     class="btn btn-primary lfm">
                                                     <i class="fa fa-picture-o"></i> Choose
                                                 </a>
@@ -230,7 +230,7 @@
                                 <input id="hinh_anh_edit" v-model="hinh_anh_edit"
                                     class="form-control edit_lfm" type="text" name="filepath">
                                 <span class="input-group-prepend">
-                                    <a data-input="hinh_anh_edit" data-preview="holder"
+                                    <a id="lfm_edit" data-input="hinh_anh_edit" data-preview="holder"
                                         class="btn btn-primary edit_lfm">
                                         <i class="fa fa-picture-o"></i> Choose
                                     </a>

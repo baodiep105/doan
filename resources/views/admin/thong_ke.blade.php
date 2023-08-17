@@ -7,23 +7,44 @@
 @endsection
 @section('js')
     <script src="/project/thong_ke.js"></script>
+    <script src="{{URL::to('owlcarousel/owl.carousel.min.js')}}"></script>
     <script>
-        $(document).ready(function() {
-            $(".owl-carousel").owlCarousel({
-                margin: 10,
-                nav: true,
-                navText: ["«", "»"],
-                loop: true,
-                dots: false,
-                responsive: {
-                    1000: {
-                        items: 3.5,
-                        merge: true,
-                    }
-                }
+        // $(document).ready(function() {
+        //     $(".owl-carousel").owlCarousel({
+        //         margin: 10,
+        //         nav: true,
+        //         navText: ["«", "»"],
+        //         loop: true,
+        //         dots: false,
+        //         responsive: {
+        //             1000: {
+        //                 items: 3.5,
+        //                 merge: true,
+        //             }
+        //         }
 
-            });
-        });
+        //     });
+        // });
+        $('.owl-carousel').owlCarousel({
+            loop: false,
+            margin: 5,
+            responsiveClass: true,
+            responsive: {
+                0: {
+                    items: 1,
+                    nav: true
+                },
+                600: {
+                    items: 3,
+                    nav: false
+                },
+                1000: {
+                    items: 4,
+                    nav: true,
+                    loop: false
+                }
+            }
+        })
     </script>
 
     <script>
@@ -81,25 +102,6 @@
                 });
             }
 
-            // const data = {
-            //     labels: res.data.product,
-            //     datasets: [{
-            //         label: 'My First Dataset',
-            //         data: res.data.tyle,
-            //         backgroundColor: [
-            //             'rgb(255, 99, 132)',
-            //             'rgb(54, 162, 235)',
-            //             'rgb(255, 205, 86)'
-            //         ],
-            //         hoverOffset: 4
-            //     }]
-            // };
-            // const config = {
-            //     type: 'doughnut',
-            //     data: data,
-            // };
-            // const ctx = document.getElementById('doughnutSanPham');
-            // new Chart(ctx, config);
 
             function Product() {
                 $.ajax({
@@ -130,6 +132,7 @@
                     }
                 });
             }
+
             function Customer() {
                 $.ajax({
                     url: '/admin/thong-ke/customer',
@@ -164,54 +167,7 @@
             Customer();
         });
     </script>
-    <script src="chart.min.js"></script>
-    <script>
-        //     new Vue({
-        //         el: '#app',
-        //         data: {
-        //             doanh_thu: '',
-        //             san_pham_ban_chay: [],
-        //             khuyenmai: '',
-        //             khach_hang_mua_nhieu: [],
-
-        //         },
-        //         created() {
-        //             this.loadData();
-        //         },
-        //         methods: {
-        //             loadData() {
-        //                 const elementDoanhThu = document.querySelector('.doanh_thu');
-
-        //                 axios
-        //                     .get('/admin/thong-ke/all')
-        //                     .then((res) => {
-        //                         this.doanh_thu = res.data.doanh_thu;
-        //                         elementDoanhThu.innerText = res.data.doanh_thu;
-        //                         this.san_pham_ban_chay = res.data.san_pham_ban_chay;
-        //                         this.khuyenmai = res.data.sl_san_pham_khuyen_mai;
-        //                         this.khach_hang_mua_nhieu = res.data.khach_hang_mua_nhieu;
-        //                         // console.log(this.doanh_thu);
-        //                         console.log(elementDoanhThu);
-        //                     });
-        //             },
-        //             create() {
-        //                 axios
-        //                     .post('/admin/san-pham/create', this.sanPhamCreate)
-        //                     .then((res) => {
-        //                         toastr.success("Đã thêm mới sản phẩm thành công!!!");
-        //                         this.loadData();
-        //                     })
-        //                     .catch((res) => {
-        //                         var danh_sach_loi = res.response.data.errors;
-        //                         $.each(danh_sach_loi, function(key, value) {
-        //                             toastr.error(value[0]);
-        //                         });
-        //                     });
-        //             },
-        //         },
-        //     });
-        //
-    </script>
+    <script src="/plugins/chart.js/chart.min.js"></script>
 
     <script src="/project/thong_ke.js"></script>
 @endsection

@@ -7,21 +7,12 @@
 @endsection
 
 @section('js')
-    <script src="/vendor/laravel-filemanager/js/lfm.js"></script>
-    {{-- <script>
-        $('.lfm').filemanager('image');
-    </script> --}}
+
     <script src="/project/quan_ly_danh_muc.js"></script>
-    <script>
-        var route_prefix = "/laravel-filemanager";
-    </script>
     <script src="/vendor/laravel-filemanager/js/stand-alone-button.js"></script>
     <script>
-        $('.lfm').filemanager('image', {
-            prefix: '/laravel-filemanager'
-        });
-        $('.edit_lfm').filemanager('image', {
-            prefix: '/laravel-filemanager'
-        });
+        var route_prefix = "laravel-filemanager";
+        $('#lfm').filemanager('image', {prefix: route_prefix});
+        $('#lfm_edit').filemanager('image', {prefix: route_prefix});
     </script>
 @endsection

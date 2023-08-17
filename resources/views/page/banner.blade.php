@@ -48,7 +48,7 @@
                                         <div class="form-group col-md-12">
                                             <label for="issueinput6">banner 3</label>
                                             <div class="input-group">
-                                                <input id="hinh_anh_3" v-model="add.hinh_anh_3" class="form-control lfm"
+                                                <input id="hinh_anh_3" v-model="add.hinh_anh_3" class="form-control "
                                                     type="text" name="filepath">
                                                 <span class="input-group-prepend">
                                                     <a data-input="hinh_anh_3" data-preview="holder"
@@ -64,7 +64,7 @@
                                         <div class="form-group col-md-12">
                                             <label for="issueinput6">banner 4</label>
                                             <div class="input-group">
-                                                <input id="hinh_anh_4" v-model="add.hinh_anh_4" class="form-control lfm"
+                                                <input id="hinh_anh_4" v-model="add.hinh_anh_4" class="form-control "
                                                     type="text" name="filepath">
                                                 <span class="input-group-prepend">
                                                     <a data-input="hinh_anh_4" data-preview="holder"
@@ -80,7 +80,7 @@
                                         <div class="form-group col-md-12">
                                             <label for="issueinput6">banner 5</label>
                                             <div class="input-group">
-                                                <input id="hinh_anh_5" v-model="add.hinh_anh_5" class="form-control lfm"
+                                                <input id="hinh_anh_5" v-model="add.hinh_anh_5" class="form-control "
                                                     type="text" name="filepath">
                                                 <span class="input-group-prepend">
                                                     <a data-input="hinh_anh_5" data-preview="holder"
@@ -240,11 +240,11 @@
                         <div class="form-group col-md-12">
                             <label for="issueinput6">baner 1</label>
                             <div class="input-group">
-                                <input id="hinh_anh_1_edit" v-model="update.hinh_anh_1_edit" class="form-control lfm"
+                                <input id="hinh_anh_1_edit" v-model="update.hinh_anh_1_edit" class="form-control "
                                     type="text" name="filepath">
                                 <span class="input-group-prepend">
                                     <a data-input="hinh_anh_1_edit" data-preview="holder"
-                                        class="btn btn-primary lfm">
+                                        class="btn btn-primary lfm_edit">
                                         <i class="fa fa-picture-o"></i> Choose
                                     </a>
                                 </span>
@@ -256,11 +256,11 @@
                         <div class="form-group col-md-12">
                             <label for="issueinput6">banner 2</label>
                             <div class="input-group">
-                                <input id="hinh_anh_2_edit" v-model="update.hinh_anh_2_edit" class="form-control lfm"
+                                <input id="hinh_anh_2_edit" v-model="update.hinh_anh_2_edit" class="form-control "
                                     type="text" name="filepath">
                                 <span class="input-group-prepend">
                                     <a data-input="hinh_anh_2_edit" data-preview="holder"
-                                        class="btn btn-primary lfm">
+                                        class="btn btn-primary lfm_edit">
                                         <i class="fa fa-picture-o"></i> Choose
                                     </a>
                                 </span>
@@ -272,11 +272,11 @@
                         <div class="form-group col-md-12">
                             <label for="issueinput6">banner 3</label>
                             <div class="input-group">
-                                <input id="hinh_anh_3_edit" v-model="update.hinh_anh_3_edit" class="form-control lfm"
+                                <input id="hinh_anh_3_edit" v-model="update.hinh_anh_3_edit" class="form-control "
                                     type="text" name="filepath">
                                 <span class="input-group-prepend">
                                     <a data-input="hinh_anh_3_edit" data-preview="holder"
-                                        class="btn btn-primary lfm">
+                                        class="btn btn-primary lfm_edit">
                                         <i class="fa fa-picture-o"></i> Choose
                                     </a>
                                 </span>
@@ -288,11 +288,11 @@
                         <div class="form-group col-md-12">
                             <label for="issueinput6">banner 4</label>
                             <div class="input-group">
-                                <input id="hinh_anh_4_edit" v-model="update.hinh_anh_4_edit" class="form-control lfm"
+                                <input id="hinh_anh_4_edit" v-model="update.hinh_anh_4_edit" class="form-control "
                                     type="text" name="filepath">
                                 <span class="input-group-prepend">
                                     <a data-input="hinh_anh_4_edit" data-preview="holder"
-                                        class="btn btn-primary lfm">
+                                        class="btn btn-primary lfm_edit">
                                         <i class="fa fa-picture-o"></i> Choose
                                     </a>
                                 </span>
@@ -304,11 +304,11 @@
                         <div class="form-group col-md-12">
                             <label for="issueinput6">banner 5</label>
                             <div class="input-group">
-                                <input id="hinh_anh_5_edit" v-model="update.hinh_anh_5_edit" class="form-control lfm"
+                                <input id="hinh_anh_5_edit" v-model="update.hinh_anh_5_edit" class="form-control "
                                     type="text" name="filepath">
                                 <span class="input-group-prepend">
                                     <a data-input="hinh_anh_5_edit" data-preview="holder"
-                                        class="btn btn-primary lfm">
+                                        class="btn btn-primary lfm_edit">
                                         <i class="fa fa-picture-o"></i> Choose
                                     </a>
                                 </span>

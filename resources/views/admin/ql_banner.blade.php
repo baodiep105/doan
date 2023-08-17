@@ -7,8 +7,10 @@
 @endsection
 @section('js')
     <script src="/project/quan_ly_banner.js"></script>
-    <script src="/vendor/laravel-filemanager/js/lfm.js"></script>
+    <script src="/vendor/laravel-filemanager/js/stand-alone-button.js"></script>
     <script>
-        $('.lfm').filemanager('image');
+        var route_prefix = "laravel-filemanager";
+        $('.lfm').filemanager('image', {prefix: route_prefix});
+        $('#lfm_edit').filemanager('image', {prefix: route_prefix});
     </script>
 @endsection
