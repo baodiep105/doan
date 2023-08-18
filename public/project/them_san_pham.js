@@ -21,7 +21,7 @@
         methods :   {
             loadData() {
                 axios
-                    .get('/admin/san-pham/loadData')
+                    .get('/admin/san-pham/load-data')
                     .then((res) => {
                         this.danhSachDanhMuc = res.data.danhSachDanhMuc;
                     });

@@ -33,7 +33,7 @@ new Vue({
 
     methods: {
         fetchCatagory(page_url) {
-            page_url = page_url || "/admin/danh-muc/getData";
+            page_url = page_url || "/admin/danh-muc/get-data";
             this.link=page_url;
             console.log(page_url);
             let vm = this;
@@ -100,7 +100,7 @@ new Vue({
 
         doiTrangThai(id) {
             axios
-                .get('/admin/danh-muc/changeStatus/' + id)
+                .get('/admin/danh-muc/change-status/' + id)
                 .then((res) => {
                     if (res.data.trangThai) {
                         toastr.success('Đã đổi trạng thái thành công!');

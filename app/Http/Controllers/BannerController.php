@@ -50,6 +50,7 @@ class BannerController extends Controller {
     }
 
     public function doiTrangThai( $id ) {
+
         $banner = Banner::find( $id );
         if ( !$banner ) {
             return response()->json( [
@@ -80,6 +81,7 @@ class BannerController extends Controller {
     }
 
     public function edit( $id ) {
+
         $banner = Banner::find( $id );
         if ( !$banner ) {
             toastr()->error( 'Ảnh không tồn tại!' );
@@ -94,7 +96,6 @@ class BannerController extends Controller {
     }
 
     public function update( editBannerRequest $request ) {
-        // $data     = $request->all();
         $banner = Banner::find( $request->idEdit );
         if ( !$banner ) {
             return response()->json( [

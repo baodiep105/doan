@@ -28,7 +28,7 @@ new Vue({
 
     methods: {
         fetchMau(page_url) {
-            page_url = page_url || "/admin/quan-ly-mau/getData";
+            page_url = page_url || "/admin/quan-ly-mau/get-data";
             console.log(page_url);
             this.link_mau=page_url;
             let vm = this;
@@ -74,7 +74,7 @@ new Vue({
             // console.log(!);
         },
         fetchSize(page_url) {
-            page_url = page_url || "/admin/quan-ly-size/getData";
+            page_url = page_url || "/admin/quan-ly-size/get-data";
             console.log(page_url);
             this.size=page_url;
             let vm = this;
@@ -164,17 +164,6 @@ new Vue({
                 .then((res) => {
                     this.list_size = res.data.size;
                 })
-        },
-
-        search() {
-            var payload = {
-                'search': this.inputSearch,
-            };
-            axios
-                .post('/admin/quan-ly-nhan-vien/search', payload)
-                .then((res) => {
-                    this.list_vue = res.data.data;
-                });
         },
 
         deletekhuyenmai(id) {

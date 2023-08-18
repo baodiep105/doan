@@ -15,7 +15,7 @@
                     <div class="owl-item col-8">
                         <div class="small-box bg-primary">
                             <div class="inner">
-                                <h3>{{ $khuyenMai }}/{{ $all }}</h3>
+                                <h3>{{ $khuyenMai }}/{{ $allSanPham }}</h3>
                                 <p>Sản phẩm dang khuyến mãi</p>
                             </div>
                         </div>

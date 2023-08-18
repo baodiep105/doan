@@ -19,38 +19,32 @@ use Illuminate\Support\Facades\Auth;
 
 class loginController extends Controller {
 
-    public function login( Request $request ) {
-        $validator =  Validator::make( $request->all(), [
-            'username'      =>  'required||exists:users,username',
-            'password'     =>  'required',
-        ], [
-            'required'      =>  ':attribute không được để trống',
-            'unique'        =>  ':attribute không tồn tại'
-        ] );
+    public function login(Request $request)
+    {
 
-        if ( $validator->fails() ) {
-            $error=array();
-            $danh_sach_loi = $validator->errors()->messages();
-            // dd($danh_sach_loi);
-            foreach ( $danh_sach_loi as  $key=>$value ) {
-                // echo $key;
-                array_push($error,$value);
-                // toastr()->error( $value[ 0 ] );
+        $rules = [
+            'username'  => 'required',
+            'password'  => 'required',
+        ];
+        $input     = $request->all();
+        $validator = Validator::make($input, $rules, [
+            'required'      =>  ':attribute không được để trống',
+        ], [
+            'username' => 'username',
+            'password' => 'password',
+        ]);
+        if ($validator->fails()) {
+            // dd($validator->errors()->messages());
+            foreach($validator->errors()->messages() as $value){
+                toastr()->error($value[0]);
             }
-            return response()->json([
-                'lỗi'=>$error,
-            ]);
-            // return redirect()->back();
-        }
-        if ( !Auth( 'web' )->attempt( $request->only( 'username', 'password' ) ) ) {
-            toastr()->error( 'username hoặc password sai!' );
             return redirect()->back();
         }
-
-        $user = User::where( 'username', $request[ 'username' ] )->firstOrFail();
-
-        $token = $user->createToken( 'auth_token' )->plainTextToken;
-
+        if (!Auth('web')->attempt($request->only('username', 'password'))) {
+            toastr()->error("tài khoản hoặc mật khẩu không đúng");
+            return redirect()->back();
+        }
+        $user = User::where('username', $request['username'])->firstOrFail();
         if ( $user->id_loai == 0 ) {
             return redirect( '/admin' );
         } else if ( $user->id_loai == 1 ) {
@@ -69,12 +63,10 @@ class loginController extends Controller {
         } else {
             return redirect( '/login' );
         }
-
     }
 
     public function logout() {
         if ( Auth::check() ) {
-            Auth::user()->tokens()->delete();
             Auth::guard( 'web' )->logout();
             return redirect( '/login' );
         } else {

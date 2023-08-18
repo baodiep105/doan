@@ -25,7 +25,7 @@
 
             methods: {
                 fetchCustomers(page_url) {
-                    page_url = page_url || "/admin/quan-ly-nhan-vien/getData";
+                    page_url = page_url || "/admin/quan-ly-nhan-vien/get-data";
                     this.link=page_url;
                     console.log(page_url);
                     let vm = this;

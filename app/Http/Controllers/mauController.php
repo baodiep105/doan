@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\mauRequest;
 use App\Models\MauSacModel;
 use Illuminate\Http\Request;
-use DB;
+use Illuminate\Support\Facades\DB;
 class mauController extends Controller
 {
 

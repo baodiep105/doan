@@ -28,7 +28,7 @@ new Vue({
     },
     methods: {
         fetchCustomers(page_url) {
-            page_url = page_url || "/admin/san-pham/getData";
+            page_url = page_url || "/admin/san-pham/get-data";
             console.log(page_url);
             this.link=page_url;
             let vm = this;
@@ -154,7 +154,7 @@ new Vue({
         },
         changeStatus(id) {
             axios
-                .get('/admin/san-pham/changeStatus/' + id)
+                .get('/admin/san-pham/change-status/' + id)
                 .then((res) => {
                     if (res.data.status) {
                        this.fetchCustomers( this.link);

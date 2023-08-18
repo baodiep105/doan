@@ -16,27 +16,13 @@ class SearchController extends Controller
 {
     public function dataProduct()
     {
-        $dataProduct = SanPham::where('is_open', 1)->paginate(8);
-        $hinh_anh = DB::table('hinh_anh')->get();
-        $anh = array();
-        foreach ($dataProduct as $key)
-            foreach ($hinh_anh as $value) {
-                if ($key->id == $value->id_san_pham) {
-                    array_push($anh, $value);
-                    break;
-                }
-            }
+        $dataProduct = SanPham::where('is_open', 1)
+            ->select('id as id_sanpham', 'ten_san_pham', 'gia_ban', 'brand', 'mo_ta_ngan', 'mo_ta_chi_tiet', 'id_danh_muc', 'is_open')->paginate(8);
+        $dataProduct = $this->getAnh($dataProduct);
         foreach ($dataProduct as $value) {
-            $a=ChiTietSanPhamModel::where('id_sanpham',$value->id)->sum('sl_chi_tiet');
-            $value->so_luong=(int)$a;
-            foreach ($anh as $key) {
-                if ($value->id == $key->id_san_pham) {
-                    $value->hinh_anh = $key->hinh_anh;
-                    break;
-                }
-            }
+            $a = ChiTietSanPhamModel::where('id_sanpham', $value->id_sanpham)->sum('sl_chi_tiet');
+            $value->so_luong = (int)$a;
         }
-        // $anh = DB::table('hinh_anh')->where('id_san_pham', $id)->get();
         $mauSac = MauSacModel::all();
         $size = sizeModel::all();
         $category = DanhMucSanPham::all();
@@ -50,37 +36,23 @@ class SearchController extends Controller
 
     public function search(Request $request)
     {
-        if (!$request->search) {
-            $data = DB::table('san_phams')->leftjoin('khuyen_mai', 'san_phams.id', 'khuyen_mai.id_san_pham')->select('san_phams.*','khuyen_mai.ty_le as khuyen_mai')->where('san_phams.is_open', 1)->paginate(8);
+        if (empty($request->search)) {
+            $data = DB::table('san_phams')->leftjoin('khuyen_mai', 'san_phams.id', 'khuyen_mai.id_san_pham')->select('san_phams.*', 'khuyen_mai.ty_le as khuyen_mai')->where('san_phams.is_open', 1)->paginate(8);
         } else {
             $data = DB::table('san_phams')
                 ->leftjoin('khuyen_mai', 'san_phams.id', 'khuyen_mai.id_san_pham')
                 ->leftjoin('danh_muc_san_phams', 'san_phams.id_danh_muc', 'danh_muc_san_phams.id')
-                ->where('san_phams.is_open',1)
+                ->where('san_phams.is_open', 1)
                 ->where('san_phams.ten_san_pham', 'like', '%' .  $request->search . '%')
                 ->orWhere('danh_muc_san_phams.ten_danh_muc', 'like', '%' .  $request->search . '%')
                 ->orWhere('san_phams.brand', 'like', '%' .  $request->search . '%')
-                ->select('san_phams.*','khuyen_mai.ty_le as khuyen_mai ', 'danh_muc_san_phams.ten_danh_muc')
+                ->select('san_phams.id as id_sanpham', 'san_phams.ten_san_pham', 'san_phams.gia_ban', 'san_phams.brand', 'san_phams.is_open', 'khuyen_mai.ty_le as khuyen_mai', 'danh_muc_san_phams.ten_danh_muc')
                 ->paginate(8);
         }
-        $hinh_anh = DB::table('hinh_anh')->get();
-        $anh = array();
-        foreach ($data as $key)
-            foreach ($hinh_anh as $value) {
-                if ($key->id == $value->id_san_pham) {
-                    array_push($anh, $value);
-                    break;
-                }
-            }
+        $data = $this->getAnh($data);
         foreach ($data as $value) {
-            $a=ChiTietSanPhamModel::where('id_sanpham',$value->id)->sum('sl_chi_tiet');
-            $value->so_luong=(int)$a;
-            foreach ($anh as $key) {
-                if ($value->id == $key->id_san_pham) {
-                    $value->hinh_anh = $key->hinh_anh;
-                    break;
-                }
-            }
+            $a = ChiTietSanPhamModel::where('id_sanpham', $value->id_sanpham)->sum('sl_chi_tiet');
+            $value->so_luong = (int)$a;
         }
 
         return response()->json([
@@ -88,5 +60,4 @@ class SearchController extends Controller
             'data' => $data,
         ]);
     }
-
 }

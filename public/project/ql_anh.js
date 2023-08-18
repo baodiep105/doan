@@ -25,7 +25,7 @@ new Vue({
     },
     methods: {
         fetchCustomers(page_url) {
-            page_url = page_url || "/admin/quan-ly-anh/getData";
+            page_url = page_url || "/admin/quan-ly-anh/get-data";
             // console.log("/admin/san-pham/getData");
             this.link=page_url;
             let vm = this;
@@ -106,14 +106,7 @@ new Vue({
                     }
                 })
         },
-        // loadData() {
-        //     axios
-        //         .get('/admin/quan-ly-anh/getData')
-        //         .then((res) => {
-        //             this.danhSachSanPham = res.data.data;
-        //             this.ds_anh = res.data.sanPham;
-        //         });
-        // },
+
 
         search() {
             var payload = {

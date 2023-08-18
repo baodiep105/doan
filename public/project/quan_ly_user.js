@@ -17,7 +17,7 @@
 
         methods         : {
             fetchUser(page_url) {
-                page_url = page_url || "/admin/quan-ly-user/getData";
+                page_url = page_url || "/admin/quan-ly-user/get-data";
                 this.link=page_url;
                 console.log(page_url);
                 let vm = this;
@@ -63,14 +63,14 @@
                 this.pagination = paginate;
                 // console.log(!);
             },
-            getData(){
-                axios
-                    .get('/admin/quan-ly-user/getData')
-                    .then((res) => {
-                        this.list_vue           = res.data.user.data;
-                        // this.danh_muc_cha_vue   = res.data.danh_muc_cha;
-                    })
-            },
+            // getData(){
+            //     axios
+            //         .get('/admin/quan-ly-user/getData')
+            //         .then((res) => {
+            //             this.list_vue           = res.data.user.data;
+            //             // this.danh_muc_cha_vue   = res.data.danh_muc_cha;
+            //         })
+            // },
 
             doiTrangThai(id) {
                 var payload={
@@ -78,7 +78,7 @@
                 }
                 console.log(id);
                 axios
-                    .post('/admin/quan-ly-user/changeStatus', payload)
+                    .post('/admin/quan-ly-user/change-status', payload)
                     .then((res) => {
                         if(res.data.status) {
                             toastr.success('Đã đổi trạng thái thành công!');

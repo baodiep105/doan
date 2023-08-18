@@ -18,7 +18,7 @@ new Vue({
 
     methods: {
         fetchDonHang(page_url) {
-            page_url = page_url || "/admin/quan-ly-don-hang/getData";
+            page_url = page_url || "/admin/quan-ly-don-hang/get-data";
             console.log(page_url);
             this.link=page_url;
             let vm = this;
@@ -70,7 +70,7 @@ new Vue({
                 'value': event,
             }
             axios
-                .put('/admin/quan-ly-don-hang/changeStatus/' + id, payload)
+                .put('/admin/quan-ly-don-hang/change-status/' + id, payload)
                 .then((res) => {
                     if (res.data.status) {
                         toastr.success('Đã đổi trạng thái thành công!');

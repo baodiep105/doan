@@ -11,6 +11,6 @@
     <script>
         var route_prefix = "laravel-filemanager";
         $('.lfm').filemanager('image', {prefix: route_prefix});
-        $('#lfm_edit').filemanager('image', {prefix: route_prefix});
+        $('.lfm_edit').filemanager('image', {prefix: route_prefix});
     </script>
 @endsection

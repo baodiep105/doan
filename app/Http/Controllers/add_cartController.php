@@ -41,96 +41,30 @@ class add_cartController extends Controller {
             'loai_thanh_toan'=>$request->type,
         ] );
         foreach ( $request->data[ 'don_hang' ]  as $value ) {
+            $chi_tiet_san_pham = ChiTietSanPhamModel::where( 'id', $value[ 'id_chi_tiet_san_pham' ] )->first();
+            if($value['so_luong']>$chi_tiet_san_pham->sl_chi_tiet){
+                return response()->json([
+                    'status'=>'error',
+                    'massage'=>'Số lượng sản phẩm trong kho không đủ'
+                ]);
+            }
             $chiTietDonHang = ChiTietDonHang::create( [
                 'id_chi_tiet_san_pham' => $value[ 'id_chi_tiet_san_pham' ],
                 'don_gia' => $value[ 'don_gia' ],
                 'so_luong' => $value[ 'so_luong' ],
                 'don_hang_id' => $don_hang->id,
             ] );
-            $chi_tiet_san_pham = ChiTietSanPhamModel::where( 'id', $value[ 'id_chi_tiet_san_pham' ] )->first();
+
             $chi_tiet_san_pham->sl_chi_tiet -= $value[ 'so_luong' ];
             $chi_tiet_san_pham->save();
         }
         return response()->json( [
             'status' => 'success',
-            'email' => $don_hang->email,
+            'email' => $don_hang,
         ] );
     }
 
-    // public function momo( $amount ) {
-    //     $endpoint = 'https://test-payment.momo.vn/gw_payment/transactionProcessor';
-    //     $partnerCode = 'MOMOBKUN20180529';
-    //     $accessKey = 'klm05TvNBzhg7h7j';
-    //     $secretKey = 'at67qH6mk8w5Y1nAyMoYKMWACiEi2bsa';
-    //     $orderInfo = 'Thanh toán qua MoMo';
-    //     $amount = $amount;
-    //     $orderId = time() .'';
-    //     $returnUrl = 'http://localhost:8000/atm/result_atm.php';
-    //     $notifyurl = 'http://localhost:8000/atm/ipn_momo.php';
-    //     // Lưu ý: link notifyUrl không phải là dạng localhost
-    //     $bankCode = 'SML';
-    //     $requestId = time().'';
-    //     $requestType = 'captureWallet';
-    //     $extraData = '';
-    //     //before sign HMAC SHA256 signature
-    //     $rawHashArr =  array(
-    //         'partnerCode' => $partnerCode,
-    //         'accessKey' => $accessKey,
-    //         'requestId' => $requestId,
-    //         'amount' => $amount,
-    //         'orderId' => $orderId,
-    //         'orderInfo' => $orderInfo,
-    //         'bankCode' => $bankCode,
-    //         'returnUrl' => $returnUrl,
-    //         'notifyUrl' => $notifyurl,
-    //         'extraData' => $extraData,
-    //         'requestType' => $requestType
-    // );
-    //     echo $secretKey;
-    //     die;
-    //     $rawHash = 'partnerCode='.$partnerCode.'&accessKey='.$accessKey.'&requestId='.$requestId.'&bankCode='.$bankCode.'&amount='.$amount.'&orderId='.$orderid.'&orderInfo='.$orderInfo.'&returnUrl='.$returnUrl.'&notifyUrl='.$notifyurl.'&extraData='.$extraData.'&requestType='.$requestType;
-    //     $signature = hash_hmac( 'sha256', $rawHash, $serectkey );
 
-    //     $data =  array( 'partnerCode' => $partnerCode,
-    //     'accessKey' => $accessKey,
-    //     'requestId' => $requestId,
-    //     'amount' => $amount,
-    //     'orderId' => $orderid,
-    //     'orderInfo' => $orderInfo,
-    //     'returnUrl' => $returnUrl,
-    //     'bankCode' => $bankCode,
-    //     'notifyUrl' => $notifyurl,
-    //     'extraData' => $extraData,
-    //     'requestType' => $requestType,
-    //     'signature' => $signature );
-    //     $result = $this->execPostRequest( $endpoint, json_encode( $data ) );
-    //     $jsonResult = json_decode( $result, true );
-    //     // decode json
-    //     return response()->json( [
-    //         'status'=>'success',
-    //         'link'=>$jsonResult[ 'payUrl' ],
-    // ] );
-    //     error_log( print_r( $jsonResult, true ) );
-    //     header( 'Location: '.$jsonResult[ 'payUrl' ] );
-    // }
-
-    public function execPostRequest( $url, $data ) {
-        $ch = curl_init( $url );
-        curl_setopt( $ch, CURLOPT_CUSTOMREQUEST, 'POST' );
-        curl_setopt( $ch, CURLOPT_POSTFIELDS, $data );
-        curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
-        curl_setopt( $ch, CURLOPT_HTTPHEADER, array(
-            'Content-Type: application/json',
-            'Content-Length: ' . strlen( $data ) )
-        );
-        curl_setopt( $ch, CURLOPT_TIMEOUT, 5 );
-        curl_setopt( $ch, CURLOPT_CONNECTTIMEOUT, 5 );
-        //execute post
-        $result = curl_exec( $ch );
-        //close connection
-        curl_close( $ch );
-        return $result;
-    }
 
     public function vnpay( $amount ) {
         $vnp_Url = 'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html';
@@ -232,7 +166,6 @@ class add_cartController extends Controller {
             ] );
         }
         if ( count( $request->don_hang ) > 0 ) {
-            
             foreach ( $request->don_hang as $value ) {
                 $san_pham = ChiTietSanPhamModel::find( $value[ 'id_chi_tiet_san_pham' ] );
                 if ( $value[ 'so_luong' ] > $san_pham->sl_chi_tiet ) {

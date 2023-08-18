@@ -29,7 +29,7 @@ new Vue({
 
     methods: {
         fetchKhuyenMai(page_url) {
-            page_url = page_url || "/admin/quan-ly-khuyen-mai/getData";
+            page_url = page_url || "/admin/quan-ly-khuyen-mai/get-data";
             console.log(page_url);
             this.link=page_url;
             let vm = this;
@@ -107,7 +107,7 @@ new Vue({
 
         doiTrangThai(id) {
             axios
-                .get('/admin/quan-ly-khuyen-mai/changeStatus/' + id)
+                .get('/admin/quan-ly-khuyen-mai/change-status/' + id)
                 .then((res) => {
                     if (res.data.trangThai) {
                         toastr.success('Đã đổi trạng thái thành công!');

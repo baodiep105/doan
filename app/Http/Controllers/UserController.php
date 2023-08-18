@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use App\Models\sanphamyeuthichmodel;
 use App\Http\Controllers\add_cartController;
 use Socialite;
 use Carbon\Carbon;
@@ -173,11 +174,8 @@ class UserController extends Controller {
         if ( $validator->fails() ) {
             $error = array();
             $danh_sach_loi = $validator->errors()->messages();
-            // dd( $danh_sach_loi );
             foreach ( $danh_sach_loi as  $key=>$value ) {
-                // echo $key;
                 array_push( $error, $value );
-                // toastr()->error( $value[ 0 ] );
             }
             return response()->json( [
                 'status'=>'error',
@@ -226,7 +224,7 @@ class UserController extends Controller {
         }
     }
 
-    public function getme( Request $request ) {
+    public function getme() {
         return response()->json( [
             'user' => Auth::guard( 'users' )->user(),
         ] );
@@ -251,11 +249,8 @@ class UserController extends Controller {
         if ( $validator->fails() ) {
             $error = array();
             $danh_sach_loi = $validator->errors()->messages();
-            // dd( $danh_sach_loi );
             foreach ( $danh_sach_loi as  $key=>$value ) {
-                // echo $key;
                 array_push( $error, $value );
-                // toastr()->error( $value[ 0 ] );
             }
             return response()->json( [
                 'status'=>'error',
@@ -302,11 +297,9 @@ class UserController extends Controller {
         if ( $validator->fails() ) {
             $error = array();
             $danh_sach_loi = $validator->errors()->messages();
-            // dd( $danh_sach_loi );
             foreach ( $danh_sach_loi as  $key=>$value ) {
                 // echo $key;
                 array_push( $error, $value );
-                // toastr()->error( $value[ 0 ] );
             }
             return response()->json( [
                 'status'=>'error',
@@ -338,7 +331,7 @@ class UserController extends Controller {
 
     public function xac_nhan( Request $request ) {
         $user = User::where( 'reset_password', $request->otp )->first();
-        if ( !is_null( $user ) || !empty( $user ) ) {
+        if (  !empty( $user ) ) {
             $user->reset_password=NULL;
             $user->save();
             return response()->json( [
@@ -354,7 +347,7 @@ class UserController extends Controller {
 
     public function reset_password( Request $request ) {
         $user = User::where( 'email', $request->email )->first();
-        if ( !is_null( $user ) || !empty( $user ) ) {
+        if (  !empty( $user ) ) {
             $rules = [
                 'password' => 'required|min:6',
                 're_password' => 'required|same:password',
@@ -374,11 +367,8 @@ class UserController extends Controller {
             if ( $validator->fails() ) {
                 $error = array();
                 $danh_sach_loi = $validator->errors()->messages();
-                // dd( $danh_sach_loi );
                 foreach ( $danh_sach_loi as  $key=>$value ) {
-                    // echo $key;
                     array_push( $error, $value );
-                    // toastr()->error( $value[ 0 ] );
                 }
                 return response()->json( [
                     'status'=>'error',
@@ -442,7 +432,73 @@ class UserController extends Controller {
             'data' => $user,
         ] );
     }
+    public function themYeuThich(Request $request)
+    {
+        $exist = sanphamyeuthichmodel::select('*')
+            ->where('id_san_pham', $request->id_san_pham)
+            ->where('id_user', auth()->user()->id)
+            ->exists();
+        if ($exist) {
+            return response()->json([
+                'status' => 'erorr',
+                'erorr' => 'the same key',
+            ]);
+        }
+        $yeuThich = sanphamyeuthichmodel::create([
+            'id_user' => auth()->user()->id,
+            'id_san_pham' => $request->id_san_pham,
+        ]);
+        return response()->json([
+            'status' => 'success',
+            'yeuthich' => $yeuThich,
+        ]);
+    }
+    public function getYeuThich()
+    {
+        $data = DB::table('san_pham_yeu_thich')->join('san_phams', 'san_pham_yeu_thich.id_san_pham', 'san_phams.id')
+            ->where('id_user', auth()->user()->id)
+            ->select('san_phams.*', 'san_pham_yeu_thich.id as id_yeu_thich')
+            ->get();
 
+        $hinh_anh = DB::table('hinh_anh')->get();
+        $anh = array();
+        foreach ($data as $key)
+            foreach ($hinh_anh as $value) {
+                if ($key->id == $value->id_san_pham) {
+                    array_push($anh, $value);
+                    break;
+                }
+            }
+        foreach ($data as $value) {
+            $a = ChiTietSanPhamModel::where('id_sanpham', $value->id)->sum('sl_chi_tiet');
+            $value->so_luong = (int)$a;
+            foreach ($anh as $key) {
+                if ($value->id == $key->id_san_pham) {
+                    $value->hinh_anh = $key->hinh_anh;
+                    break;
+                }
+            }
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $data,
+        ]);
+    }
+
+    public function deleteYeu($id)
+    {
+        $yeuthich = sanphamyeuthichmodel::find($id);
+        if (!$yeuthich) {
+            return response()->json([
+                'status' => 'erorr',
+            ]);
+        }
+        $yeuthich->delete();
+        return response()->json([
+            'status'  =>  'success',
+        ]);
+    }
     public function vnpay( $amount ) {
         $vnp_Url = 'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html';
         $vnp_Returnurl = config( 'global.link_user' ).'/direction?fbclid=IwAR1wJzmlbTCmITiQ5nNIHINeIMu6cEylupOwP3Tfi6aXtDj65i1iRL2miis';
@@ -518,7 +574,7 @@ class UserController extends Controller {
             'max'           =>  ':attribute phải đúng 10 chữ số',
             'min'           =>  ':attribute phải đúng 10 chữ số',
             'unique'        =>  ':attribute đã tồn tại',
-        ],[
+        ], [
             'email'      =>  'email',
             'nguoi_nhan'     =>  'người nhận',
             'sdt'   =>  'số điện thoại',
@@ -526,15 +582,15 @@ class UserController extends Controller {
         ] );
         if ( $validator->fails() ) {
 
-            $error=array();
+            $error = array();
             $danh_sach_loi = $validator->errors()->messages();
             foreach ( $danh_sach_loi as  $key=>$value ) {
-                array_push($error,$value);
+                array_push( $error, $value );
             }
-            return response()->json([
+            return response()->json( [
                 'status'=>'error',
                 'errorsp'=>$error,
-            ]);
+            ] );
         }
         if ( count( $request->don_hang ) > 0 ) {
             foreach ( $request->don_hang as $value ) {
@@ -549,38 +605,40 @@ class UserController extends Controller {
             if ( $type == 1 ) {
                 return $this->vnpay( $request->all() );
             } else {
-
-                // return response()->json([
-                //     'adsads'=>$request->all(),
-                // ]);
                 $donHang = DonHang::create( [
                     'email' =>$request->email,
                     'tong_tien' => $request->tong_tien,
                     'tien_giam_gia' => $request->tien_giam,
                     'thuc_tra' => $request->thuc_tra,
-                    'status' => 2,
+                    'status' => 3,
                     'dia_chi' => $request->dia_chi,
                     'nguoi_nhan' => $request->nguoi_nhan,
                     'sdt' => $request->sdt,
                     'ghi_chu' => $request->ghi_chu,
                     'loai_thanh_toan'=>0,
                 ] );
-                // dd( $request->don_hang[ 0 ] );
+
                 foreach ( $request->don_hang as $value ) {
+                    $chi_tiet_san_pham = ChiTietSanPhamModel::where( 'id', $value[ 'id_chi_tiet_san_pham' ] )->first();
+                    if($value['so_luong']>$chi_tiet_san_pham->sl_chi_tiet){
+                        return response()->json([
+                            'status'=>'error',
+                            'massage'=>'Số lượng sản phẩm trong kho không đủ'
+                        ]);
+                    }
                     $chiTietDonHang = ChiTietDonHang::create( [
                         'id_chi_tiet_san_pham' => $value[ 'id_chi_tiet_san_pham' ],
                         'don_gia' => $value[ 'don_gia' ],
                         'so_luong' => $value[ 'so_luong' ],
                         'don_hang_id' => $donHang->id,
                     ] );
-                    $chi_tiet_san_pham = ChiTietSanPhamModel::where( 'id', $value[ 'id_chi_tiet_san_pham' ] )->first();
+
                     $chi_tiet_san_pham->sl_chi_tiet -= $value[ 'so_luong' ];
                     $chi_tiet_san_pham->save();
                 }
-                // }
                 return response()->json( [
                     'status' => 'success',
-                    'email' => $donHang->email,
+                    'data' => $donHang,
                 ] );
             }
         } else {
@@ -591,58 +649,4 @@ class UserController extends Controller {
         }
     }
 
-    // public function DonHang( donhangRequest $request ) {
-    //     // dd( 'ads' );
-    //     if ( count( $request->don_hang ) > 0 ) {
-    //         foreach ( $request->don_hang as $value ) {
-    //             $san_pham = ChiTietSanPhamModel::find( $value[ 'id_chi_tiet_san_pham' ] );
-    //             if ( $value[ 'so_luong' ] > $san_pham->sl_chi_tiet ) {
-    //                 return response()->json( [
-    //                     'status' => 'error',
-    //                     'message' => 'Số lượng trong kho không đủ',
-    // ] );
-    //             }
-    //         }
-    //         // if ( $type == 'vnpay' ) {
-    //         //     return $this->vnpay( $request->all() );
-    //         // } else if ( $type == 'momo' ) {
-    //         //     $this->momo( $request->thuc_tra );
-    //         // } else {
-    //         $donHang = DonHang::create( [
-    //             'email' => $request->email,
-    //             'tong_tien' => $request->tong_tien,
-    //             'tien_giam_gia' => $request->tien_giam,
-    //             'thuc_tra' => $request->thuc_tra,
-    //             'status' => 2,
-    //             'dia_chi' => $request->dia_chi,
-    //             'nguoi_nhan' => $request->nguoi_nhan,
-    //             'sdt' => $request->sdt,
-    //             'ghi_chu' => $request->ghi_chu,
-    //             'loai_thanh_toan'=>0,
-    // ] );
-    //         foreach ( $request->don_hang as $value ) {
-    //             $chiTietDonHang = ChiTietDonHang::create( [
-    //                 'id_chi_tiet_san_pham' => $value[ 'id_chi_tiet_san_pham' ],
-    //                 'don_gia' => $value[ 'don_gia' ],
-    //                 'so_luong' => $value[ 'so_luong' ],
-    //                 'don_hang_id' => $donHang->id,
-    // ] );
-    //             $chi_tiet_san_pham = ChiTietSanPhamModel::where( 'id', $value[ 'id_chi_tiet_san_pham' ] )->first();
-    //             $chi_tiet_san_pham->sl_chi_tiet -= $value[ 'so_luong' ];
-    //             $chi_tiet_san_pham->save();
-    //         }
-    //         // }
-    //         return response()->json( [
-    //             'status' => 'success',
-    //             'email' => $donHang->email,
-    // ] );
-    //         // }
-    //     } else {
-    //         return response()->json( [
-    //             'status' => 'error',
-    //             'message'=> 'hãy chọn sản phẩm cần mua',
-    // ] );
-    //     }
-
-    // }
 }

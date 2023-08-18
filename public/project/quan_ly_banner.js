@@ -30,7 +30,7 @@ new Vue({
 
     methods: {
         fetchBanner(page_url) {
-            page_url = page_url || "/admin/quan-ly-banner/getData";
+            page_url = page_url || "/admin/quan-ly-banner/get-data";
             console.log(page_url);
             this.link=page_url;
             let vm = this;
@@ -99,17 +99,11 @@ new Vue({
 
         },
 
-        getData() {
-            axios
-                .get('/admin/quan-ly-banner/getData')
-                .then((res) => {
-                    this.list_vue = res.data.banner;
-                })
-        },
+
 
         doiTrangThai(id) {
             axios
-                .get('/admin/quan-ly-banner/changeStatus/' + id)
+                .get('/admin/quan-ly-banner/change-status/' + id)
                 .then((res) => {
                     if (res.data.trangThai) {
                         toastr.success('Đã đổi trạng thái thành công!');

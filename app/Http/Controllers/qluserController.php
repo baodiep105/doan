@@ -23,36 +23,51 @@ class qluserController extends Controller
 
     public function changeStatus(Request $request)
     {
-        $user = User::find($request->id);
-        if ($user) {
-            // $san_pham->is_block = !$san_pham->is_open;
-            if ($user->is_block == 1) {
-                $user->is_block = 0;
-            } else {
-                $user->is_block = 1;
+        if(!empty($id)){
+            $user = User::find($request->id);
+            if (!$user) {
+               return response()->json([
+                'status'=>false,
+               ]);
+            }else{
+                 if ($user->is_block == 1) {
+                    $user->is_block = 0;
+                } else {
+                    $user->is_block = 1;
+                }
+                $user->save();
+                return response()->json(['status' => true]);
             }
-            $user->save();
-            return response()->json(['status' => true]);
         }
+        return response()->json([
+            'status'=>false,
+           ]);
+
     }
 
     public function delete($id)
     {
-        $user = User::find($id);
-        if (!$user) {
-            return response()->json([
-                'status'  =>  false,
-            ]);
-        } else {
-            $user->delete();
-            return response()->json(['status' => true]);
+        if(!empty($id)){
+            $user = User::find($id);
+            if (!$user) {
+                return response()->json([
+                    'status'  =>  false,
+                ]);
+            } else {
+                $user->delete();
+                return response()->json(['status' => true]);
+            }
         }
+        return response()->json([
+            'status'  =>  false,
+        ]);
+
     }
     public function search(Request $request)
     {
         // dd($request->search);
         $search=$request->search;
-        if($search==""){
+        if(empty($search)){
             $data=User::where('id_loai',2)->orderBy('created_at','DESC')->get();
         }else{
         $data = User::where('id_loai', 2)->where(function ($query) use($search){

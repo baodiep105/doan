@@ -9,22 +9,7 @@
     <script src="/project/thong_ke.js"></script>
     <script src="{{URL::to('owlcarousel/owl.carousel.min.js')}}"></script>
     <script>
-        // $(document).ready(function() {
-        //     $(".owl-carousel").owlCarousel({
-        //         margin: 10,
-        //         nav: true,
-        //         navText: ["«", "»"],
-        //         loop: true,
-        //         dots: false,
-        //         responsive: {
-        //             1000: {
-        //                 items: 3.5,
-        //                 merge: true,
-        //             }
-        //         }
 
-        //     });
-        // });
         $('.owl-carousel').owlCarousel({
             loop: false,
             margin: 5,
@@ -46,7 +31,6 @@
             }
         })
     </script>
-
     <script>
         $(document).ready(function() {
             function Danhthu() {
@@ -101,8 +85,6 @@
                     },
                 });
             }
-
-
             function Product() {
                 $.ajax({
                     url: '/admin/thong-ke/product',

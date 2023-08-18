@@ -7,14 +7,6 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
     <style>
-        /* CSS Libraries Used
-
-*Animate.css by Daniel Eden.
-*FontAwesome 4.7.0
-*Typicons
-
-*/
-
         @import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400');
 
         body,
