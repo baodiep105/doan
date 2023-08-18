@@ -1,9 +1,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>AdminLTE 3 | Dashboard</title>
-
-{{-- <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"/> --}}
-<!-- Google Font: Source Sans Pro -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
 <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
 <link rel="stylesheet" href="/dist/css/adminlte.min.css">
@@ -12,9 +9,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.26.1/axios.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-{{-- <link rel="stylesheet" href="{{URL::to('owlcarousel/assets/owl.carousel.min.css')}}">
-  <link rel="stylesheet" href="{{URL::to('owlcarousel/assets/owl.theme.default.min.css')}}"> --}}
-{{-- <link rel="stylesheet" href="{{URL::to('project/css/style_owlcarosel.css')}}"> --}}
 <link rel="stylesheet" href="{{URL::to('owlcarousel/assets/owl.carousel.min.css')}}">
 <link rel="stylesheet" href="{{URL::to('owlcarousel/assets/owl.theme.default.min.css')}}">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
